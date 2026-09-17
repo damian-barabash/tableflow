@@ -1,0 +1,17 @@
+{
+  "name": "TableFlow AI",
+  "short_name": "TableFlow",
+  "description": "Recepcja AI, która odbiera telefony i zapisuje klientów do kalendarza.",
+  "lang": "pl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "background_color": "#fafafa",
+  "theme_color": "#fafafa",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

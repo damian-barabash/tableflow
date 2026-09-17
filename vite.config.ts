@@ -2,9 +2,9 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { copyFileSync } from 'node:fs'
 
-// Relative base → works on user.github.io/<repo>/ and on a custom domain alike.
+// Absolute base: the site lives at the root of tableflow.pl and uses clean URLs (/regulamin, /karta).
 export default defineConfig({
-  base: './',
+  base: '/',
   plugins: [
     react(),
     {

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Logo } from '../brand/Logo'
 import { LOCALES, LOCALE_NAMES, useI18n } from '../i18n'
 import { SECTION_IDS } from './Nav'
@@ -31,8 +31,7 @@ function useBigMark() {
 export function Footer() {
   const { t, locale, setLocale } = useI18n()
   const box = useBigMark()
-  const loc = useLocation(); const home = loc.pathname === '/'
-  const href = (id: string) => home ? `#${id}` : `/#${id}`
+  const to = (id: string) => ({ pathname: '/', hash: id })
   const year = new Date().getFullYear()
   const L = t.footer.links
   return (
@@ -48,12 +47,12 @@ export function Footer() {
           <div className="foot__cols">
             <div>
               <h4>{t.footer.product}</h4>
-              <a href={href(SECTION_IDS.features)}>{L.features}</a>
-              <a href={href(SECTION_IDS.industries)}>{L.industries}</a>
-              <a href={href(SECTION_IDS.app)}>{L.app}</a>
-              <a href={href(SECTION_IDS.loyalty)}>{L.loyalty}</a>
-              <a href={href(SECTION_IDS.faq)}>{L.faq}</a>
-              <a href={href(SECTION_IDS.waitlist)}>{L.waitlist}</a>
+              <Link to={to(SECTION_IDS.features)}>{L.features}</Link>
+              <Link to={to(SECTION_IDS.industries)}>{L.industries}</Link>
+              <Link to={to(SECTION_IDS.app)}>{L.app}</Link>
+              <Link to={to(SECTION_IDS.loyalty)}>{L.loyalty}</Link>
+              <Link to={to(SECTION_IDS.faq)}>{L.faq}</Link>
+              <Link to={to(SECTION_IDS.waitlist)}>{L.waitlist}</Link>
             </div>
             <div>
               <h4>{t.footer.legal}</h4>

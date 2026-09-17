@@ -74,7 +74,7 @@ const SIZES: { v: string; label: string }[] = [{ v: '0.85em', label: 'S' }, { v:
 
 function Editor({ session, onLogout }: { session: Session; onLogout: () => void }) {
   const { locale, base, overrides, setLocale, setEditMode, setEditorOverrides } = useI18n()
-  const [page, setPage] = useState<PageId>(() => (new URLSearchParams(window.location.hash.split('?')[1] || '').get('page') as PageId) || 'home')
+  const [page, setPage] = useState<PageId>(() => (new URLSearchParams(window.location.search).get('page') as PageId) || 'home')
   const [status, setStatus] = useState<Status>('loading')
   const [source, setSource] = useState<'draft' | 'published' | 'none'>('none')
   const [changes, setChanges] = useState<Changes>({})
@@ -92,7 +92,7 @@ function Editor({ session, onLogout }: { session: Session; onLogout: () => void 
     if (locale !== 'pl') void setLocale('pl', { animate: false, persist: false })
     return () => { setEditMode(false); document.body.classList.remove('editing'); setEditorOverrides('pl', null) }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { const u = new URL(window.location.href); const [h, q] = u.hash.split('?'); const sp = new URLSearchParams(q || ''); sp.set('page', page); history.replaceState(null, '', `${u.pathname}${h}?${sp}`) }, [page])
+  useEffect(() => { const u = new URL(window.location.href); u.searchParams.set('page', page); history.replaceState(history.state, '', `${u.pathname}${u.search}${u.hash}`) }, [page])
 
   useEffect(() => {
     if (locale !== 'pl') return

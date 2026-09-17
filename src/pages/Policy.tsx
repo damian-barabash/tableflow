@@ -7,7 +7,7 @@ import { Rich } from '../components/Rich'
 export function Policy({ kind }: { kind: 'privacy' | 'cookies' | 'terms' }) {
   const { t } = useI18n()
   const p = t.policies[kind]
-  useEffect(() => { document.title = `${p.title} — TableFlow AI`; window.scrollTo(0, 0) }, [p.title])
+  useEffect(() => { window.scrollTo(0, 0) }, [kind])
   return (
     <main className="section" style={{ paddingTop: 'clamp(40px, 6vw, 80px)' }}>
       <div className="container">

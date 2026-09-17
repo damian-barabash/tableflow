@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
+import { motion } from 'motion/react'
 import { I } from './Icons'
 import { useI18n } from '../i18n'
 import { Rich } from './Rich'
@@ -16,16 +16,13 @@ export function Faq() {
         <div className="faq__list rv" data-delay="1" data-px="0.06">
           {t.faq.items.map((it, i) => (
             <div key={i} className={`faq__item ${open === i || editMode ? 'is-open' : ''}`}>
-              <button className="faq__q lang-swap" onClick={() => setOpen(open === i ? null : i)} aria-expanded={open === i}>
+              <button className="faq__q lang-swap" onClick={() => setOpen(open === i ? null : i)} aria-expanded={open === i} aria-controls={`faq-a-${i}`}>
                 <span>{it.q}</span><I.chevron className="faq__chev" width={18} height={18} />
               </button>
-              <AnimatePresence initial={false}>
-                {(open === i || editMode) && (
-                  <motion.div key="a" className="faq__a" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: .4, ease: [.22, 1, .36, 1] }}>
-                    <Rich as="p" className="lang-swap" html={it.a} path={`faq.items.${i}.a`} />
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {/* answers stay in the DOM (collapsed) so crawlers index every one of them */}
+              <motion.div id={`faq-a-${i}`} className="faq__a" role="region" aria-hidden={!(open === i || editMode)} initial={false} animate={open === i || editMode ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }} transition={{ duration: .4, ease: [.22, 1, .36, 1] }}>
+                <Rich as="p" className="lang-swap" html={it.a} path={`faq.items.${i}.a`} />
+              </motion.div>
             </div>
           ))}
         </div>

@@ -15,7 +15,8 @@ const srv = createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0])
   if (p === '/') p = '/index.html'
   let f = join('dist', p)
-  if (!existsSync(f) || statSync(f).isDirectory()) f = join('dist', 'index.html')
+  if ((!existsSync(f) || statSync(f).isDirectory()) && existsSync(f + '.html')) f += '.html'   // GitHub Pages: /regulamin → regulamin.html
+  if (!existsSync(f) || statSync(f).isDirectory()) f = join('dist', '404.html')
   res.setHeader('Content-Type', MIME[extname(f)] || 'application/octet-stream')
   res.end(readFileSync(f))
 }).listen(0)
@@ -81,7 +82,7 @@ if (!only || only === 'ru') await run('mobile-ru', { width: 390, height: 844, la
 {
   const page = await browser.newPage(); await page.setViewport({ width: 1440, height: 900 })
   await page.evaluateOnNewDocument(() => { localStorage.setItem('tf_lang', 'pl') })
-  await page.goto(base + '#/polityka-prywatnosci', { waitUntil: 'networkidle0' }); await sleep(3600)
+  await page.goto(base + 'polityka-prywatnosci', { waitUntil: 'networkidle0' }); await sleep(3600)
   await page.screenshot({ path: `${OUT}/policy.png` })
   const h1 = await page.evaluate(() => document.querySelector('h1')?.textContent)
   console.log(JSON.stringify({ name: 'policy', h1 }))

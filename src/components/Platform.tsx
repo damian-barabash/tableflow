@@ -54,7 +54,7 @@ export function Platform() {
     </div>,
     // 6 scanner
     <div className="pm pm--scan" key="s">
-      <div className="pm__scanbox"><i /><i /><i /><i /><span className="pm__scanline" /><img className="pm__qr" src="./qr-karta.svg" alt="" width={46} height={46} /></div>
+      <div className="pm__scanbox"><i /><i /><i /><i /><span className="pm__scanline" /><img className="pm__qr" src="/qr-karta.svg" alt="" width={46} height={46} /></div>
       <div className="pm__scanres"><I.check width={14} height={14} /> {m.scanOk}</div>
     </div>,
   ]

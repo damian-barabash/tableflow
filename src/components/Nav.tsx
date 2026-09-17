@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { Logo } from '../brand/Logo'
 import { I } from './Icons'
@@ -30,12 +30,13 @@ export function Nav() {
     document.addEventListener('click', off); return () => document.removeEventListener('click', off)
   }, [langOpen])
 
+  const navigate = useNavigate()
   const href = (id: string) => home ? `#${id}` : `/#${id}`
   const go = (id: string) => (e: React.MouseEvent) => {
-    if (!home) return
     e.preventDefault()
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     setOpen(false)
+    if (!home) { navigate({ pathname: '/', hash: id }); return }
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
   const links: [string, string][] = [
     [t.nav.features, SECTION_IDS.features], [t.nav.industries, SECTION_IDS.industries], [t.nav.app, SECTION_IDS.app], [t.nav.loyalty, SECTION_IDS.loyalty], [t.nav.faq, SECTION_IDS.faq],

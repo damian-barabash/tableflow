@@ -29,12 +29,11 @@ export function Karta({ ready = true }: { ready?: boolean }) {
   const once = useRef(false)
 
   useEffect(() => {
-    document.title = `${t.card.title} — TableFlow AI`
     window.scrollTo(0, 0)
     if (!ready) return                                   // wait for the preloader to finish
     if (!once.current) {
       once.current = true
-      if (analyticsAllowed()) logEvent('card_scan', locale, { src: new URLSearchParams(window.location.hash.split('?')[1] || '').get('src') || 'direct' })
+      if (analyticsAllowed()) logEvent('card_scan', locale, { src: new URLSearchParams(window.location.search).get('src') || 'direct' })
     }
     // timers are idempotent (setState to true), so a StrictMode double-run is harmless
     const a = setTimeout(() => setStamped(true), 1100)
@@ -94,7 +93,7 @@ export function Karta({ ready = true }: { ready?: boolean }) {
         </AnimatePresence>
 
         <div className="kcard__qr">
-          <img src="./qr-karta.svg" alt="QR" width={88} height={88} />
+          <img src="/qr-karta.svg" alt="QR: tableflow.pl/karta" width={88} height={88} />
           <span>{t.card.powered}</span>
         </div>
       </motion.div>

@@ -11,12 +11,13 @@ import { Policy } from './pages/Policy'
 import { Karta } from './pages/Karta'
 import { useDesync } from './lib/useDesync'
 import { EditMod } from './pages/EditMod'
+import { Seo } from './seo/Seo'
 
 function useHashScroll() {
   const loc = useLocation()
   useEffect(() => {
     if (loc.pathname !== '/') return
-    const id = window.location.hash.replace(/^#\/?/, '').split('#')[1]
+    const id = decodeURIComponent(loc.hash.slice(1))
     if (id) setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }), 50)
   }, [loc])
 }
@@ -29,9 +30,10 @@ export default function App() {
   useHashScroll()
   const path = useLocation().pathname
   useDesync(`${intro}-${path}`)
-  if (path === '/edit-mod') return <EditMod />
+  if (path === '/edit-mod') return <><Seo /><EditMod /></>
   return (
     <>
+      <Seo />
       <AnimatePresence>{intro && <Preloader key="pre" onDone={done} />}</AnimatePresence>
       <Nav />
       <Routes>

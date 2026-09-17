@@ -29,7 +29,7 @@ export function Loyalty() {
               <div><small>{c.nextReward.toUpperCase()}</small><b>30</b></div>
             </div>
             <div className="wpass__stamps" aria-label={c.stamps}>{Array.from({ length: 10 }).map((_, i) => <i key={i} className={i < 7 ? 'is-on' : ''} />)}</div>
-            <div className="wpass__code"><img className="wpass__qr" src="./qr-karta.svg" alt="QR → tableflow.pl/#/karta" width={92} height={92} /><span>TF · 8841 2290 07</span></div>
+            <div className="wpass__code"><img className="wpass__qr" src="/qr-karta.svg" alt="QR: tableflow.pl/karta" width={92} height={92} /><span>TF · 8841 2290 07</span></div>
           </div>
           {/* Add-to-wallet buttons */}
           <div className="loy__btns">
@@ -47,7 +47,7 @@ export function Loyalty() {
           {/* Scanner phone */}
           <div className="scanph">
             <div className="scanph__top"><span>{t.loyalty.scan.title}</span></div>
-            <div className="scanph__view"><i /><i /><i /><i /><span className="scanph__line" /><img className="scanph__qr" src="./qr-karta.svg" alt="" width={56} height={56} /></div>
+            <div className="scanph__view"><i /><i /><i /><i /><span className="scanph__line" /><img className="scanph__qr" src="/qr-karta.svg" alt="" width={56} height={56} /></div>
             <div className="scanph__hint">{t.loyalty.scan.hint}</div>
             <div className="scanph__res"><b><I.check width={14} height={14} /> {t.loyalty.scan.result}</b><span className="btn btn--brand btn--sm">{t.loyalty.scan.addPoints}</span></div>
           </div>

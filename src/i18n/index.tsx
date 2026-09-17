@@ -73,11 +73,9 @@ interface Ctx {
 }
 const I18nContext = createContext<Ctx | null>(null)
 
-function applyDocument(l: Locale, d: Dict) {
+// title/description/canonical are route-aware and live in <Seo> (src/seo/Seo.tsx)
+function applyDocument(l: Locale, _d: Dict) {
   document.documentElement.lang = l
-  document.title = d.meta.title
-  const m = document.querySelector('meta[name="description"]')
-  if (m) m.setAttribute('content', d.meta.description)
 }
 
 export function I18nProvider({ children }: { children: ReactNode }) {

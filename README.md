@@ -4,7 +4,7 @@ Lądowanie produktu **TableFlow AI** (recepcja AI: odbiera telefony, zapisuje kl
 
 ## Stack
 
-- React 19 + Vite 7 + TypeScript, `motion` (animacje), `react-router-dom` (HashRouter, `base: './'`).
+- React 19 + Vite 7 + TypeScript, `motion` (animacje), `react-router-dom` (BrowserRouter, czyste adresy `/regulamin`, `/karta`; stare `/#/…` przekierowywane w `main.tsx`; `base: '/'`).
 - Backend: Supabase **TableFlow Backend** (`ahtjgghocwegyepxoeru`, eu-west-1) — bez supabase-js, dwa RPC przez `fetch` (`src/lib/supabase.ts`).
 - Deploy: GitHub Pages przez `.github/workflows/deploy.yml` (push na `main` → build → Pages). W repo: Settings → Pages → Source = **GitHub Actions**, Custom domain **tableflow.pl** (`public/CNAME`).
 
@@ -12,11 +12,19 @@ Lądowanie produktu **TableFlow AI** (recepcja AI: odbiera telefony, zapisuje kl
 
 ```bash
 npm run dev        # dev server
-npm run build      # tsc + vite build → dist/
+npm run build      # tsc + vite build + scripts/prerender.mjs → dist/
+npm run qc:seo     # routing/SEO: czyste URL, 404 + noindex, canonical, FAQ w DOM, widok bez JS
 npm run qc         # puppeteer QC (1440/390, pl/en/de/ru, polityka) → qc-out/
 node scripts/og.mjs      # regeneruje public/og.png + apple-touch-icon.png
 node scripts/visual.mjs  # kadry preloadera, asystenta języka, sticky slidera
 ```
+
+## SEO
+
+- `src/seo/routes.ts` — jedno źródło prawdy: trasy, title/description, index/noindex, sitemap. `src/seo/Seo.tsx` synchronizuje `<head>` przy nawigacji.
+- `scripts/prerender.mjs` (po `vite build`): osobny HTML na trasę (`regulamin.html` → GitHub Pages serwuje `/regulamin` z 200), snapshot DOM (headless Chrome, PL + opublikowane zmiany CMS), JSON-LD (`Organization`, `WebSite`, `WebPage`, `Service`, `FAQPage`, `BreadcrumbList`), `404.html` (noindex), `sitemap.xml`, `robots.txt`, `llms.txt`.
+- `/karta` — `noindex, follow`; `/edit-mod` — `noindex, nofollow` + `Disallow` w robots.
+- Zmiany opublikowane w `/edit-mod` trafiają do statycznego HTML przy następnym deployu (JS pokazuje je od razu).
 
 ## Struktura
 
