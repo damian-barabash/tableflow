@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { I } from './Icons'
 import { useI18n } from '../i18n'
+import { Rich } from './Rich'
 import { joinWaitlist, logEvent, type JoinResult } from '../lib/supabase'
 import { analyticsAllowed } from '../lib/consent'
 import { SECTION_IDS } from './Nav'
@@ -43,8 +44,8 @@ export function Waitlist() {
         <div className="wl__card mesh rv" data-px="0.08"><span className="mesh__b" /><span className="mesh__g" />
           <div className="wl__in">
             <div className="wl__text">
-              <h2 className="h2 lang-swap">{t.waitlist.h2}</h2>
-              <p className="lead lang-swap">{t.waitlist.sub}</p>
+              <Rich as="h2" className="h2 lang-swap" html={t.waitlist.h2} path="waitlist.h2" />
+              <Rich as="p" className="lead lang-swap" html={t.waitlist.sub} path="waitlist.sub" />
             </div>
             <AnimatePresence mode="wait">
               {done ? (

@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { I } from '../components/Icons'
 import { useI18n } from '../i18n'
+import { Rich } from '../components/Rich'
 
 export function Policy({ kind }: { kind: 'privacy' | 'cookies' | 'terms' }) {
   const { t } = useI18n()
@@ -14,12 +15,12 @@ export function Policy({ kind }: { kind: 'privacy' | 'cookies' | 'terms' }) {
         <article className="prose">
           <h1>{p.title}</h1>
           <p className="meta">{t.common.updated}: {p.updated}</p>
-          <p style={{ marginTop: 16 }}>{p.intro}</p>
-          {p.sections.map(s => (
+          <Rich as="p" style={{ marginTop: 16 }} html={p.intro} path={`policies.${kind}.intro`} />
+          {p.sections.map((s, si) => (
             <section key={s.h}>
               <h2>{s.h}</h2>
-              {s.p.map((para, i) => <p key={i}>{para}</p>)}
-              {s.list && <ul>{s.list.map(li => <li key={li}>{li}</li>)}</ul>}
+              {s.p.map((para, i) => <Rich as="p" key={i} html={para} path={`policies.${kind}.sections.${si}.p.${i}`} />)}
+              {s.list && <ul>{s.list.map((li, li_i) => <Rich as="li" key={li} html={li} path={`policies.${kind}.sections.${si}.list.${li_i}`} />)}</ul>}
             </section>
           ))}
         </article>

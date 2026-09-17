@@ -1,6 +1,7 @@
 import { Mark } from '../brand/Logo'
 import { I } from './Icons'
 import { useI18n } from '../i18n'
+import { Rich } from './Rich'
 import { SECTION_IDS } from './Nav'
 import './platform.css'
 
@@ -61,8 +62,8 @@ export function Platform() {
     <section className="section platform" id={SECTION_IDS.features}>
       <div className="container">
         <div className="center rv">
-          <h2 className="h2 lang-swap">{t.platform.h2}</h2>
-          <p className="lead lang-swap" style={{ marginTop: 18 }}>{t.platform.sub}</p>
+          <Rich as="h2" className="h2 lang-swap" html={t.platform.h2} path="platform.h2" />
+          <Rich as="p" className="lead lang-swap" style={{ marginTop: 18 }} html={t.platform.sub} path="platform.sub" />
         </div>
         <div className="platform__grid" data-px="0.1">
           {t.platform.cards.map((c, i) => (

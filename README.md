@@ -28,7 +28,7 @@ node scripts/visual.mjs  # kadry preloadera, asystenta języka, sticky slidera
 - `src/brand/Logo.tsx` — `Mark` (goły glif, `currentColor`), `Wordmark` (AI z gradientowym podkreśleniem), `Logo`, `Orb`; pliki `public/logo.svg`, `logo-mark.svg`, `logo-mark-white.svg`, `favicon.svg`.
 - Gradienty: zawsze animowane i ziarniste — `.g` (małe powierzchnie) / `.mesh` (duże). `global.css` musi być importowany pierwszy w `main.tsx`.
 - `src/mocks/` — makiety produktu (rozmowa AI, dashboard kalendarza).
-- **`/edit-mod`** — wizualny edytor treści (login moderatora: `jakub` / `dmytrii` → `@tableflow.pl`; hasła poza repo). Teksty słowników wykrywane w DOM → contenteditable, nadpisania w `site_content` (draft/published na język). Silnik: `src/editor/engine.ts`, UI: `src/pages/EditMod.tsx`.
+- **`/edit-mod`** — wizualny edytor treści (login moderatora: `jakub` / `dmytrii` → `@tableflow.pl`; hasła poza repo). Edycja **tylko po polsku**; „Opublikuj” zapisuje PL i tłumaczy **tylko zmienione** teksty na EN/RU/FR/ES przez edge function `translate` (Barabash AI; klucz w sekretach Supabase `BAI_KEY`/`BAI_URL`, nigdy w repo). Nagłówki/leady to bloki rich (`<Rich>`, znaczniki `<g>` = gradient, `<b>`, `<span style>`) — zaznaczenie tekstu pokazuje pasek: pogrubienie, rozmiar, kolor, gradient wł./wył. Silnik: `src/editor/engine.ts`, UI: `src/pages/EditMod.tsx`, funkcja: `supabase/functions/translate/index.ts`.
 - Strony: `/` (landing), `/polityka-prywatnosci`, `/polityka-cookies`, `/regulamin`, **`/karta`** (strona za kodem QR z makiet: karta z pieczątkami → ostatnia pieczątka → zapis na newsletter e-mail/telefon).
 - QR: `node scripts/qr.mjs` → `public/qr-karta.svg` (prawdziwy kod → `https://tableflow.pl/#/karta?src=qr`).
 

@@ -1,4 +1,5 @@
 import { motion } from 'motion/react'
+import { Rich } from './Rich'
 import { I } from './Icons'
 import { CallCard } from '../mocks/CallCard'
 import { DashboardMock } from '../mocks/DashboardMock'
@@ -17,10 +18,8 @@ export function Hero({ ready }: { ready: boolean }) {
     <section className="hero" id="top">
       <div className="hero__aura aura" aria-hidden="true" data-px="-0.25" />
       <div className="container">
-        <motion.h1 className="h1 hero__h1 lang-swap" data-px="0.03" {...fade(0)}>
-          {t.hero.h1[0]}<span className="grad-text">{t.hero.h1[1]}</span>{t.hero.h1[2]}<span className="grad-text">{t.hero.h1[3]}</span>
-        </motion.h1>
-        <motion.p className="lead hero__sub lang-swap" {...fade(1)}>{t.hero.sub}</motion.p>
+        <motion.div data-px="0.03" {...fade(0)}><Rich as="h1" className="h1 hero__h1 lang-swap" html={t.hero.h1} path="hero.h1" /></motion.div>
+        <motion.div {...fade(1)}><Rich as="p" className="lead hero__sub lang-swap" html={t.hero.sub} path="hero.sub" /></motion.div>
         <motion.div className="hero__cta lang-swap" {...fade(2)}>
           <div className="row wrap">
             <a href={`#${SECTION_IDS.waitlist}`} onClick={go(SECTION_IDS.waitlist)} className="btn btn--primary">{t.hero.ctaPrimary}</a>
@@ -31,7 +30,7 @@ export function Hero({ ready }: { ready: boolean }) {
             <ul>{t.hero.industries.map((name, i) => { const Ic = INDUSTRY_ICONS[i % INDUSTRY_ICONS.length]; return <li key={name}><Ic width={14} height={14} />{name}</li> })}</ul>
           </div>
         </motion.div>
-        <motion.p className="sub hero__note lang-swap" {...fade(3)}>{t.hero.note}</motion.p>
+        <motion.div {...fade(3)}><Rich as="p" className="sub hero__note lang-swap" html={t.hero.note} path="hero.note" /></motion.div>
       </div>
       <motion.div className="hero__demo dots" initial={{ opacity: 0, y: 40 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 1, delay: .45, ease: EASE }}>
         <div className="container hero__demo-in">

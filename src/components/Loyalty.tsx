@@ -1,6 +1,7 @@
 import { Mark } from '../brand/Logo'
 import { I } from './Icons'
 import { useI18n } from '../i18n'
+import { Rich } from './Rich'
 import { SECTION_IDS } from './Nav'
 import './loyalty.css'
 
@@ -12,8 +13,8 @@ export function Loyalty() {
     <section className="section loy" id={SECTION_IDS.loyalty}>
       <div className="container loy__in">
         <div className="loy__text rv" data-px="0.05">
-          <h2 className="h2 lang-swap">{t.loyalty.h2}</h2>
-          <p className="lead lang-swap" style={{ marginTop: 18 }}>{t.loyalty.sub}</p>
+          <Rich as="h2" className="h2 lang-swap" html={t.loyalty.h2} path="loyalty.h2" />
+          <Rich as="p" className="lead lang-swap" style={{ marginTop: 18 }} html={t.loyalty.sub} path="loyalty.sub" />
           <ul className="loy__bullets lang-swap">{t.loyalty.bullets.map(b => <li key={b}><I.check width={16} height={16} />{b}</li>)}</ul>
           <a href={`#${SECTION_IDS.waitlist}`} onClick={go} className="btn btn--ghost lang-swap" style={{ marginTop: 28 }}>{t.loyalty.cta} <I.arrow className="arrow" width={16} height={16} /></a>
         </div>

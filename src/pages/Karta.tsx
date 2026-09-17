@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { Logo, Mark } from '../brand/Logo'
 import { I } from '../components/Icons'
+import { Rich } from '../components/Rich'
 import { useI18n } from '../i18n'
 import { joinWaitlistContact, logEvent, type ContactResult } from '../lib/supabase'
 import { analyticsAllowed } from '../lib/consent'
@@ -102,10 +103,10 @@ export function Karta() {
           <motion.section className="knews card" initial={{ opacity: 0, y: 20, height: 0 }} animate={{ opacity: 1, y: 0, height: 'auto' }} transition={{ duration: .7, ease: EASE }}>
             <motion.div className="knews__won" initial={{ scale: .9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: .6, ease: EASE, delay: .1 }}>
               <span className="knews__confetti" aria-hidden="true">{Array.from({ length: 12 }).map((_, i) => <i key={i} style={{ ['--i' as string]: i }} />)}</span>
-              <h1 className="knews__h">{t.card.won}</h1>
+              <Rich as="h1" className="knews__h" html={t.card.won} path="card.won" />
             </motion.div>
-            <p className="knews__sub2">{t.card.newsletterTitle}</p>
-            <p className="sub">{t.card.newsletterSub}</p>
+            <Rich as="p" className="knews__sub2" html={t.card.newsletterTitle} path="card.newsletterTitle" />
+            <Rich as="p" className="sub" html={t.card.newsletterSub} path="card.newsletterSub" />
             {done ? (
               <motion.div className="knews__done" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                 <span className="wl__check"><I.check width={20} height={20} /></span>

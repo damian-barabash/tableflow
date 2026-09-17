@@ -60,3 +60,21 @@ async function upsert(locale: Locale, status: 'draft' | 'published', data: Overr
 }
 export async function saveDraft(locale: Locale, data: Overrides) { await upsert(locale, 'draft', data) }
 export async function publish(locale: Locale, data: Overrides) { await upsert(locale, 'published', data); await upsert(locale, 'draft', data); invalidatePublished(locale) }
+
+/** Editor: the published row of any locale (read with the editor's JWT). */
+export async function fetchPublishedAuth(locale: Locale): Promise<Overrides> {
+  const res = await authFetch(`/rest/v1/site_content?select=data&locale=eq.${locale}&status=eq.published`)
+  if (!res.ok) return {}
+  const rows = await res.json() as { data: Overrides }[]
+  return rows[0]?.data ?? {}
+}
+
+export interface TranslateResult { translations: Overrides; failed: string[]; error?: string }
+/** Edge function `translate`: Polish → one target language. The AI key never leaves the server. */
+export async function translateTexts(target: Locale, items: { path: string; text: string }[]): Promise<TranslateResult> {
+  if (!items.length) return { translations: {}, failed: [] }
+  const res = await authFetch('/functions/v1/translate', { method: 'POST', body: JSON.stringify({ target, items }) })
+  const j = await res.json().catch(() => ({})) as Partial<TranslateResult> & { error?: string }
+  if (!res.ok) return { translations: j.translations ?? {}, failed: j.failed ?? items.map(i => i.path), error: j.error || `http_${res.status}` }
+  return { translations: j.translations ?? {}, failed: j.failed ?? [] }
+}

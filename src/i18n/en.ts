@@ -7,7 +7,7 @@ export const en: Dict = {
   },
   nav: { features: 'Features', industries: 'Industries', app: 'App', loyalty: 'Loyalty', faq: 'FAQ', cta: 'Join the waitlist', lang: 'Language', menu: 'Menu' },
   hero: {
-    h1: ['An AI receptionist that ', 'answers calls', ' and books clients, ', 'not just replies.'],
+    h1: 'An AI receptionist that <g>answers calls</g> and books clients, <g>not just replies.</g>',
     sub: 'A client calls your number. TableFlow picks up, checks the calendar, books an appointment with the right person and notifies your team in the app. Zero missed calls, full history, sales stats and loyalty in one place.',
     ctaPrimary: 'Join the waitlist',
     ctaSecondary: 'See how it works',

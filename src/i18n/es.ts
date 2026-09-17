@@ -7,7 +7,7 @@ export const es: Dict = {
   },
   nav: { features: 'Funciones', industries: 'Sectores', app: 'App', loyalty: 'Fidelización', faq: 'FAQ', cta: 'Unirme a la lista', lang: 'Idioma', menu: 'Menú' },
   hero: {
-    h1: ['Una recepción con IA que ', 'contesta llamadas', ' y agenda clientes, ', 'no solo responde.'],
+    h1: 'Una recepción con IA que <g>contesta llamadas</g> y agenda clientes, <g>no solo responde.</g>',
     sub: 'Un cliente llama a tu número. TableFlow contesta, revisa el calendario, reserva con la persona adecuada y avisa al equipo en la app. Cero llamadas perdidas, historial completo, estadísticas de ventas y fidelización en un solo lugar.',
     ctaPrimary: 'Unirme a la lista de espera',
     ctaSecondary: 'Ver cómo funciona',

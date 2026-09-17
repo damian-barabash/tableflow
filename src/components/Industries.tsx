@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Mark } from '../brand/Logo'
 import { I } from './Icons'
 import { useI18n } from '../i18n'
+import { Rich } from './Rich'
 import { SECTION_IDS } from './Nav'
 import './industries.css'
 
@@ -81,8 +82,8 @@ export function Industries() {
         <div className="container">
           <div className="ind__head rv">
             <div>
-              <h2 className="h2 lang-swap">{t.industries.h2}<br /><span className="muted-head">{t.industries.h2b}</span></h2>
-              <p className="lead lang-swap" style={{ marginTop: 14 }}>{t.industries.sub}</p>
+              <h2 className="h2 lang-swap"><Rich html={t.industries.h2} path="industries.h2" /><br /><Rich className="muted-head" html={t.industries.h2b} path="industries.h2b" /></h2>
+              <Rich as="p" className="lead lang-swap" style={{ marginTop: 14 }} html={t.industries.sub} path="industries.sub" />
             </div>
             <div className="ind__arrows hide-mobile">
               <button aria-label="prev" onClick={() => go(Math.max(0, idx - 1))} disabled={idx === 0}><I.chevronL /></button>

@@ -1,4 +1,5 @@
 import { useI18n } from '../i18n'
+import { Rich } from './Rich'
 import { SECTION_IDS } from './Nav'
 import './stats.css'
 
@@ -9,8 +10,8 @@ export function Stats() {
     <section className="section stats">
       <div className="container">
         <div className="center rv">
-          <h2 className="h2 lang-swap">{t.stats.h2}</h2>
-          <p className="lead lang-swap" style={{ marginTop: 18 }}>{t.stats.sub}</p>
+          <Rich as="h2" className="h2 lang-swap" html={t.stats.h2} path="stats.h2" />
+          <Rich as="p" className="lead lang-swap" style={{ marginTop: 18 }} html={t.stats.sub} path="stats.sub" />
         </div>
         <div className="stats__grid" data-px="0.1">
           {t.stats.items.map((s, i) => (

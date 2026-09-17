@@ -1,6 +1,7 @@
 import { Mark } from '../brand/Logo'
 import { I } from './Icons'
 import { useI18n } from '../i18n'
+import { Rich } from './Rich'
 import { SECTION_IDS } from './Nav'
 import './app-section.css'
 
@@ -26,8 +27,8 @@ export function AppSection() {
           </div>
         </div>
         <div className="appx__text rv" data-delay="1" data-px="0.05">
-          <h2 className="h2 lang-swap">{t.app.h2}</h2>
-          <p className="lead lang-swap" style={{ marginTop: 18 }}>{t.app.sub}</p>
+          <Rich as="h2" className="h2 lang-swap" html={t.app.h2} path="app.h2" />
+          <Rich as="p" className="lead lang-swap" style={{ marginTop: 18 }} html={t.app.sub} path="app.sub" />
           <ul className="appx__feats lang-swap">
             {t.app.features.map((f, i) => { const Ic = FEAT_ICONS[i]; return <li key={f.title}><span className="appx__ic"><Ic width={17} height={17} /></span><div><b>{f.title}</b><p className="sub">{f.desc}</p></div></li> })}
           </ul>

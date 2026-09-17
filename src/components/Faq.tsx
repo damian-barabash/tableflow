@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { I } from './Icons'
 import { useI18n } from '../i18n'
+import { Rich } from './Rich'
 import { SECTION_IDS } from './Nav'
 import './faq.css'
 
@@ -11,7 +12,7 @@ export function Faq() {
   return (
     <section className="section faq" id={SECTION_IDS.faq}>
       <div className="container">
-        <h2 className="h2 center rv lang-swap">{t.faq.h2}</h2>
+        <Rich as="h2" className="h2 center rv lang-swap" html={t.faq.h2} path="faq.h2" />
         <div className="faq__list rv" data-delay="1" data-px="0.06">
           {t.faq.items.map((it, i) => (
             <div key={i} className={`faq__item ${open === i || editMode ? 'is-open' : ''}`}>
@@ -21,7 +22,7 @@ export function Faq() {
               <AnimatePresence initial={false}>
                 {(open === i || editMode) && (
                   <motion.div key="a" className="faq__a" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: .4, ease: [.22, 1, .36, 1] }}>
-                    <p className="lang-swap">{it.a}</p>
+                    <Rich as="p" className="lang-swap" html={it.a} path={`faq.items.${i}.a`} />
                   </motion.div>
                 )}
               </AnimatePresence>

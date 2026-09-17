@@ -28,7 +28,7 @@ export interface Dict {
   meta: { title: string; description: string }
   nav: { features: string; industries: string; app: string; loyalty: string; faq: string; cta: string; lang: string; menu: string }
   hero: {
-    h1: [string, string, string, string] // plain, gradient, plain, gradient-end
+    h1: string // rich: <g>…</g> = brand gradient
     sub: string; ctaPrimary: string; ctaSecondary: string; note: string; worksFor: string
     industries: string[]
   }

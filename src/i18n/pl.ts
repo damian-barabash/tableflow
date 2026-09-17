@@ -7,7 +7,7 @@ export const pl: Dict = {
   },
   nav: { features: 'Funkcje', industries: 'Branże', app: 'Aplikacja', loyalty: 'Lojalność', faq: 'FAQ', cta: 'Dołącz do listy', lang: 'Język', menu: 'Menu' },
   hero: {
-    h1: ['Recepcja AI, która ', 'odbiera telefony', ' i zapisuje klientów, ', 'nie tylko odpowiada.'],
+    h1: 'Recepcja AI, która <g>odbiera telefony</g> i zapisuje klientów, <g>nie tylko odpowiada.</g>',
     sub: 'Klient dzwoni na Twój numer. TableFlow odbiera, sprawdza kalendarz, umawia wizytę do konkretnej osoby i powiadamia zespół w aplikacji. Zero nieodebranych połączeń, pełna historia, statystyki i lojalność w jednym miejscu.',
     ctaPrimary: 'Dołącz do listy oczekujących',
     ctaSecondary: 'Zobacz, jak działa',

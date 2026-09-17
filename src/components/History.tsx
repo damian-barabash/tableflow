@@ -1,5 +1,6 @@
 import { I } from './Icons'
 import { useI18n } from '../i18n'
+import { Rich } from './Rich'
 import { SECTION_IDS } from './Nav'
 import './history.css'
 
@@ -11,8 +12,8 @@ export function History() {
     <section className="section hist dots">
       <div className="container hist__in">
         <div className="hist__text rv" data-px="0.05">
-          <h2 className="h2 lang-swap">{t.history.h2}</h2>
-          <p className="lead lang-swap" style={{ marginTop: 18 }}>{t.history.sub}</p>
+          <Rich as="h2" className="h2 lang-swap" html={t.history.h2} path="history.h2" />
+          <Rich as="p" className="lead lang-swap" style={{ marginTop: 18 }} html={t.history.sub} path="history.sub" />
           <ul className="hist__bullets lang-swap">{t.history.bullets.map(b => <li key={b}><span><I.check width={13} height={13} /></span>{b}</li>)}</ul>
           <a href={`#${SECTION_IDS.waitlist}`} onClick={go} className="btn btn--ghost lang-swap" style={{ marginTop: 28 }}>{t.hero.ctaPrimary} <I.arrow className="arrow" width={16} height={16} /></a>
         </div>
