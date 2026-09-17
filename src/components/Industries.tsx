@@ -110,7 +110,14 @@ export function Industries() {
         </div>
         <div className="container">
           <div className="ind__progress" aria-hidden="true"><i ref={prog} /></div>
-          <div className="ind__dots">{t.industries.scenarios.map((_, i) => <button key={i} className={i === idx ? 'is-active' : ''} onClick={() => go(i)} aria-label={`${i + 1}`} />)}</div>
+          <div className="ind__foot">
+            <div className="ind__dots">{t.industries.scenarios.map((_, i) => <button key={i} className={i === idx ? 'is-active' : ''} onClick={() => go(i)} aria-label={`${i + 1}`} />)}</div>
+            <div className="ind__swipe only-mobile" aria-hidden="true">
+              <button className="ind__swipe-btn" onClick={() => go(Math.max(0, idx - 1))} disabled={idx === 0}><I.chevronL width={18} height={18} /></button>
+              <span className="ind__swipe-hint"><I.arrow width={18} height={18} /></span>
+              <button className="ind__swipe-btn" onClick={() => go(Math.min(n - 1, idx + 1))} disabled={idx >= n - 1}><I.chevronR width={18} height={18} /></button>
+            </div>
+          </div>
         </div>
       </div>
     </section>

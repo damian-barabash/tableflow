@@ -22,6 +22,7 @@ export function Nav() {
     return () => window.removeEventListener('scroll', on)
   }, [])
   useEffect(() => { setOpen(false); setLangOpen(false) }, [loc])
+  useEffect(() => { document.body.classList.toggle('locked', open); return () => document.body.classList.remove('locked') }, [open])
   useEffect(() => {
     if (!langOpen) return
     const off = (e: MouseEvent) => { if (!(e.target as HTMLElement).closest('.nav__lang')) setLangOpen(false) }
@@ -67,8 +68,8 @@ export function Nav() {
       </div>
       <AnimatePresence>
         {open && (
-          <motion.div className="nav__mobile" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: .25 }}>
-            {links.map(([label, id]) => <a key={id} href={href(id)} onClick={go(id)} className="nav__mlink">{label}</a>)}
+          <motion.div className="nav__mobile" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: .3, ease: [.22, 1, .36, 1] }}>
+            {links.map(([label, id], i) => <motion.a key={id} href={href(id)} onClick={go(id)} className="nav__mlink" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .05 + i * .05, duration: .4, ease: [.22, 1, .36, 1] }}>{label}</motion.a>)}
             <a href={href(SECTION_IDS.waitlist)} onClick={go(SECTION_IDS.waitlist)} className="btn btn--primary" style={{ marginTop: 8 }}>{t.nav.cta}</a>
             <div className="nav__mlangs">
               {LOCALES.map(l => <button key={l} className={`pill ${l === locale ? 'pill--brand' : ''}`} onClick={() => { setOpen(false); void setLocale(l) }}>{LOCALE_NAMES[l]}</button>)}

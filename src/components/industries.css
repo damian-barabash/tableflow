@@ -39,3 +39,10 @@
 @media (max-width: 600px) { .ind__visual { padding: 20px 14px 0; min-height: 0; } .ind__card { flex-basis: 88vw; } }
 
 @media (min-width: 900px) and (max-height: 820px) { .ind__sticky .h2 { font-size: 30px; } .ind__sticky .lead { display: none; } .ind__visual { padding-top: 16px; } .ind__phone { font-size: 12px; gap: 6px; } }
+
+.ind__foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.ind__swipe { display: flex; align-items: center; gap: 6px; }
+.ind__swipe-btn { width: 40px; height: 40px; border-radius: var(--r-md); border: 1px solid #3a3833; display: grid; place-items: center; color: #fff; }
+.ind__swipe-btn:disabled { opacity: .35; }
+.ind__swipe-hint { width: 40px; height: 40px; display: grid; place-items: center; color: var(--tf-pink); animation: ind-nudge 1.6s ease-in-out infinite; }
+@keyframes ind-nudge { 0%, 100% { transform: translateX(-3px); opacity: .6 } 50% { transform: translateX(3px); opacity: 1 } }
