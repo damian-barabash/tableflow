@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { Logo } from '../brand/Logo'
@@ -66,7 +67,7 @@ export function Nav() {
           <button className="nav__burger only-mobile" onClick={() => setOpen(v => !v)} aria-label={t.nav.menu} aria-expanded={open}>{open ? <I.close /> : <I.menu />}</button>
         </div>
       </div>
-      <AnimatePresence>
+      {createPortal(<AnimatePresence>
         {open && (
           <motion.div className="nav__mobile" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: .3, ease: [.22, 1, .36, 1] }}>
             {links.map(([label, id], i) => <motion.a key={id} href={href(id)} onClick={go(id)} className="nav__mlink" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .05 + i * .05, duration: .4, ease: [.22, 1, .36, 1] }}>{label}</motion.a>)}
@@ -76,7 +77,7 @@ export function Nav() {
             </div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence>, document.body)}
     </header>
   )
 }

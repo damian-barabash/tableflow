@@ -16,7 +16,7 @@
 .nav__langmenu button:hover { background: var(--bg-2); }
 .nav__langmenu button.is-active { font-weight: 500; color: var(--accent-ink); }
 .nav__burger { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 10px; }
-.nav__mobile { position: fixed; left: 0; right: 0; top: 56px; bottom: 0; padding: 20px var(--pad) max(24px, env(safe-area-inset-bottom)); background: var(--bg); display: flex; flex-direction: column; gap: 0; overflow-y: auto; }
+.nav__mobile { position: fixed; left: 0; right: 0; top: 56px; bottom: 0; z-index: 790; padding: 20px var(--pad) max(24px, env(safe-area-inset-bottom)); background: var(--bg); display: flex; flex-direction: column; gap: 0; overflow-y: auto; }
 .nav__mlink { padding: 18px 4px; font-size: 26px; font-weight: 500; letter-spacing: -.02em; border-bottom: 1px solid var(--line); }
 .nav__mobile .btn { margin-top: 24px !important; height: 48px; font-size: 16px; }
 .nav__mlangs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 28px; }

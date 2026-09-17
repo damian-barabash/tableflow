@@ -18,7 +18,7 @@ type Status = 'idle' | 'sending' | 'ok' | 'exists' | 'err_email' | 'err_phone' |
  * Only the top nav + a centred stamp card: the last stamp gets stamped (the "scan"), then the
  * newsletter sign-up appears with an e-mail / phone toggle.
  */
-export function Karta() {
+export function Karta({ ready = true }: { ready?: boolean }) {
   const { t, locale } = useI18n()
   const [stamped, setStamped] = useState(false)
   const [showForm, setShowForm] = useState(false)
@@ -31,6 +31,7 @@ export function Karta() {
   useEffect(() => {
     document.title = `${t.card.title} — TableFlow AI`
     window.scrollTo(0, 0)
+    if (!ready) return                                   // wait for the preloader to finish
     if (!once.current) {
       once.current = true
       if (analyticsAllowed()) logEvent('card_scan', locale, { src: new URLSearchParams(window.location.hash.split('?')[1] || '').get('src') || 'direct' })
@@ -39,7 +40,7 @@ export function Karta() {
     const a = setTimeout(() => setStamped(true), 1100)
     const b = setTimeout(() => setShowForm(true), 2400)
     return () => { clearTimeout(a); clearTimeout(b) }
-  }, [t.card.title, locale])
+  }, [t.card.title, locale, ready])
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -58,7 +59,7 @@ export function Karta() {
   return (
     <main className="karta">
       <div className="karta__aura aura" aria-hidden="true" />
-      <motion.div className="kcard mesh" initial={{ opacity: 0, y: 24, scale: .96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: .8, ease: EASE }}>
+      <motion.div className="kcard mesh" initial={{ opacity: 0, y: 24, scale: .96 }} animate={ready ? { opacity: 1, y: 0, scale: 1 } : {}} transition={{ duration: .8, ease: EASE }}>
         <span className="mesh__b" /><span className="mesh__g" />
         <div className="kcard__head">
           <Logo size={26} light />

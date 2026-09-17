@@ -39,7 +39,7 @@ export default function App() {
         <Route path="/polityka-prywatnosci" element={<Policy kind="privacy" />} />
         <Route path="/polityka-cookies" element={<Policy kind="cookies" />} />
         <Route path="/regulamin" element={<Policy kind="terms" />} />
-        <Route path="/karta" element={<Karta />} />
+        <Route path="/karta" element={<Karta ready={ready} />} />
         <Route path="*" element={<Home ready={ready} />} />
       </Routes>
       <Footer />
