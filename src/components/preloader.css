@@ -1,0 +1,14 @@
+.pre { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; color: #fff; }
+.pre .pre__bg { position: absolute; inset: 0; }
+.pre__bg::before, .pre__bg::after, .pre__bg .mesh__b { filter: blur(80px); }
+.pre__bg::before { width: 90vmax; left: -30vmax; top: -40vmax; animation-duration: 18s; }
+.pre__bg::after { width: 100vmax; right: -40vmax; bottom: -50vmax; animation-duration: 22s; }
+.pre__bg .mesh__b { width: 70vmax; animation-duration: 16s; }
+.pre__logo { position: relative; z-index: 2; display: flex; align-items: center; gap: 16px; will-change: transform, opacity, filter; }
+.pre__mark { display: block; will-change: transform, filter; }
+.pre__word { display: inline-flex; align-items: baseline; gap: .32em; overflow: visible; white-space: nowrap; font-size: clamp(34px, 5vw, 52px); }
+.pre__letters { display: inline-flex; font-size: 1em; font-weight: 600; letter-spacing: -0.04em; line-height: 1; color: #fff; }
+.pre__ch { display: inline-block; will-change: transform, filter, opacity; }
+.pre__ai { position: relative; display: inline-block; font-size: 1em; font-weight: 600; line-height: 1; letter-spacing: -.02em; color: #fff; transform-origin: left center; padding-bottom: .1em; }
+.pre__ai i { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 2px; background: #fff; opacity: .9; }
+.pre__bar { position: absolute; left: 50%; bottom: 10vh; width: 120px; height: 2px; margin-left: -60px; border-radius: 2px; background: rgba(255,255,255,.9); transform-origin: left center; z-index: 2; }

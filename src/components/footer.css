@@ -1,0 +1,22 @@
+.foot { background: #000; color: #fff; padding: clamp(56px, 7vw, 96px) 0 0; overflow: hidden; }
+.foot__top { display: grid; grid-template-columns: 1.3fr 2fr; gap: 48px; }
+.foot__brand { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; font-size: 18px; }
+.foot__tag { font-size: 15px; color: #a8a49c; max-width: 34ch; line-height: 1.5; }
+.foot__kv { font-size: 14px; color: #a8a49c; display: flex; gap: 8px; }
+.foot__kv a { color: #fff; }
+.foot__status { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px 0 10px; border-radius: var(--r-md); background: #1a1916; font-size: 13px; color: #ddd9d1; }
+.foot__status i { width: 8px; height: 8px; border-radius: 50%; background: var(--tf-mauve); box-shadow: 0 0 0 4px rgba(167,132,163,.25); }
+.foot__cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.foot__cols h4 { font-size: 13px; font-weight: 500; color: #7d786f; margin: 0 0 14px; letter-spacing: .04em; text-transform: uppercase; }
+.foot__cols a, .foot__cols button { display: block; font-size: 15px; color: #e6e3dd; padding: 6px 0; text-align: left; transition: color .2s; }
+.foot__cols a:hover, .foot__cols button:hover { color: #fff; }
+.foot__cols button.is-active { color: var(--tf-lav); }
+.foot__mark { margin-top: clamp(40px, 6vw, 80px); overflow: hidden; position: relative; padding-top: .04em; }
+.foot__word { display: inline-block; width: max-content; font-weight: 600; letter-spacing: -0.05em; line-height: .82; color: #fff; white-space: nowrap; margin-bottom: -.02em; }
+.foot__ch { display: inline-block; transform: translateY(110%); opacity: 0; transition: transform 1s cubic-bezier(.22,1,.36,1), opacity .6s; transition-delay: calc(var(--i) * 55ms); will-change: transform; }
+.foot__mark.in .foot__ch { transform: none; opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .foot__ch { transition: none; transform: none; opacity: 1; } }
+.foot__bottom { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 20px 0 28px; border-top: 1px solid #262521; font-size: 13px; color: #7d786f; }
+@media (max-width: 900px) { .foot__top { grid-template-columns: 1fr; gap: 36px; } }
+@media (max-width: 560px) { .foot__cols { grid-template-columns: 1fr 1fr; } }
+.foot__company { padding: 0 0 28px; margin-top: -14px; font-size: 12px; color: #6f6a62; letter-spacing: .01em; }

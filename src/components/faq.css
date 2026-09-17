@@ -1,0 +1,10 @@
+.faq__list { max-width: 900px; margin: clamp(32px, 4vw, 56px) auto 0; border-top: 1px solid var(--line); }
+.faq__item { border-bottom: 1px solid var(--line); }
+.faq__q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 16px; text-align: left; font-size: 17px; font-weight: 500; letter-spacing: -.01em; transition: color .2s; }
+.faq__q:hover { color: var(--accent-ink); }
+.faq__chev { flex: 0 0 auto; color: var(--muted); transition: transform .35s var(--ease); }
+.faq__item.is-open .faq__chev { transform: rotate(180deg); }
+.faq__a { overflow: hidden; }
+.faq__a p { padding: 0 16px 22px; color: var(--fg-2); font-size: 16px; line-height: 1.6; max-width: 76ch; }
+.faq__more { margin-top: 28px; font-size: 15px; }
+.faq__more .link { margin-left: 4px; }

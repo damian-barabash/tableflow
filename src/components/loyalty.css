@@ -1,0 +1,50 @@
+.loy__in { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(40px, 6vw, 96px); align-items: center; }
+.loy__bullets { margin-top: 26px; display: flex; flex-direction: column; gap: 12px; }
+.loy__bullets li { display: flex; gap: 10px; align-items: flex-start; font-size: 16px; color: var(--fg-2); }
+.loy__bullets svg { color: var(--ok); margin-top: 3px; flex: 0 0 auto; }
+.loy__visual { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 250px); gap: 20px 24px; align-items: start; justify-content: center; }
+.loy__col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.wpass { position: relative; width: 100%; border-radius: 16px; color: #fff; padding: 20px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 40px 80px -40px rgba(42,52,128,.6); overflow: hidden; }
+.wpass__head { display: flex; align-items: center; gap: 12px; }
+.wpass__head b { display: block; font-weight: 600; font-size: 15px; letter-spacing: -.01em; }
+.wpass__head span:not(.wpass__tier) { font-size: 12px; opacity: .85; }
+.wpass__tier { margin-left: auto; font-size: 11px; font-weight: 600; letter-spacing: .08em; padding: 4px 9px; border-radius: var(--r-sm); background: rgba(255,255,255,.22); border: 1px solid rgba(255,255,255,.4); }
+.wpass__fields { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 12px; }
+.wpass__fields small { display: block; font-size: 9.5px; letter-spacing: .12em; opacity: .8; margin-bottom: 4px; }
+.wpass__fields b { font-size: 18px; font-weight: 500; letter-spacing: -.01em; }
+.wpass__stamps { display: flex; gap: 8px; }
+.wpass__stamps i { flex: 1; aspect-ratio: 1; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.55); }
+.wpass__stamps i.is-on { background: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,.18); animation: stamp-pop .7s cubic-bezier(.22,1,.36,1) both; }
+.wpass__stamps i:nth-child(1) { animation-delay: .1s } .wpass__stamps i:nth-child(2) { animation-delay: .25s } .wpass__stamps i:nth-child(3) { animation-delay: .4s } .wpass__stamps i:nth-child(4) { animation-delay: .55s } .wpass__stamps i:nth-child(5) { animation-delay: .7s } .wpass__stamps i:nth-child(6) { animation-delay: .85s } .wpass__stamps i:nth-child(7) { animation-delay: 1s }
+@keyframes stamp-pop { 0% { transform: scale(.4); opacity: 0 } 60% { transform: scale(1.15); opacity: 1 } 100% { transform: scale(1); opacity: 1 } }
+.wpass__code { background: #fff; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--fg); }
+.wpass__qr { width: 92px; height: 92px; image-rendering: pixelated; }
+.wpass__code span { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: .06em; }
+.gpass { width: 100%; border-radius: 14px; background: #fff; border: 1px solid var(--line); box-shadow: 0 30px 60px -30px rgba(0,0,0,.3); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.gpass__head { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; }
+.gpass__head em { margin-left: auto; font-style: normal; font-size: 11px; color: var(--accent-ink); background: #ecebf7; padding: 2px 8px; border-radius: var(--r-sm); }
+.gpass__row { display: flex; gap: 20px; }
+.gpass__row small { display: block; font-size: 11px; color: var(--muted); }
+.gpass__row b { font-size: 20px; font-weight: 500; letter-spacing: -.02em; }
+.gpass__bar { height: 6px; border-radius: 3px; background: var(--bg-2); overflow: hidden; }
+.gpass__bar i { display: block; height: 100%; background-image: var(--grad-anim); background-size: 300% 300%; animation: g-flow 18s ease-in-out infinite; }
+.loy__btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.wbtn { position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; border-radius: var(--r-md); color: #fff; font-size: 13px; font-weight: 500; white-space: nowrap; }
+.wbtn::after { content: ""; position: absolute; inset: 0; background-image: var(--grain); background-size: 160px 160px; mix-blend-mode: soft-light; pointer-events: none; }
+.scanph { width: 100%; border-radius: 24px; background: #0f0f0e; color: #fff; padding: 14px; box-shadow: 0 40px 70px -30px rgba(0,0,0,.5); border: 6px solid #1d1c1a; display: flex; flex-direction: column; gap: 10px; }
+.scanph__top { text-align: center; font-size: 12px; font-weight: 500; padding-top: 4px; }
+.scanph__view { position: relative; height: 150px; border-radius: 12px; background: #1a1916; display: grid; place-items: center; overflow: hidden; }
+.scanph__view > i { position: absolute; width: 18px; height: 18px; border: 2px solid #fff; }
+.scanph__view > i:nth-child(1) { left: 12px; top: 12px; border-right: 0; border-bottom: 0; border-radius: 4px 0 0 0; }
+.scanph__view > i:nth-child(2) { right: 12px; top: 12px; border-left: 0; border-bottom: 0; border-radius: 0 4px 0 0; }
+.scanph__view > i:nth-child(3) { left: 12px; bottom: 12px; border-right: 0; border-top: 0; border-radius: 0 0 0 4px; }
+.scanph__view > i:nth-child(4) { right: 12px; bottom: 12px; border-left: 0; border-top: 0; border-radius: 0 0 4px 0; }
+.scanph__line { position: absolute; left: 18px; right: 18px; height: 2px; background-image: var(--grad-anim); background-size: 300% 300%; box-shadow: 0 0 12px rgba(167,132,163,.9); animation: pm-scan 2.9s ease-in-out infinite, g-flow 12s linear infinite; animation-delay: -1.3s, -4s; }
+.scanph__qr { width: 56px; height: 56px; filter: invert(1); opacity: .9; image-rendering: pixelated; }
+.scanph__hint { font-size: 11px; color: var(--dark-muted); text-align: center; }
+.scanph__res { display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 12px; background: #1a1916; font-size: 12px; }
+.scanph__res b { display: flex; align-items: center; gap: 6px; font-weight: 500; }
+.scanph__res b svg { color: #5fd39c; }
+.scanph__res .btn { align-self: flex-start; height: 30px; font-size: 12px; }
+@media (max-width: 960px) { .loy__in { grid-template-columns: 1fr; } .loy__visual { justify-content: start; } }
+@media (max-width: 640px) { .loy__visual { grid-template-columns: 1fr; } .scanph { max-width: 300px; border-width: 4px; } }

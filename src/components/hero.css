@@ -1,0 +1,27 @@
+.hero { position: relative; padding-top: clamp(56px, 8vw, 112px); overflow: hidden; }
+.hero__aura { width: 820px; height: 620px; right: -200px; top: -320px; opacity: .28; }
+.hero__h1 { max-width: 900px; }
+.hero__sub { margin-top: 28px; max-width: 62ch; }
+.hero__cta { margin-top: 36px; display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
+.hero__works { display: flex; align-items: center; gap: 10px 12px; flex-wrap: wrap; color: var(--muted); font-size: 14px; margin-top: 22px; }
+.hero__works > span { font-weight: 500; color: var(--fg-2); }
+.hero__works ul { display: flex; flex-wrap: wrap; gap: 6px; }
+.hero__works li { position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 11px 0 9px; border-radius: var(--r-md); color: #fff; font-size: 13px; font-weight: 500; }
+.hero__works li::after { content: ""; position: absolute; inset: 0; background-image: var(--grain); background-size: 160px 160px; mix-blend-mode: soft-light; pointer-events: none; }
+.hero__works li svg { color: #fff; opacity: .9; }
+.hero__note { margin-top: 18px; font-size: 14px; }
+.hero__demo { margin-top: clamp(36px, 5vw, 64px); padding: clamp(24px, 3vw, 40px) 0 clamp(40px, 5vw, 80px); position: relative; }
+.hero__demo::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 160px; background: linear-gradient(to bottom, rgba(250,250,250,0), var(--bg)); pointer-events: none; }
+.hero__demo-in { display: grid; grid-template-columns: 380px 1fr; gap: clamp(24px, 4vw, 72px); align-items: start; position: relative; z-index: 1; }
+.hero__call { padding-top: 40px; }
+.hero__db { position: relative; }
+.hero__db-inner { }
+.hero__db .db { width: 130%; }
+@media (max-width: 1100px) { .hero__demo-in { grid-template-columns: 340px 1fr; } .hero__db .db { width: 140%; min-width: 700px; } }
+@media (max-width: 860px) {
+  .hero__demo-in { grid-template-columns: 1fr; }
+  .hero__call { padding-top: 0; }
+  .hero__call .cc { max-width: 100%; }
+  .hero__db { overflow: hidden; border-radius: 16px; margin-right: calc(-1 * var(--pad)); }
+  .hero__db .db { width: 100%; min-width: 720px; }
+}

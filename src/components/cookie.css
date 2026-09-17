@@ -1,0 +1,5 @@
+.ck { position: fixed; left: 20px; bottom: 20px; z-index: 850; width: min(calc(100vw - 40px), 400px); padding: 16px 18px; border-radius: 14px; background: #fff; border: 1px solid var(--line); box-shadow: 0 24px 60px -28px rgba(0,0,0,.35); }
+.ck__text { font-size: 13.5px; line-height: 1.5; color: var(--fg-2); margin-bottom: 12px; }
+.ck__text a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+.ck__actions { display: flex; justify-content: flex-end; gap: 8px; }
+@media (max-width: 480px) { .ck { left: 12px; right: 12px; width: auto; bottom: 12px; } }

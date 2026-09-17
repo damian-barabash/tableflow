@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 64" width="400" height="64" role="img" aria-label="TableFlow AI">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dcc3cb"/><stop offset=".3" stop-color="#a784a3"/><stop offset=".55" stop-color="#6f6396"/><stop offset=".78" stop-color="#464f96"/><stop offset="1" stop-color="#2a3480"/></linearGradient></defs>
+  <g fill="none" stroke="#1a1916" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 44 L40 14"/><path d="M54 16 L42 28 L54 40"/><path d="M22 50 L32 40"/></g>
+  <circle cx="10" cy="30" r="4.6" fill="#1a1916"/>
+  <text x="76" y="47" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="44" font-weight="600" letter-spacing="-1.6" fill="#1a1916">TableFlow</text>
+  <text x="318" y="47" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="44" font-weight="600" letter-spacing="-0.5" fill="#1a1916">AI</text>
+  <rect x="318" y="52" width="58" height="4" rx="2" fill="url(#g)"/>
+</svg>

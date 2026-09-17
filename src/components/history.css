@@ -1,0 +1,22 @@
+.hist__in { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(40px, 6vw, 96px); align-items: center; }
+.hist__bullets { margin-top: 26px; display: flex; flex-direction: column; gap: 12px; }
+.hist__bullets li { display: flex; gap: 10px; align-items: flex-start; font-size: 16px; color: var(--fg-2); }
+.hist__bullets li span { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: var(--bg-2); color: var(--fg); flex: 0 0 auto; margin-top: 2px; }
+.hist__demo-in { display: flex; flex-direction: column; gap: 10px; }
+.hist__msg { padding: 14px 18px; border-radius: 12px; font-size: 15px; line-height: 1.45; max-width: 84%; }
+.hist__msg--c { align-self: flex-end; background: var(--bg-2); border-bottom-right-radius: 6px; }
+.hist__msg--a { align-self: flex-start; background: #fff; border: 1px solid var(--line); border-bottom-left-radius: 6px; }
+.hist__why { margin-top: 8px; padding: 22px 22px 18px; display: flex; flex-direction: column; gap: 14px; position: relative; }
+.hist__whyhead { display: flex; justify-content: center; position: relative; }
+.hist__whyhead::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid var(--line); }
+.hist__whyhead .pill { position: relative; background: #fff; border: 1px solid #d9d6ee; height: 28px; border-radius: var(--r-sm); }
+.hist__block { display: grid; grid-template-columns: 26px 1fr; gap: 12px; align-items: start; padding-left: 4px; }
+.hist__ic { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); color: var(--muted); background: #fff; }
+.hist__block small { display: block; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin: 4px 0 6px; }
+.hist__block p { font-size: 14px; }
+.hist__src { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; background: var(--bg-2); font-size: 13.5px; margin-top: 6px; color: var(--fg-2); }
+.hist__src span { flex: 1; }
+.hist__src .ok { color: var(--ok); }
+.hist__foot { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: var(--muted); padding-top: 12px; border-top: 1px solid var(--line); }
+.hist__foot i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+@media (max-width: 960px) { .hist__in { grid-template-columns: 1fr; } }

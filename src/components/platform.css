@@ -1,0 +1,60 @@
+.platform__grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; margin-top: clamp(36px, 5vw, 64px); }
+.platform__card { padding: 22px 22px 0; display: flex; flex-direction: column; gap: 6px; min-height: 320px; overflow: hidden; grid-column: span 3; }
+.platform__card:nth-child(-n+3) { grid-column: span 4; }
+.platform__card .sub { font-size: 14px; margin-bottom: 10px; }
+.platform__mock { margin-top: auto; }
+.card--light { background: var(--card); }
+.card--dark .h3 { color: #fff; }
+.card--brand .h3 { color: #fff; }
+
+/* mini mocks */
+.pm { background: #fff; border: 1px solid var(--line); border-radius: 12px 12px 0 0; border-bottom: 0; padding: 14px; font-size: 13px; box-shadow: 0 -10px 30px -20px rgba(42,52,128,.25); }
+.card--dark .pm { background: #201f1b; border-color: var(--dark-line); color: #fff; }
+.pm__row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-top: 1px solid var(--line); color: var(--muted); }
+.card--dark .pm__row { border-color: var(--dark-line); color: var(--dark-muted); }
+.pm__row b { font-weight: 500; color: var(--fg); }
+.card--dark .pm__row b { color: #fff; }
+.pm__num { display: flex; align-items: center; gap: 8px; padding-bottom: 10px; font-size: 14px; }
+.pm__num b { font-weight: 500; letter-spacing: .01em; }
+.pm__num .pill { margin-left: auto; }
+.pm--cal .pm__calhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 14px; }
+.pm__slot { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-top: 1px solid var(--dark-line); font-size: 12px; color: var(--dark-muted); }
+.pm__slot i { display: block; height: 26px; border-radius: 6px; background: #3a3833; position: relative; overflow: hidden; color: #fff; font-style: normal; font-size: 11px; padding: 0 8px; line-height: 26px; white-space: nowrap; overflow: hidden; }
+.pm--push { padding: 0; background: transparent; border: 0; box-shadow: none; }
+.pm__phone { margin: 0 auto; width: 88%; padding: 14px 10px 0; border-radius: 26px 26px 0 0; background: linear-gradient(180deg, #e9e8f3, #f5f4f9); border: 1px solid #dcdbe8; border-bottom: 0; min-height: 130px; }
+.pm__notif { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 14px; background: rgba(255,255,255,.9); box-shadow: 0 10px 30px -14px rgba(42,52,128,.35); font-size: 12px; animation: pm-notif 5s ease-in-out infinite; }
+.pm__notif b { display: block; font-weight: 500; }
+.pm__notif span { color: var(--muted); font-size: 11.5px; line-height: 1.3; display: block; }
+.pm__notif em { margin-left: auto; font-style: normal; color: var(--muted); font-size: 11px; }
+.pm__notif--ghost { height: 44px; margin-top: 8px; background: rgba(255,255,255,.5); box-shadow: none; animation: none; }
+@keyframes pm-notif { 0%, 10% { transform: translateY(-12px); opacity: 0 } 20%, 85% { transform: none; opacity: 1 } 95%, 100% { transform: translateY(-8px); opacity: 0 } }
+.pm__kpi { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.pm__kpi span { flex-basis: 100%; color: var(--muted); font-size: 12px; }
+.pm__kpi b { font-size: 26px; font-weight: 500; letter-spacing: -.03em; }
+.pm__bars { display: flex; align-items: flex-end; gap: 6px; height: 70px; margin: 12px 0; }
+.pm__bars i { flex: 1; border-radius: 4px 4px 0 0; background: #e3e1dc; }
+.pm__bars i.is-hi { background-image: var(--grad-anim); background-size: 300% 300%; animation: g-flow 18s ease-in-out infinite; }
+.pm__title { display: block; font-weight: 500; font-size: 14px; margin-bottom: 8px; }
+.pm__topic { display: grid; grid-template-columns: 1fr 2fr auto; align-items: center; gap: 10px; padding: 6px 0; color: var(--fg-2); font-size: 12px; }
+.pm__topic i { display: block; height: 8px; border-radius: 4px; background-image: var(--grad-anim); background-size: 300% 300%; animation: g-flow 18s ease-in-out infinite; opacity: .8; }
+.pm__topic em { font-style: normal; color: var(--muted); }
+.pm--card { background: transparent; border: 0; box-shadow: none; padding: 0; }
+.pm__wallet { border-radius: 14px 14px 0 0; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.35); border-bottom: 0; backdrop-filter: blur(8px); padding: 16px; color: #fff; display: flex; flex-direction: column; gap: 14px; }
+.pm__wtop { display: flex; align-items: center; gap: 8px; font-weight: 500; font-size: 13px; }
+.pm__wname { font-size: 17px; font-weight: 500; letter-spacing: -.01em; }
+.pm__wrow { display: flex; justify-content: space-between; gap: 12px; }
+.pm__wrow small { display: block; font-size: 11px; opacity: .8; }
+.pm__wrow b { font-size: 15px; font-weight: 500; }
+.pm--scan { display: flex; flex-direction: column; gap: 12px; }
+.pm__scanbox { position: relative; height: 120px; border-radius: 12px; background: #0f0f0e; overflow: hidden; display: grid; place-items: center; }
+.pm__scanbox > i { position: absolute; width: 18px; height: 18px; border: 2px solid #fff; }
+.pm__scanbox > i:nth-child(1) { left: 14px; top: 14px; border-right: 0; border-bottom: 0; border-radius: 4px 0 0 0; }
+.pm__scanbox > i:nth-child(2) { right: 14px; top: 14px; border-left: 0; border-bottom: 0; border-radius: 0 4px 0 0; }
+.pm__scanbox > i:nth-child(3) { left: 14px; bottom: 14px; border-right: 0; border-top: 0; border-radius: 0 0 0 4px; }
+.pm__scanbox > i:nth-child(4) { right: 14px; bottom: 14px; border-left: 0; border-top: 0; border-radius: 0 0 4px 0; }
+.pm__scanline { position: absolute; left: 20px; right: 20px; height: 2px; background-image: var(--grad-anim); background-size: 300% 300%; animation: pm-scan 2.2s ease-in-out infinite, g-flow 12s linear infinite; animation: pm-scan 2.2s ease-in-out infinite; box-shadow: 0 0 12px rgba(167,132,163,.8); }
+@keyframes pm-scan { 0%, 100% { top: 22px } 50% { top: calc(100% - 22px) } }
+.pm__qr { width: 46px; height: 46px; filter: invert(1); opacity: .85; image-rendering: pixelated; }
+.pm__scanres { display: inline-flex; align-items: center; gap: 6px; color: #5fd39c; font-size: 13px; font-weight: 500; }
+@media (max-width: 1000px) { .platform__card, .platform__card:nth-child(-n+3) { grid-column: span 6; } }
+@media (max-width: 600px) { .platform__card, .platform__card:nth-child(-n+3) { grid-column: span 12; min-height: 0; } }

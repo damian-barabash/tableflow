@@ -1,0 +1,11 @@
+.stats__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: clamp(36px, 5vw, 64px); }
+.stats__card { padding: 28px; display: flex; flex-direction: column; gap: 8px; min-height: 260px; }
+.stats__bar { display: flex; flex-direction: column; gap: 6px; margin-bottom: 26px; }
+.stats__bar i { display: block; height: 8px; border-radius: 4px; background-image: var(--grad-anim); background-size: 300% 300%; animation: g-flow 18s ease-in-out infinite; }
+.stats__bar .stats__bar-ref { background: #e3e1dc; }
+.card--dark .stats__bar .stats__bar-ref { background: #3a3833; }
+.stats__value { font-size: clamp(40px, 4.5vw, 58px); letter-spacing: -.04em; line-height: 1; font-weight: 500; }
+.stats__label { font-size: 17px; font-weight: 500; letter-spacing: -.01em; margin-bottom: 6px; }
+.stats__cta { margin-top: clamp(32px, 4vw, 48px); flex-wrap: wrap; }
+.stats__note { margin-top: 24px; font-size: 13px; max-width: 70ch; margin-inline: auto; }
+@media (max-width: 860px) { .stats__grid { grid-template-columns: 1fr; } .stats__card { min-height: 0; } }

@@ -1,0 +1,22 @@
+.voices__in { display: grid; grid-template-columns: 1fr 1.3fr; gap: clamp(32px, 5vw, 72px); }
+.voices__quote { position: relative; padding-right: clamp(0px, 4vw, 48px); border-right: 1px solid var(--line); min-height: 260px; display: flex; flex-direction: column; }
+.voices__title { margin-bottom: 20px; }
+.voices__text { font-size: clamp(18px, 1.5vw, 21px); line-height: 1.45; letter-spacing: -.01em; }
+.voices__stack { display: grid; flex: 1; }
+.voices__item { grid-area: 1 / 1; margin: 0; opacity: 0; transform: translateY(8px); filter: blur(4px); transition: opacity .55s var(--ease), transform .55s var(--ease), filter .55s var(--ease); pointer-events: none; }
+.voices__item.is-active { opacity: 1; transform: none; filter: none; pointer-events: auto; }
+.voices__quote footer { margin-top: 22px; display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
+.voices__quote footer b { font-weight: 500; }
+.voices__quote footer span { color: var(--muted); }
+.voices__dots { display: flex; gap: 10px; margin-top: 28px; }
+.voices__dots button { width: 8px; height: 8px; border-radius: 4px; background: #d6d3cd; transition: width .3s var(--ease), background .3s; }
+.voices__dots button.is-active { width: 28px; background: var(--tf-indigo); }
+.voices__right { display: flex; flex-direction: column; gap: 18px; }
+.voices__right hr { border: 0; border-top: 1px solid var(--line); margin: 8px 0; }
+.voices__logos { display: flex; flex-wrap: wrap; gap: 10px 26px; }
+.voices__logos li { display: inline-flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 500; letter-spacing: -.01em; color: #8f8a82; transition: color .25s; }
+.voices__logos li:hover { color: var(--fg); }
+.voices__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.voices__chips li { position: relative; overflow: hidden; padding: 6px 12px; border-radius: var(--r-md); font-size: 13px; color: #fff; font-weight: 500; }
+.voices__chips li::after { content: ""; position: absolute; inset: 0; background-image: var(--grain); background-size: 160px 160px; mix-blend-mode: soft-light; pointer-events: none; }
+@media (max-width: 860px) { .voices__in { grid-template-columns: 1fr; } .voices__quote { border-right: 0; border-bottom: 1px solid var(--line); padding: 0 0 28px; min-height: 0; } }

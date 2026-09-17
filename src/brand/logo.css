@@ -1,0 +1,18 @@
+.tf-logo { display: inline-flex; align-items: center; gap: 8px; color: var(--fg); }
+.tf-logo--light { color: #fff; }
+.tf-mark { flex: 0 0 auto; display: block; }
+.tf-word { display: inline-flex; align-items: center; gap: .32em; font-weight: 600; letter-spacing: -0.035em; line-height: 1; font-size: 1.22em; white-space: nowrap; }
+.tf-word__ai { position: relative; display: inline-block; font-weight: 600; letter-spacing: -.01em; line-height: 1; }
+.tf-word__ai i { position: absolute; left: 0; right: 0; bottom: -.14em; height: .09em; min-height: 2px; border-radius: 2px; }
+
+.tf-orb {
+  display: inline-block; border-radius: 30%; position: relative; flex: 0 0 auto; overflow: hidden;
+  background: conic-gradient(from 0deg, #dcc3cb, #a784a3, #6f6396, #464f96, #2a3480, #6f6396, #a784a3, #dcc3cb);
+  animation: tf-orb-spin 6s linear infinite;
+  box-shadow: 0 6px 18px -8px rgba(70,79,150,.6);
+}
+.tf-orb::after { content: ""; position: absolute; inset: 22%; border-radius: 30%; background: rgba(255,255,255,.85); filter: blur(1px); transform: scale(.9); animation: tf-orb-pulse 1.6s ease-in-out infinite paused; }
+.tf-orb.is-active { animation-duration: 2.4s; }
+.tf-orb.is-active::after { animation-play-state: running; }
+@keyframes tf-orb-spin { to { transform: rotate(360deg); } }
+@keyframes tf-orb-pulse { 0%,100% { transform: scale(.7); opacity: .9 } 50% { transform: scale(1); opacity: .5 } }
