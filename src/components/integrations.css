@@ -48,8 +48,8 @@
 .integ__hub { background: rgba(255,255,255,.94); border-radius: var(--r-lg); padding: 14px; box-shadow: 0 24px 50px -24px rgba(10,14,50,.55); color: var(--fg); }
 .integ__hubhead { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
 .integ__hubmark { width: 34px; height: 34px; border-radius: var(--r-md); display: grid; place-items: center; overflow: hidden; flex: 0 0 auto; }
-.integ__hubhead b { display: block; font-weight: 500; font-size: 14px; }
-.integ__hubhead span { display: block; font-size: 12px; color: var(--muted); }
+.integ__hubhead div b { display: block; font-weight: 500; font-size: 14px; }
+.integ__hubhead div span { display: block; font-size: 12px; color: var(--muted); }
 .integ__sync { margin-left: auto; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: #e8f7ef; color: #1f8a5a; animation: integ-ping 2.6s ease-out infinite; }
 .integ__feed { position: relative; display: grid; gap: 8px; padding-top: 12px; min-height: 236px; align-content: start; }
 .integ__ev { position: relative; display: grid; grid-template-columns: 4px 44px 1fr auto; align-items: center; gap: 10px; padding: 9px 10px 9px 0; border-radius: var(--r-md); background: #f6f5f3; overflow: hidden; }
