@@ -51,8 +51,9 @@ body.editing .nav { position: relative; }               /* no sticky nav while e
 @media (max-width: 760px) { .ed-bar { flex-wrap: wrap; } .ed-bar__actions { margin-left: 0; width: 100%; justify-content: flex-end; } .ed-status { order: 3; width: 100%; } }
 
 /* selection toolbar */
-.ed-tb { position: fixed; z-index: 970; transform: translate(-50%, calc(-100% - 12px)); display: flex; align-items: center; gap: 2px; padding: 5px; border-radius: var(--r-md); background: #1a1916; color: #fff; box-shadow: 0 16px 40px -14px rgba(0,0,0,.5); white-space: nowrap; }
+.ed-tb { position: fixed; z-index: 970; display: flex; align-items: center; gap: 2px; padding: 5px; border-radius: var(--r-md); background: #1a1916; color: #fff; box-shadow: 0 16px 40px -14px rgba(0,0,0,.5); white-space: nowrap; }
 .ed-tb::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 12px; height: 12px; background: #1a1916; transform: translateX(-50%) rotate(45deg); border-radius: 2px; }
+.ed-tb--below::after { bottom: auto; top: -6px; }
 .ed-tb__btn { height: 30px; min-width: 30px; padding: 0 8px; border-radius: 7px; font-size: 13px; font-weight: 500; color: #ddd9d1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 .ed-tb__btn:hover { background: #2f2e2a; color: #fff; }
 .ed-tb__btn.is-on { background: #fff; color: #1a1916; }

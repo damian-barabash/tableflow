@@ -186,8 +186,11 @@ function Editor({ session, onLogout }: { session: Session; onLogout: () => void 
       {/* selection toolbar */}
       <AnimatePresence>
         {sel && (
-          <motion.div className="ed-tb" style={{ left: Math.max(8, Math.min(window.innerWidth - 8, sel.rect.left + sel.rect.width / 2)), top: Math.max(12, sel.rect.top) }}
-            initial={{ opacity: 0, y: 6, scale: .96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 6, scale: .96 }} transition={{ duration: .18 }}
+          <motion.div className={`ed-tb ${sel.rect.top < 72 ? 'ed-tb--below' : ''}`}
+            style={sel.rect.top < 72
+              ? { left: Math.max(240, Math.min(window.innerWidth - 240, sel.rect.left + sel.rect.width / 2)), top: sel.rect.bottom + 14, x: '-50%' }
+              : { left: Math.max(240, Math.min(window.innerWidth - 240, sel.rect.left + sel.rect.width / 2)), bottom: window.innerHeight - sel.rect.top + 14, x: '-50%' }}
+            initial={{ opacity: 0, scale: .96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: .96 }} transition={{ duration: .18 }}
             onMouseDown={e => e.preventDefault()}>
             <button className={`ed-tb__btn ${sel.bold ? 'is-on' : ''}`} title="Pogrubienie (⌘B)" onClick={() => engine.current?.format('bold')}><b>B</b></button>
             <span className="ed-tb__sep" />
