@@ -43,7 +43,7 @@ h = await head(p); const y = await p.evaluate(() => Math.round(document.getEleme
 ok(h.url === '/#faq' && Math.abs(y) < 200 && h.canonical === 'https://tableflow.pl/', `footer FAQ → ${h.url}, faq top ${y}, canonical ${h.canonical}`)
 // FAQ: second answer in DOM, opens on click
 const faq = await p.evaluate(async () => { const it = document.querySelectorAll('.faq__item')[1]; const a = it.querySelector('.faq__a'); const before = a.getBoundingClientRect().height; it.querySelector('button').click(); await new Promise(r => setTimeout(r, 700)); return { text: a.textContent.length, before, after: a.getBoundingClientRect().height, n: document.querySelectorAll('.faq__a p').length } })
-ok(faq.n === 6 && faq.before === 0 && faq.after > 20 && faq.text > 20, `FAQ answers in DOM ${JSON.stringify(faq)}`)
+ok(faq.n >= 7 && faq.before === 0 && faq.after > 20 && faq.text > 20, `FAQ answers in DOM ${JSON.stringify(faq)}`)
 // SPA link to privacy
 await p.evaluate(() => [...document.querySelectorAll('footer a')].find(a => a.getAttribute('href') === '/polityka-prywatnosci').click()); await sleep(800)
 h = await head(p); ok(h.url === '/polityka-prywatnosci' && h.title.startsWith('Polityka prywatności') && h.canonical.endsWith('/polityka-prywatnosci'), `SPA → privacy ${JSON.stringify(h)}`)
@@ -72,6 +72,6 @@ ok(!p._errors.length, `home errors ${p._errors}`); await p.close()
 // 6. no-JS crawler view
 p = await open('/', { noJs: true })
 const nojs = await p.evaluate(() => ({ h1: document.querySelector('h1')?.textContent, h2: document.querySelectorAll('h2').length, faq: document.querySelectorAll('.faq__a p').length, opacity: getComputedStyle(document.getElementById('root')).opacity, links: [...document.querySelectorAll('a[href^="/"]')].map(a => a.getAttribute('href')).filter((v, i, a) => a.indexOf(v) === i) }))
-ok(nojs.h1 && nojs.h2 >= 7 && nojs.faq === 6 && nojs.opacity === '1', `no-JS view ${JSON.stringify(nojs)}`); await p.close()
+ok(nojs.h1 && nojs.h2 >= 7 && nojs.faq >= 7 && nojs.opacity === '1', `no-JS view ${JSON.stringify(nojs)}`); await p.close()
 await browser.close(); srv.close()
 console.log(fails.length ? `\n${fails.length} FAILED` : '\nALL OK'); process.exit(fails.length ? 1 : 0)

@@ -224,6 +224,7 @@ writeFileSync(join(DIST, 'llms.txt'), [
   `${text(d.hero.sub)}\n`,
   `Status: ${text(d.footer.status)}. ${text(d.hero.note)}. Strona: ${SITE_URL}/ (PL; dostępne też EN, RU, FR, ES).\n`,
   sec(d.platform.h2, [text(d.platform.sub), '', ...d.platform.cards.map(c => `- **${text(c.title)}**: ${text(c.desc)}`)]),
+  sec(text(d.integrations.eyebrow) + ': ' + text(d.integrations.h2), [text(d.integrations.sub), '', ...d.integrations.features.map(f => `- **${text(f.title)}**: ${text(f.desc)}`), '', text(d.integrations.note)]),
   sec(d.industries.h2, [text(d.industries.sub), '', `- ${d.hero.worksFor}: ${d.hero.industries.map(text).join(', ')}`]),
   sec(d.loyalty.h2, [text(d.loyalty.sub), '', ...d.loyalty.bullets.map(b => `- ${text(b)}`)]),
   sec(d.app.h2, [text(d.app.sub), '', ...d.app.features.map(f => `- **${text(f.title)}**: ${text(f.desc)}`)]),

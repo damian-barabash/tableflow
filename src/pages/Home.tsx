@@ -3,6 +3,7 @@ import { Voices } from '../components/Voices'
 import { Stats } from '../components/Stats'
 import { Platform } from '../components/Platform'
 import { Industries } from '../components/Industries'
+import { Integrations } from '../components/Integrations'
 import { History } from '../components/History'
 import { Loyalty } from '../components/Loyalty'
 import { AppSection } from '../components/AppSection'
@@ -24,6 +25,7 @@ export function Home({ ready }: { ready: boolean }) {
       <Voices />
       <Stats />
       <Platform />
+      <Integrations />
       <Industries />
       <History />
       <Loyalty />

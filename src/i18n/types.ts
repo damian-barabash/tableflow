@@ -49,6 +49,16 @@ export interface Dict {
     scan: { title: string; hint: string; result: string; addPoints: string }
     walletApple: string; walletGoogle: string
   }
+  integrations: {
+    soon: string; eyebrow: string
+    h2: string // rich
+    sub: string // rich
+    features: { title: string; desc: string }[]
+    note: string
+    tileCaption: string; synced: string
+    hubTitle: string; hubToday: string; newLabel: string; aiSource: string; footer: string
+    events: { src: 'booksy' | 'versum' | 'ai'; time: string; title: string }[]
+  }
   history: { h2: string; sub: string; bullets: string[]; demo: { client: string; ai: string; why: string; reasoning: string; reasoningText: string; sources: string; sourceItems: string[]; action: string; actionText: string; audited: string } }
   app: { h2: string; sub: string; features: { title: string; desc: string }[]; push: { app: string; title: string; body: string; time: string }; screen: { today: string; next: string; items: string[] }; stores: string }
   faq: { h2: string; items: { q: string; a: string }[]; more: string; contact: string }
