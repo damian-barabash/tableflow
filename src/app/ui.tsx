@@ -202,25 +202,39 @@ export function useCopy() {
   }, [toast])
 }
 
-/** Popover menu (⋯). */
+/** Popover menu (⋯) — rendered in a portal with fixed position, so tables with overflow never clip it;
+ *  opens upwards when there is no room below. */
 export function Menu({ items, label = 'Więcej' }: { items: ({ label: ReactNode; onClick: () => void; danger?: boolean; icon?: ReactNode } | null | false)[]; label?: string }) {
-  const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
+  const [pos, setPos] = useState<{ top?: number; bottom?: number; right: number } | null>(null)
+  const btn = useRef<HTMLButtonElement>(null)
+  const pop = useRef<HTMLUListElement>(null)
+  const list = items.filter(Boolean) as { label: ReactNode; onClick: () => void; danger?: boolean; icon?: ReactNode }[]
+  const open = () => {
+    const r = btn.current!.getBoundingClientRect()
+    const h = list.length * 38 + 12
+    const right = Math.max(8, window.innerWidth - r.right)
+    setPos(r.bottom + 6 + h > window.innerHeight - 8 && r.top - 6 - h > 8 ? { bottom: window.innerHeight - r.top + 6, right } : { top: r.bottom + 6, right })
+  }
   useEffect(() => {
-    if (!open) return
-    const h = (e: MouseEvent) => { if (!ref.current?.contains(e.target as Node)) setOpen(false) }
-    document.addEventListener('mousedown', h); return () => document.removeEventListener('mousedown', h)
-  }, [open])
+    if (!pos) return
+    const close = () => setPos(null)
+    const down = (e: MouseEvent) => { const t = e.target as Node; if (!pop.current?.contains(t) && !btn.current?.contains(t)) close() }
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
+    document.addEventListener('mousedown', down); document.addEventListener('keydown', key)
+    window.addEventListener('scroll', close, true); window.addEventListener('resize', close)
+    return () => { document.removeEventListener('mousedown', down); document.removeEventListener('keydown', key); window.removeEventListener('scroll', close, true); window.removeEventListener('resize', close) }
+  }, [pos])
   return (
-    <div className="ap-menu" ref={ref}>
-      <button className="ap-icon-btn" aria-label={label} aria-expanded={open} onClick={e => { e.stopPropagation(); setOpen(v => !v) }}><Ic.dots width={16} height={16} /></button>
-      <AnimatePresence>
-        {open && (
-          <motion.ul className="ap-menu__pop" initial={{ opacity: 0, y: -4, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: .16 }}>
-            {items.filter(Boolean).map((it, i) => { const x = it as { label: ReactNode; onClick: () => void; danger?: boolean; icon?: ReactNode }; return <li key={i}><button className={x.danger ? 'is-danger' : ''} onClick={e => { e.stopPropagation(); setOpen(false); x.onClick() }}>{x.icon}{x.label}</button></li> })}
-          </motion.ul>
-        )}
-      </AnimatePresence>
+    <div className="ap-menu">
+      <button ref={btn} className="ap-icon-btn" aria-label={label} aria-expanded={!!pos} onClick={e => { e.stopPropagation(); if (pos) setPos(null); else open() }}><Ic.dots width={16} height={16} /></button>
+      {createPortal(
+        <AnimatePresence>
+          {pos && (
+            <motion.ul ref={pop} className="ap-menu__pop" style={{ position: 'fixed', ...pos }} initial={{ opacity: 0, y: pos.top != null ? -4 : 4, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: .16 }}>
+              {list.map((x, i) => <li key={i}><button className={x.danger ? 'is-danger' : ''} onClick={e => { e.stopPropagation(); setPos(null); x.onClick() }}>{x.icon}{x.label}</button></li>)}
+            </motion.ul>
+          )}
+        </AnimatePresence>, document.body)}
     </div>
   )
 }

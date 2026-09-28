@@ -172,7 +172,7 @@ body.ap-noscroll { overflow: hidden; }
 .btn--ghost .ap-spin { border-color: rgba(0,0,0,.12); border-top-color: var(--fg); }
 .ap-loading { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 60px 0; color: var(--muted); font-size: 14px; }
 .ap-menu { position: relative; }
-.ap-menu__pop { position: absolute; right: 0; top: calc(100% + 6px); z-index: 40; min-width: 210px; padding: 5px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 24px 50px -22px rgba(0,0,0,.35); }
+.ap-menu__pop { z-index: 1050; min-width: 210px; padding: 5px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 24px 50px -22px rgba(0,0,0,.35); }
 .ap-menu__pop button { width: 100%; display: flex; align-items: center; gap: 9px; padding: 9px 10px; border-radius: 8px; font-size: 13.5px; text-align: left; white-space: nowrap; }
 .ap-menu__pop button:hover { background: var(--bg-2); }
 .ap-menu__pop button.is-danger { color: #b1321f; }
@@ -283,7 +283,9 @@ body.ap-noscroll { overflow: hidden; }
   .ap-bottom .ap-bottom__scan span { width: 48px; height: 48px; margin-top: -20px; border-radius: 16px; display: grid; place-items: center; box-shadow: 0 12px 24px -10px rgba(42,52,128,.6); }
   .ap-drawer { display: block; position: fixed; inset: 0; z-index: 900; }
   .ap-drawer__bg { position: absolute; inset: 0; background: rgba(26,25,22,.35); }
-  .ap-drawer .ap-side { display: flex; position: absolute; left: 0; top: 0; bottom: 0; width: min(86vw, 300px); height: 100%; box-shadow: 20px 0 60px -20px rgba(0,0,0,.35); }
+  /* the animated wrapper gets the full height itself — a transformed 0-height wrapper would squash the sidebar into a line mid-animation */
+  .ap-drawer__panel { position: absolute; left: 0; top: 0; bottom: 0; width: min(86vw, 300px); }
+  .ap-drawer .ap-side { display: flex; position: relative; width: 100%; height: 100%; box-shadow: 20px 0 60px -20px rgba(0,0,0,.35); }
   .ap-grid--2 { grid-template-columns: minmax(0, 1fr); }
   .ap-head { margin-bottom: 18px; }
 }

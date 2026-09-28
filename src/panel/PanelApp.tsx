@@ -169,9 +169,9 @@ function PanelShell({ access, logout }: { access: Access; logout: () => Promise<
         </nav>
         <AnimatePresence>
           {drawer && (
-            <motion.div className="ap-drawer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <div className="ap-drawer__bg" onClick={() => setDrawer(false)} />
-              <motion.div initial={{ x: -40 }} animate={{ x: 0 }} exit={{ x: -40 }} transition={{ duration: .3, ease: EASE }}>{side}</motion.div>
+            <motion.div className="ap-drawer" initial={{ opacity: 1 }} exit={{ opacity: 1 }} transition={{ duration: .32 }}>
+              <motion.div className="ap-drawer__bg" onClick={() => setDrawer(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .25 }} />
+              <motion.div className="ap-drawer__panel" initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} transition={{ duration: .32, ease: EASE }}>{side}</motion.div>
             </motion.div>
           )}
         </AnimatePresence>

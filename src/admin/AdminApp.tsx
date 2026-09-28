@@ -87,7 +87,7 @@ function Shell({ access, logout }: { access: Access; logout: () => Promise<void>
         {NAV.filter(n => ['', 'analityka', 'zgloszenia', 'firmy'].includes(n.id)).map(n => { const Icon = Ic[n.icon]; return <Link key={n.id} to={`/admin${n.id ? `/${n.id}` : ''}`} className={tab === n.id ? 'is-active' : ''}><Icon width={20} height={20} />{n.label.split(' ')[0]}</Link> })}
         <button onClick={() => setDrawer(true)}><Ic.menu width={20} height={20} />Więcej</button>
       </nav>
-      <AnimatePresence>{drawer && <motion.div className="ap-drawer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><div className="ap-drawer__bg" onClick={() => setDrawer(false)} /><motion.div initial={{ x: -40 }} animate={{ x: 0 }} exit={{ x: -40 }} transition={{ duration: .3, ease: EASE }}>{side}</motion.div></motion.div>}</AnimatePresence>
+      <AnimatePresence>{drawer && <motion.div className="ap-drawer" initial={{ opacity: 1 }} exit={{ opacity: 1 }} transition={{ duration: .32 }}><motion.div className="ap-drawer__bg" onClick={() => setDrawer(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .25 }} /><motion.div className="ap-drawer__panel" initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} transition={{ duration: .32, ease: EASE }}>{side}</motion.div></motion.div>}</AnimatePresence>
     </div>
   )
 }
