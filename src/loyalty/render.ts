@@ -166,9 +166,14 @@ function icon(size: number, d: Design, imgs: Imgs, name: string) {
   }
   return c
 }
+/** Apple lays logoText right after the logo image's full width — so the canvas must be cropped
+ *  to the drawn logo (a square logo in a 160×50 canvas would push the text into the middle and truncate it). */
 function logo(w: number, h: number, imgs: Imgs) {
-  const c = canvas(w, h), ctx = c.getContext('2d')!
-  if (imgs.logo) contain(ctx, imgs.logo, 0, 0, w, h, 'left')
+  const img = imgs.logo!
+  const nw = img.naturalWidth || h, nh = img.naturalHeight || h
+  const s = Math.min(w / nw, h / nh)
+  const c = canvas(Math.max(1, Math.round(nw * s)), h), ctx = c.getContext('2d')!
+  contain(ctx, img, 0, 0, c.width, h, 'left')
   return c
 }
 
