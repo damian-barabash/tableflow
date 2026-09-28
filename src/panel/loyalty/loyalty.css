@@ -139,3 +139,11 @@
 .dz-prog i { display: block; height: 100%; border-radius: 6px; transition: width .3s var(--ease); }
 @media (max-width: 1100px) { .dz { grid-template-columns: minmax(0, 1fr); } .dz__preview { order: -1; } .dz__sticky { position: relative; top: 0; } .dz__stage { min-height: 0; } }
 @media (max-width: 620px) { .ly-segs, .ly-actions { grid-template-columns: minmax(0, 1fr); } .dz__bar .btn { flex: 1; } }
+
+/* share: poster preview (iframe with the real print document) */
+.ly-share { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.ly-poster-wrap { position: relative; width: 100%; overflow: hidden; border-radius: 10px; background: #efeeeb; }
+.ly-poster-frame { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; background: #fff; box-shadow: 0 30px 60px -30px rgba(0,0,0,.35); pointer-events: none; }
+.ly-qr-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.ly-qr-mini .lc-qr { width: 120px; height: 120px; padding: 8px; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+@media (max-width: 1100px) { .ly-share { grid-template-columns: minmax(0, 1fr); } }
