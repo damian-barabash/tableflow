@@ -37,7 +37,7 @@ export function Seo() {
     else document.head.querySelector('link[rel="canonical"]')?.remove()
     document.head.querySelectorAll<HTMLLinkElement>('link[rel="alternate"][hreflang]').forEach(l => { l.href = url })
     // unknown paths render the home page (soft 404) → never index them
-    setMeta('name', 'robots', !r ? ROBOTS_NOINDEX : r.path === '/edit-mod' ? ROBOTS_PRIVATE : r.index ? ROBOTS_INDEX : ROBOTS_NOINDEX)
+    setMeta('name', 'robots', !r ? ROBOTS_NOINDEX : r.private ? ROBOTS_PRIVATE : r.index ? ROBOTS_INDEX : ROBOTS_NOINDEX)
   }, [pathname, t, locale])
   return null
 }

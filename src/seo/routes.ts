@@ -18,6 +18,8 @@ export interface RouteSeo {
   index: boolean
   /** included in sitemap.xml */
   sitemap: boolean
+  /** app / personal pages: noindex, nofollow + Disallow */
+  private?: boolean
   priority?: number
   changefreq?: 'weekly' | 'monthly' | 'yearly'
   title: (d: SeoDict) => string
@@ -44,8 +46,18 @@ export const ROUTES: RouteSeo[] = [
   { path: '/regulamin', file: 'regulamin.html', index: true, sitemap: true, priority: 0.3, changefreq: 'yearly', ...policy('terms') },
   // QR landing: thin, campaign-only content → keep out of the index, but let links be followed
   { path: '/karta', file: 'karta.html', index: false, sitemap: false, title: d => `${d.card.title} — ${SITE_NAME}`, description: d => clip(d.card.newsletterSub) },
-  { path: '/edit-mod', file: 'edit-mod.html', index: false, sitemap: false, title: () => `Edytor — ${SITE_NAME}`, description: () => '' },
+  { path: '/edit-mod', file: 'edit-mod.html', index: false, sitemap: false, private: true, title: () => `Edytor — ${SITE_NAME}`, description: () => '' },
+  // client panel, admin and customer loyalty-card pages (SPA shells, never indexed)
+  ...['', '/dzisiaj', '/kalendarz', '/rozmowy', '/klienci', '/lojalnosc', '/statystyki', '/zespol', '/ustawienia', '/skaner'].map(t => app(`/panel${t}`, `Panel firmy — ${SITE_NAME}`)),
+  ...['', '/analityka', '/zgloszenia', '/firmy', '/konta', '/strona', '/dziennik'].map(t => app(`/admin${t}`, `Administracja — ${SITE_NAME}`)),
+  app('/dolacz', `Karta stałego klienta — ${SITE_NAME}`),
+  app('/moja-karta', `Twoja karta — ${SITE_NAME}`),
+  app('/s', `Karta lojalnościowa — ${SITE_NAME}`),
 ]
+function app(path: string, title: string): RouteSeo {
+  return { path, file: `${path.slice(1)}.html`, index: false, sitemap: false, private: true, title: () => title, description: () => '' }
+}
+export const DISALLOW = ['/edit-mod', '/panel', '/admin', '/moja-karta', '/s?', '/dolacz']
 
 export function routeFor(path: string): RouteSeo | null {
   const p = path.replace(/\/+$/, '') || '/'

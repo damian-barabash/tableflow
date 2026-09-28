@@ -1,0 +1,54 @@
+/* ===== Loyalty card visuals (panel preview + customer page) ===== */
+.lc-strip { display: block; width: 100%; aspect-ratio: 375 / 123; }
+.lc-qr { display: block; }
+.lc-qr svg { display: block; width: 100%; height: 100%; }
+
+.lc-field { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.lc-field small { font-size: 9.5px; font-weight: 600; letter-spacing: .08em; }
+.lc-field b { font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lc-field--r { text-align: right; align-items: flex-end; }
+
+/* Apple store card: 320 pt wide, rounded 12, strip edge-to-edge */
+.lc-apple { width: 100%; max-width: 340px; border-radius: 14px; overflow: hidden; box-shadow: 0 30px 60px -30px rgba(0,0,0,.45), 0 0 0 1px rgba(0,0,0,.06); font-family: -apple-system, "SF Pro Text", Inter, sans-serif; }
+.lc-apple__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px 10px; min-height: 52px; }
+.lc-apple__logo { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+.lc-apple__logo img { max-height: 30px; max-width: 110px; object-fit: contain; }
+.lc-apple__logo span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lc-apple__fields { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px 0; }
+.lc-apple__qr { display: grid; place-items: center; padding: 18px 0 16px; }
+.lc-apple__qr > div { background: #fff; border-radius: 8px; padding: 9px 9px 5px; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.lc-apple__qr .lc-qr { width: 118px; height: 118px; }
+.lc-apple__qr small { color: #1a1916; font-size: 10px; font-family: var(--mono); letter-spacing: .08em; }
+
+/* Google loyalty card */
+.lc-google { width: 100%; max-width: 340px; border-radius: 22px; overflow: hidden; box-shadow: 0 30px 60px -30px rgba(0,0,0,.45); font-family: "Google Sans", Roboto, Inter, sans-serif; display: flex; flex-direction: column; }
+.lc-google__head { display: flex; align-items: center; gap: 10px; padding: 16px 18px 6px; font-size: 14px; }
+.lc-google__logo { width: 34px; height: 34px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; box-shadow: 0 0 0 1.5px rgba(255,255,255,.4); flex: 0 0 auto; }
+.lc-google__logo img { width: 72%; height: 72%; object-fit: contain; }
+.lc-google__logo b { font-size: 15px; }
+.lc-google h4 { font-size: 21px; font-weight: 400; padding: 6px 18px 12px; line-height: 1.2; }
+.lc-google__row { display: flex; gap: 32px; padding: 0 18px 14px; }
+.lc-google__row small { display: block; font-size: 11px; opacity: .8; }
+.lc-google__row b { font-size: 17px; font-weight: 500; }
+.lc-google__qr { align-self: center; background: #fff; border-radius: 12px; padding: 10px 10px 6px; display: flex; flex-direction: column; align-items: center; gap: 3px; margin: 2px 0 18px; }
+.lc-google__qr .lc-qr { width: 128px; height: 128px; }
+.lc-google__qr small { color: #3c4043; font-size: 11px; letter-spacing: .06em; }
+
+/* Web card (customer page) */
+.lc-web { position: relative; width: 100%; border-radius: 22px; overflow: hidden; padding: 18px 18px 16px; box-shadow: 0 40px 80px -40px rgba(42,52,128,.55); display: flex; flex-direction: column; gap: 8px; isolation: isolate; }
+.lc-web.is-anim { animation: g-flow 12s ease-in-out infinite; }
+.lc-web.grain::after { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: var(--grain); background-size: 160px 160px; mix-blend-mode: soft-light; opacity: .95; z-index: 0; border-radius: inherit; }
+.lc-web > * { position: relative; z-index: 1; }
+.lc-web__top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.lc-web__logo { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 600; letter-spacing: -.02em; min-width: 0; }
+.lc-web__logo img { max-height: 34px; max-width: 120px; object-fit: contain; }
+.lc-web__count { text-align: right; }
+.lc-web__count small, .lc-web__bottom small { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
+.lc-web__count b { font-size: 28px; font-weight: 500; letter-spacing: -.02em; line-height: 1.1; }
+.lc-web__count em { font-style: normal; font-size: 16px; opacity: .7; }
+.lc-web__strip { margin: 0 -8px; width: calc(100% + 16px); }
+.lc-web__bottom { display: flex; justify-content: space-between; gap: 12px; }
+.lc-web__bottom b { font-size: 16px; font-weight: 500; }
+.lc-web__who { text-align: right; }
+.lc-web.is-pulse { animation: lc-pulse .9s var(--ease), g-flow 12s ease-in-out infinite; }
+@keyframes lc-pulse { 0% { transform: scale(1) } 35% { transform: scale(1.03) } 100% { transform: scale(1) } }

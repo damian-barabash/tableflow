@@ -217,3 +217,11 @@ select.input { appearance: none; background-image: url("data:image/svg+xml;utf8,
 .prose li + li { margin-top: 6px; }
 .prose .meta { color: var(--muted); font-size: 14px; }
 .prose a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ---------- Announcement bar (set in /admin → Strona) ---------- */
+.annc { position: relative; overflow: hidden; background: #1a1916; color: #fff; z-index: 810; }
+.annc__in { position: relative; z-index: 4; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 40px; padding: 8px 44px; font-size: 14px; text-align: center; }
+.annc__in a, .annc__in p { display: inline-flex; align-items: center; gap: 8px; }
+.annc__in a:hover span { text-decoration: underline; text-underline-offset: 3px; }
+.annc__in button { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; display: grid; place-items: center; border-radius: 8px; color: rgba(255,255,255,.8); }
+.annc__in button:hover { background: rgba(255,255,255,.12); color: #fff; }

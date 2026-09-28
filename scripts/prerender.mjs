@@ -8,10 +8,10 @@
  * Without Chrome the snapshots are skipped (warning) — set PRERENDER_STRICT=1 to fail instead.
  */
 import { createServer } from 'node:http'
-import { readFileSync, writeFileSync, existsSync, statSync } from 'node:fs'
-import { join, extname } from 'node:path'
+import { readFileSync, writeFileSync, existsSync, statSync, mkdirSync } from 'node:fs'
+import { join, extname, dirname } from 'node:path'
 import { pl } from '../src/i18n/pl.ts'
-import { ROUTES, SITE_URL, SITE_NAME, ROBOTS_INDEX, ROBOTS_NOINDEX, ROBOTS_PRIVATE, clip } from '../src/seo/routes.ts'
+import { ROUTES, SITE_URL, SITE_NAME, ROBOTS_INDEX, ROBOTS_NOINDEX, ROBOTS_PRIVATE, DISALLOW, clip } from '../src/seo/routes.ts'
 
 const DIST = 'dist'
 const SUPABASE_URL = 'https://ahtjgghocwegyepxoeru.supabase.co'
@@ -161,7 +161,7 @@ function setAttr(html, re, value) {
 }
 function page(r, body) {
   const url = urlOf(r), title = r.title(d), desc = r.description(d)
-  const robots = r.path === '/edit-mod' ? ROBOTS_PRIVATE : r.index ? ROBOTS_INDEX : ROBOTS_NOINDEX
+  const robots = r.private ? ROBOTS_PRIVATE : r.index ? ROBOTS_INDEX : ROBOTS_NOINDEX
   let h = template
   h = h.replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
   h = setAttr(h, /(<meta name="robots" content=")[^"]*(")/, robots)
@@ -183,7 +183,13 @@ function page(r, body) {
 
 const indexable = ROUTES.filter(r => r.index)
 const snaps = await snapshots(indexable.map(r => r.path))
-for (const r of ROUTES) writeFileSync(join(DIST, r.file), page(r, snaps[r.path]))
+for (const r of ROUTES) {
+  const f = join(DIST, r.file)
+  mkdirSync(dirname(f), { recursive: true })
+  writeFileSync(f, page(r, snaps[r.path]))
+  // /panel and /panel/lojalnosc both exist: GitHub Pages may redirect /panel → /panel/ (dir) — serve the same shell there
+  if (existsSync(join(DIST, r.path.slice(1))) && statSync(join(DIST, r.path.slice(1))).isDirectory()) writeFileSync(join(DIST, r.path.slice(1), 'index.html'), page(r, snaps[r.path]))
+}
 
 // 404: same app shell (renders the home page for unknown paths) but never indexed, no canonical
 writeFileSync(join(DIST, '404.html'), template
@@ -211,7 +217,7 @@ ${ROUTES.filter(r => r.sitemap).map(r => `  <url>
 writeFileSync(join(DIST, 'robots.txt'), `# ${SITE_NAME} — ${SITE_URL}
 User-agent: *
 Allow: /
-Disallow: /edit-mod
+${DISALLOW.map(p => `Disallow: ${p}`).join('\n')}
 
 Sitemap: ${SITE_URL}/sitemap.xml
 `)
