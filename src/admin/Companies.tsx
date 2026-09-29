@@ -118,7 +118,7 @@ function CompanyModal({ c, onClose, reload }: { c: AdminCompany | null; onClose:
   return (
     <>
       <Modal open onClose={onClose} wide="xl" title={<span className="ap-row"><Avatar name={c.name} src={c.logo_url} size={34} />{c.name}</span>} sub={`Utworzona ${fmtDate(c.created_at)} · ${c.programs} programów · ${fmtNum(c.cards)} kart`}
-        footer={<><button className="btn btn--ghost btn--sm" style={{ color: '#b1321f' }} onClick={del}><Ic.trash width={14} height={14} /> Usuń firmę</button><span style={{ flex: 1 }} /><Link className="btn btn--primary btn--sm" to={`/panel/lojalnosc?firma=${c.id}`}>Otwórz panel firmy <Ic.arrow width={14} height={14} /></Link></>}>
+        footer={<><button className="btn btn--ghost btn--sm" style={{ color: '#b1321f' }} onClick={del}><Ic.trash width={14} height={14} /> Usuń firmę</button><span style={{ flex: 1 }} /><Link className="btn btn--primary btn--sm" to={`/panel?firma=${c.id}`}>Otwórz panel firmy <Ic.arrow width={14} height={14} /></Link></>}>
         <div className="ad-co-detail">
           <div className="ap-stack">
             <Panel title="Konta klienta" sub="Kilka osób może mieć dostęp do jednej firmy." actions={<button className="btn btn--ghost btn--xs" onClick={() => setAddOpen(true)}><Ic.plus width={13} height={13} /> Dodaj konto</button>}>

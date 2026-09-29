@@ -55,6 +55,16 @@ export const LIVE_MODULES = ['loyalty', 'reception', 'calendar', 'clients', 'cal
 const TAB_IDS: TabId[] = ['dzisiaj', 'kalendarz', 'rozmowy', 'klienci', 'uslugi', 'asystent', 'lojalnosc', 'statystyki', 'zespol', 'ustawienia', 'skaner']
 const STORE = 'tf_panel_company'
 
+/** Where a company's panel starts: the first tab its package unlocks
+ *  (reception/calendar → Dzisiaj, only loyalty → Lojalność, only CRM → Klienci). */
+export function homeTab(modules: string[]): TabId {
+  const has = (m: string) => modules.includes(m) && LIVE_MODULES.includes(m)
+  if (has('reception') || has('calendar')) return 'dzisiaj'
+  if (has('loyalty')) return 'lojalnosc'
+  if (has('clients')) return 'klienci'
+  return 'ustawienia'
+}
+
 export default function PanelApp() {
   useEffect(() => { document.body.classList.add('ap-body'); return () => document.body.classList.remove('ap-body') }, [])
   return (
@@ -96,8 +106,8 @@ function PanelShell({ access, logout, reloadAccess }: { access: Access; logout: 
   useEffect(() => { setCompany(undefined); void reloadCompany() }, [reloadCompany])
   useEffect(() => { void walletStatus().then(setWallet) }, [])
   useEffect(() => { if (companyId && membership) { try { localStorage.setItem(STORE, companyId) } catch { /* */ } } }, [companyId, membership])
-  const hasReception = (company?.modules ?? []).some(m => ['reception', 'calendar'].includes(m))
-  useEffect(() => { if (!seg && company) nav(`/panel/${hasReception ? 'dzisiaj' : 'lojalnosc'}${loc.search}`, { replace: true }) }, [seg, nav, loc.search, company, hasReception])
+  const home = company ? homeTab(company.modules) : null
+  useEffect(() => { if (!seg && home) nav(`/panel/${home}${loc.search}`, { replace: true }) }, [seg, nav, loc.search, home])
   useEffect(() => { setDrawer(false); window.scrollTo(0, 0) }, [tab])
 
   const href = useCallback((t: TabId, extra?: Record<string, string>) => {
@@ -181,12 +191,17 @@ function PanelShell({ access, logout, reloadAccess }: { access: Access; logout: 
           </div>
         </main>
         <nav className="ap-bottom" aria-label="Nawigacja">
-          {(hasReception ? [
-            { id: 'dzisiaj' as TabId, label: 'Dzisiaj', icon: 'home' as const }, { id: 'kalendarz' as TabId, label: 'Kalendarz', icon: 'calendar' as const },
-          ] : [{ id: 'lojalnosc' as TabId, label: 'Lojalność', icon: 'card' as const }, { id: 'statystyki' as TabId, label: 'Statystyki', icon: 'analytics' as const }]).map(i => { const I2 = Ic[i.icon]; return <Link key={i.id} to={href(i.id)} className={tab === i.id ? 'is-active' : ''}><I2 width={20} height={20} />{i.label}</Link> })}
-          {!locked('loyalty') ? <Link to={href('skaner')} className="ap-bottom__scan"><span className="g"><Ic.scan width={22} height={22} /></span></Link>
-            : <Link to={href('asystent')} className="ap-bottom__scan"><span className="g"><Ic.sparkle width={22} height={22} /></span></Link>}
-          {(hasReception ? [{ id: 'klienci' as TabId, label: 'Klienci', icon: 'users' as const }] : [{ id: 'zespol' as TabId, label: 'Zespół', icon: 'users' as const }]).map(i => { const I2 = Ic[i.icon]; return <Link key={i.id} to={href(i.id)} className={tab === i.id ? 'is-active' : ''}><I2 width={20} height={20} />{i.label}</Link> })}
+          {(() => {
+            // mobile bar: the first tabs the package unlocks + a centre action (scanner or assistant)
+            const center: TabId | null = !locked('loyalty') ? 'skaner' : !locked(['reception']) ? 'asystent' : null
+            const open = [...RECEPCJA, ...FIRMA].filter(i => !locked(i.modules) && i.id !== center && !['uslugi', 'asystent', 'ustawienia'].includes(i.id)).slice(0, center ? 3 : 4)
+            const link = (i: NavDef) => { const I2 = Ic[i.icon]; return <Link key={i.id} to={href(i.id)} className={tab === i.id ? 'is-active' : ''}><I2 width={20} height={20} />{i.label.split(' ')[0]}</Link> }
+            return <>
+              {open.slice(0, 2).map(link)}
+              {center && <Link to={href(center)} className="ap-bottom__scan" aria-label={center === 'skaner' ? 'Skaner' : 'Asystent AI'}><span className="g">{center === 'skaner' ? <Ic.scan width={22} height={22} /> : <Ic.sparkle width={22} height={22} />}</span></Link>}
+              {open.slice(2).map(link)}
+            </>
+          })()}
           <button onClick={() => setDrawer(true)}><Ic.menu width={20} height={20} />Więcej</button>
         </nav>
         <AnimatePresence>
@@ -226,7 +241,7 @@ function CompanySwitch({ access, company, impersonating }: { access: Access; com
       </button>
       {open && (
         <div className="ap-co__pop">
-          {access.companies.map(c => <button key={c.id} onClick={() => { setOpen(false); try { localStorage.setItem(STORE, c.id) } catch { /* */ } nav(`/panel/lojalnosc?firma=${c.id}`) }}><Avatar name={c.name} src={c.logo_url} size={24} />{c.name}{c.id === company.id && <Ic.check width={14} height={14} style={{ marginLeft: 'auto' }} />}</button>)}
+          {access.companies.map(c => <button key={c.id} onClick={() => { setOpen(false); try { localStorage.setItem(STORE, c.id) } catch { /* */ } nav(`/panel?firma=${c.id}`) }}><Avatar name={c.name} src={c.logo_url} size={24} />{c.name}{c.id === company.id && <Ic.check width={14} height={14} style={{ marginLeft: 'auto' }} />}</button>)}
         </div>
       )}
     </div>
