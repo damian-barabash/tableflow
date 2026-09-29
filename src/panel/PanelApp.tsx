@@ -12,6 +12,12 @@ import { StatsPage } from './StatsPage'
 import { TeamPage } from './TeamPage'
 import { SettingsPage } from './SettingsPage'
 import { ScannerPage } from './ScannerPage'
+import { TodayPage } from './reception/TodayPage'
+import { CalendarPage } from './reception/CalendarPage'
+import { CallsPage } from './reception/CallsPage'
+import { ClientsPage } from './reception/ClientsPage'
+import { SetupPage } from './reception/SetupPage'
+import { AssistantPage } from './reception/AssistantPage'
 import '../app/app.css'
 
 export interface Company {
@@ -19,7 +25,7 @@ export interface Company {
   email: string | null; phone: string | null; address: string | null; city: string | null; website: string | null; nip: string | null; logo_url: string | null
 }
 export type Role = 'owner' | 'manager' | 'staff'
-export type TabId = 'dzisiaj' | 'kalendarz' | 'rozmowy' | 'klienci' | 'lojalnosc' | 'statystyki' | 'zespol' | 'ustawienia' | 'skaner'
+export type TabId = 'dzisiaj' | 'kalendarz' | 'rozmowy' | 'klienci' | 'uslugi' | 'asystent' | 'lojalnosc' | 'statystyki' | 'zespol' | 'ustawienia' | 'skaner'
 
 interface Ctx {
   access: Access; company: Company; role: Role; canManage: boolean; impersonating: boolean
@@ -29,21 +35,24 @@ interface Ctx {
 const PanelCtx = createContext<Ctx | null>(null)
 export const usePanel = () => useContext(PanelCtx)!
 
-// module id per tab — only "loyalty" is live today, the rest is shown with a padlock
-const RECEPCJA: { id: TabId; label: string; icon: keyof typeof Ic; module: string; badge?: string }[] = [
-  { id: 'dzisiaj', label: 'Dzisiaj', icon: 'home', module: 'reception' },
-  { id: 'kalendarz', label: 'Kalendarz', icon: 'calendar', module: 'calendar' },
-  { id: 'rozmowy', label: 'Rozmowy', icon: 'phone', module: 'calls' },
-  { id: 'klienci', label: 'Klienci', icon: 'users', module: 'clients' },
+// modules that unlock a tab (any of them); tabs without modules are always open
+type NavDef = { id: TabId; label: string; icon: keyof typeof Ic; modules?: string[] }
+const RECEPCJA: NavDef[] = [
+  { id: 'dzisiaj', label: 'Dzisiaj', icon: 'home', modules: ['reception', 'calendar'] },
+  { id: 'kalendarz', label: 'Kalendarz', icon: 'calendar', modules: ['reception', 'calendar'] },
+  { id: 'rozmowy', label: 'Rozmowy', icon: 'phone', modules: ['reception'] },
+  { id: 'klienci', label: 'Klienci', icon: 'users', modules: ['reception', 'clients', 'calendar'] },
+  { id: 'uslugi', label: 'Usługi i grafik', icon: 'list', modules: ['reception', 'calendar'] },
+  { id: 'asystent', label: 'Asystent AI', icon: 'sparkle', modules: ['reception'] },
 ]
-const FIRMA: { id: TabId; label: string; icon: keyof typeof Ic; module?: string }[] = [
-  { id: 'lojalnosc', label: 'Lojalność', icon: 'card', module: 'loyalty' },
+const FIRMA: NavDef[] = [
+  { id: 'lojalnosc', label: 'Lojalność', icon: 'card', modules: ['loyalty'] },
   { id: 'statystyki', label: 'Statystyki', icon: 'analytics' },
   { id: 'zespol', label: 'Zespół', icon: 'users' },
   { id: 'ustawienia', label: 'Ustawienia', icon: 'settings' },
 ]
-export const LIVE_MODULES = ['loyalty']
-const TAB_IDS: TabId[] = ['dzisiaj', 'kalendarz', 'rozmowy', 'klienci', 'lojalnosc', 'statystyki', 'zespol', 'ustawienia', 'skaner']
+export const LIVE_MODULES = ['loyalty', 'reception', 'calendar', 'clients', 'calls']
+const TAB_IDS: TabId[] = ['dzisiaj', 'kalendarz', 'rozmowy', 'klienci', 'uslugi', 'asystent', 'lojalnosc', 'statystyki', 'zespol', 'ustawienia', 'skaner']
 const STORE = 'tf_panel_company'
 
 export default function PanelApp() {
@@ -62,7 +71,7 @@ function PanelShell({ access, logout, reloadAccess }: { access: Access; logout: 
   const loc = useLocation(), nav = useNavigate()
   const q = new URLSearchParams(loc.search)
   const seg = loc.pathname.split('/')[2] as TabId | undefined
-  const tab: TabId = seg && TAB_IDS.includes(seg) ? seg : 'lojalnosc'
+  const tab: TabId = seg && TAB_IDS.includes(seg) ? seg : 'dzisiaj'
   const superAdmin = isSuper(access)
   const firmaParam = q.get('firma')
   const companyId = useMemo(() => {
@@ -87,7 +96,8 @@ function PanelShell({ access, logout, reloadAccess }: { access: Access; logout: 
   useEffect(() => { setCompany(undefined); void reloadCompany() }, [reloadCompany])
   useEffect(() => { void walletStatus().then(setWallet) }, [])
   useEffect(() => { if (companyId && membership) { try { localStorage.setItem(STORE, companyId) } catch { /* */ } } }, [companyId, membership])
-  useEffect(() => { if (!seg) nav(`/panel/lojalnosc${loc.search}`, { replace: true }) }, [seg, nav, loc.search])
+  const hasReception = (company?.modules ?? []).some(m => ['reception', 'calendar'].includes(m))
+  useEffect(() => { if (!seg && company) nav(`/panel/${hasReception ? 'dzisiaj' : 'lojalnosc'}${loc.search}`, { replace: true }) }, [seg, nav, loc.search, company, hasReception])
   useEffect(() => { setDrawer(false); window.scrollTo(0, 0) }, [tab])
 
   const href = useCallback((t: TabId, extra?: Record<string, string>) => {
@@ -111,7 +121,7 @@ function PanelShell({ access, logout, reloadAccess }: { access: Access; logout: 
   if (!company) return <div className="ap-gate"><Empty title="Nie znaleziono firmy" action={<button className="btn btn--ghost btn--sm" onClick={logout}>Wyloguj</button>} /></div>
 
   const ctx: Ctx = { access, company, role, canManage: role !== 'staff', impersonating, reloadCompany, reloadAccess, href, wallet }
-  const locked = (m?: string) => !!m && (!LIVE_MODULES.includes(m) || !company.modules.includes(m))
+  const locked = (mods?: string[] | string) => { const list = typeof mods === 'string' ? [mods] : mods; return !!list?.length && !list.some(m => LIVE_MODULES.includes(m) && company.modules.includes(m)) }
   const title = [...RECEPCJA, ...FIRMA].find(i => i.id === tab)?.label ?? 'Skaner'
 
   const side = (
@@ -119,9 +129,9 @@ function PanelShell({ access, logout, reloadAccess }: { access: Access; logout: 
       <div className="ap-side__logo"><Mark size={22} /><span>TableFlow</span></div>
       <CompanySwitch access={access} company={company} impersonating={impersonating} />
       <div className="ap-sec">Recepcja</div>
-      {RECEPCJA.map(i => <NavItem key={i.id} to={href(i.id)} icon={i.icon} label={i.label} active={tab === i.id} locked={locked(i.module)} />)}
+      {RECEPCJA.map(i => <NavItem key={i.id} to={href(i.id)} icon={i.icon} label={i.label} active={tab === i.id} locked={locked(i.modules)} />)}
       <div className="ap-sec">Firma</div>
-      {FIRMA.map(i => <NavItem key={i.id} to={href(i.id)} icon={i.icon} label={i.label} active={tab === i.id} locked={locked(i.module)} />)}
+      {FIRMA.map(i => <NavItem key={i.id} to={href(i.id)} icon={i.icon} label={i.label} active={tab === i.id} locked={locked(i.modules)} />)}
       {!locked('loyalty') && <Link to={href('skaner')} className={`btn btn--brand ap-scan-btn ${tab === 'skaner' ? 'is-active' : ''}`}><Ic.scan width={17} height={17} /> Skaner pieczątek</Link>}
       <div className="ap-side__foot">
         {superAdmin && <Link to="/admin" className="ap-item"><Ic.shield width={17} height={17} />Administracja</Link>}
@@ -138,7 +148,13 @@ function PanelShell({ access, logout, reloadAccess }: { access: Access; logout: 
 
   let page: ReactNode
   const item = [...RECEPCJA, ...FIRMA].find(i => i.id === tab)
-  if (item && 'module' in item && locked(item.module)) page = <Locked tab={tab} enabledButNotLive={!!item.module && company.modules.includes(item.module)} />
+  if (item && locked(item.modules)) page = <Locked tab={tab} enabledButNotLive={false} />
+  else if (tab === 'dzisiaj') page = <TodayPage />
+  else if (tab === 'kalendarz') page = <CalendarPage />
+  else if (tab === 'rozmowy') page = <CallsPage />
+  else if (tab === 'klienci') page = <ClientsPage />
+  else if (tab === 'uslugi') page = <SetupPage />
+  else if (tab === 'asystent') page = <AssistantPage />
   else if (tab === 'lojalnosc') page = <LoyaltyPage />
   else if (tab === 'statystyki') page = <StatsPage />
   else if (tab === 'zespol') page = <TeamPage />
@@ -165,10 +181,12 @@ function PanelShell({ access, logout, reloadAccess }: { access: Access; logout: 
           </div>
         </main>
         <nav className="ap-bottom" aria-label="Nawigacja">
-          <Link to={href('lojalnosc')} className={tab === 'lojalnosc' ? 'is-active' : ''}><Ic.card width={20} height={20} />Lojalność</Link>
-          <Link to={href('statystyki')} className={tab === 'statystyki' ? 'is-active' : ''}><Ic.analytics width={20} height={20} />Statystyki</Link>
-          <Link to={href('skaner')} className="ap-bottom__scan"><span className="g"><Ic.scan width={22} height={22} /></span></Link>
-          <Link to={href('zespol')} className={tab === 'zespol' ? 'is-active' : ''}><Ic.users width={20} height={20} />Zespół</Link>
+          {(hasReception ? [
+            { id: 'dzisiaj' as TabId, label: 'Dzisiaj', icon: 'home' as const }, { id: 'kalendarz' as TabId, label: 'Kalendarz', icon: 'calendar' as const },
+          ] : [{ id: 'lojalnosc' as TabId, label: 'Lojalność', icon: 'card' as const }, { id: 'statystyki' as TabId, label: 'Statystyki', icon: 'analytics' as const }]).map(i => { const I2 = Ic[i.icon]; return <Link key={i.id} to={href(i.id)} className={tab === i.id ? 'is-active' : ''}><I2 width={20} height={20} />{i.label}</Link> })}
+          {!locked('loyalty') ? <Link to={href('skaner')} className="ap-bottom__scan"><span className="g"><Ic.scan width={22} height={22} /></span></Link>
+            : <Link to={href('asystent')} className="ap-bottom__scan"><span className="g"><Ic.sparkle width={22} height={22} /></span></Link>}
+          {(hasReception ? [{ id: 'klienci' as TabId, label: 'Klienci', icon: 'users' as const }] : [{ id: 'zespol' as TabId, label: 'Zespół', icon: 'users' as const }]).map(i => { const I2 = Ic[i.icon]; return <Link key={i.id} to={href(i.id)} className={tab === i.id ? 'is-active' : ''}><I2 width={20} height={20} />{i.label}</Link> })}
           <button onClick={() => setDrawer(true)}><Ic.menu width={20} height={20} />Więcej</button>
         </nav>
         <AnimatePresence>

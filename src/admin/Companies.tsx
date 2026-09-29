@@ -14,10 +14,9 @@ export interface AdminCompany {
 }
 export const MODULES: { id: string; label: string; live: boolean; hint: string }[] = [
   { id: 'loyalty', label: 'Karty lojalnościowe', live: true, hint: 'Apple/Google Wallet, skaner, powiadomienia' },
-  { id: 'reception', label: 'Recepcja AI (telefon)', live: false, hint: 'Zakładki Dzisiaj i Rozmowy' },
-  { id: 'calendar', label: 'Kalendarz', live: false, hint: 'Rezerwacje zespołu' },
-  { id: 'calls', label: 'Rozmowy', live: false, hint: 'Transkrypcje i decyzje AI' },
-  { id: 'clients', label: 'Klienci (CRM)', live: false, hint: 'Baza klientów' },
+  { id: 'reception', label: 'Recepcja AI (telefon)', live: true, hint: 'Asystent głosowy, Rozmowy + kalendarz i klienci. Wolny numer przydzieli się sam przy pierwszym wgraniu asystenta.' },
+  { id: 'calendar', label: 'Kalendarz (bez AI)', live: true, hint: 'Dzisiaj, Kalendarz, Usługi i grafik, Klienci' },
+  { id: 'clients', label: 'Klienci (CRM)', live: true, hint: 'Sama baza klientów' },
 ]
 const STATUS = { active: { label: 'Aktywna', tone: 'ok' as const }, trial: { label: 'Okres próbny', tone: 'brand' as const }, paused: { label: 'Wstrzymana', tone: 'warn' as const } }
 

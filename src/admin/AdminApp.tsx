@@ -13,15 +13,17 @@ import { Companies } from './Companies'
 import { Users } from './Users'
 import { SiteSettings } from './SiteSettings'
 import { Audit } from './Audit'
+import { Reception } from './Reception'
 import '../app/app.css'
 import './admin.css'
 
-type Tab = '' | 'analityka' | 'zgloszenia' | 'firmy' | 'konta' | 'strona' | 'dziennik'
+type Tab = '' | 'analityka' | 'zgloszenia' | 'firmy' | 'recepcja' | 'konta' | 'strona' | 'dziennik'
 const NAV: { id: Tab; label: string; icon: keyof typeof Ic }[] = [
   { id: '', label: 'Przegląd', icon: 'home' },
   { id: 'analityka', label: 'Analityka ruchu', icon: 'analytics' },
   { id: 'zgloszenia', label: 'Zgłoszenia', icon: 'inbox' },
   { id: 'firmy', label: 'Firmy', icon: 'building' },
+  { id: 'recepcja', label: 'Recepcja AI', icon: 'phone' },
   { id: 'konta', label: 'Konta', icon: 'users' },
   { id: 'strona', label: 'Strona', icon: 'globe' },
   { id: 'dziennik', label: 'Dziennik zmian', icon: 'list' },
@@ -73,6 +75,7 @@ function Shell({ access, logout, reload }: { access: Access; logout: () => Promi
     case 'analityka': page = <Analytics />; break
     case 'zgloszenia': page = <Leads onChange={() => rpc<{ leads_new: number }>('admin_overview').then(o => setPending(o.leads_new)).catch(() => {})} />; break
     case 'firmy': page = <Companies />; break
+    case 'recepcja': page = <Reception />; break
     case 'konta': page = <Users me={access.user_id} />; break
     case 'strona': page = <SiteSettings />; break
     case 'dziennik': page = <Audit />; break

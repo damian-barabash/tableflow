@@ -9,9 +9,11 @@
     "preview": "vite preview",
     "qc": "node scripts/qc.mjs",
     "qc:seo": "node scripts/seo-e2e.mjs",
-    "qc:panel": "node scripts/panel-e2e.mjs"
+    "qc:panel": "node scripts/panel-e2e.mjs",
+    "qc:reception": "node scripts/reception-e2e.mjs"
   },
   "dependencies": {
+    "@elevenlabs/client": "^1.25.0",
     "@jsquash/webp": "^1.5.0",
     "jsqr": "^1.4.0",
     "motion": "^13.1.1",

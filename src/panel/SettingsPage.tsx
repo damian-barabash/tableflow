@@ -61,7 +61,8 @@ export function SettingsPage() {
               <li className="ap-row ap-row--between"><span>Karty lojalnościowe</span>{company.modules.includes('loyalty') ? <Badge tone="ok">Aktywne</Badge> : <Badge>Niedostępne</Badge>}</li>
               <li className="ap-row ap-row--between"><span><Ic.apple width={14} height={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> Apple Wallet</span>{wallet?.apple ? <Badge tone="ok">Połączony</Badge> : <Badge tone="warn">W konfiguracji</Badge>}</li>
               <li className="ap-row ap-row--between"><span>Google Wallet</span>{wallet?.google ? <Badge tone="ok">Połączony</Badge> : <Badge tone="warn">W konfiguracji</Badge>}</li>
-              <li className="ap-row ap-row--between"><span>Recepcja AI, kalendarz, rozmowy</span><Badge><Ic.lock width={11} height={11} /> Wkrótce</Badge></li>
+              <li className="ap-row ap-row--between"><span>Recepcja AI (telefon, rozmowy)</span>{company.modules.includes('reception') ? <Badge tone="ok">Aktywna</Badge> : <Badge>Niedostępna</Badge>}</li>
+              <li className="ap-row ap-row--between"><span>Kalendarz i klienci</span>{company.modules.some(m => ['reception', 'calendar'].includes(m)) ? <Badge tone="ok">Aktywne</Badge> : <Badge>Niedostępne</Badge>}</li>
             </ul>
           </Panel>
         </div>

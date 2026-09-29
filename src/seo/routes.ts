@@ -48,8 +48,8 @@ export const ROUTES: RouteSeo[] = [
   { path: '/karta', file: 'karta.html', index: false, sitemap: false, title: d => `${d.card.title} — ${SITE_NAME}`, description: d => clip(d.card.newsletterSub) },
   { path: '/edit-mod', file: 'edit-mod.html', index: false, sitemap: false, private: true, title: () => `Edytor — ${SITE_NAME}`, description: () => '' },
   // client panel, admin and customer loyalty-card pages (SPA shells, never indexed)
-  ...['', '/dzisiaj', '/kalendarz', '/rozmowy', '/klienci', '/lojalnosc', '/statystyki', '/zespol', '/ustawienia', '/skaner'].map(t => app(`/panel${t}`, `Panel firmy — ${SITE_NAME}`)),
-  ...['', '/analityka', '/zgloszenia', '/firmy', '/konta', '/strona', '/dziennik'].map(t => app(`/admin${t}`, `Administracja — ${SITE_NAME}`)),
+  ...['', '/dzisiaj', '/kalendarz', '/rozmowy', '/klienci', '/uslugi', '/asystent', '/lojalnosc', '/statystyki', '/zespol', '/ustawienia', '/skaner'].map(t => app(`/panel${t}`, `Panel firmy — ${SITE_NAME}`)),
+  ...['', '/analityka', '/zgloszenia', '/firmy', '/konta', '/strona', '/recepcja', '/dziennik'].map(t => app(`/admin${t}`, `Administracja — ${SITE_NAME}`)),
   app('/dolacz', `Karta stałego klienta — ${SITE_NAME}`),
   app('/moja-karta', `Twoja karta — ${SITE_NAME}`),
   app('/s', `Karta lojalnościowa — ${SITE_NAME}`),
