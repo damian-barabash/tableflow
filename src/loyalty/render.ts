@@ -156,10 +156,14 @@ export function drawStrip(ctx: CanvasRenderingContext2D, W: number, H: number, d
 function canvas(w: number, h: number) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c }
 const toBlob = (c: HTMLCanvasElement) => new Promise<Blob>((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error('render_failed')), 'image/png'))
 
+/** Pass icon = the picture iOS shows next to Wallet notifications (and Google's round program logo).
+ *  A (nearly) square logo fills the whole icon; a wide logo sits on the card colour with padding. */
 function icon(size: number, d: Design, imgs: Imgs, name: string) {
   const c = canvas(size, size), ctx = c.getContext('2d')!
   ctx.fillStyle = d.pass_bg; ctx.fillRect(0, 0, size, size)
-  if (imgs.logo) contain(ctx, imgs.logo, size * .14, size * .14, size * .72, size * .72)
+  const lw = imgs.logo ? imgs.logo.naturalWidth || 1 : 0, lh = imgs.logo ? imgs.logo.naturalHeight || 1 : 0
+  if (imgs.logo && lw / lh > .8 && lw / lh < 1.25) cover(ctx, imgs.logo, 0, 0, size, size)
+  else if (imgs.logo) contain(ctx, imgs.logo, size * .1, size * .1, size * .8, size * .8)
   else {
     ctx.fillStyle = d.fg; ctx.font = `600 ${size * .5}px Inter, system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
     ctx.fillText((name.trim()[0] ?? 'T').toUpperCase(), size / 2, size * .54)
