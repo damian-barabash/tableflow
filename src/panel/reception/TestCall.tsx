@@ -7,6 +7,13 @@ import { TOOL_LABEL, reception } from './model'
 type Line = { id: number; kind: 'agent' | 'user' | 'tool'; text: string; state?: 'live' | 'ok' | 'err' }
 type Conv = { endSession: () => Promise<void>; getId: () => string; getInputVolume: () => number; getOutputVolume: () => number }
 
+/** ElevenLabs session errors → something a business owner understands. */
+function humanError(m: string): string {
+  if (/payment_issue|billing|quota|credits|limit/i.test(m)) return 'Asystent jest chwilowo niedostępny (rozliczenie usługi głosowej po stronie TableFlow). Zespół TableFlow już nad tym pracuje — spróbuj za chwilę.'
+  if (/permission|microphone|NotAllowed/i.test(m)) return 'Zezwól przeglądarce na użycie mikrofonu, aby porozmawiać z asystentem.'
+  return `Asystent: ${m.replace(/^\[[a-z_]+\]\s*/, '')}`
+}
+
 /**
  * Talk to the company's assistant in the browser (microphone) — same agent, same tools, same memory as a
  * real phone call. Used while no phone number is connected ("tryb testowy") and for trying changes.
@@ -63,7 +70,7 @@ export function TestCall({ onEnded, compact }: { onEnded?: (conversationId: stri
         onModeChange: ({ mode: m }) => setMode(m === 'speaking' ? 'speaking' : 'listening'),
         onAgentToolRequest: (t) => push({ kind: 'tool', text: t.tool_name, state: 'live' }),
         onAgentToolResponse: (t) => setLines(v => { const i = [...v].reverse().findIndex(l => l.kind === 'tool' && l.text === t.tool_name && l.state === 'live'); if (i < 0) return v; const idx = v.length - 1 - i; const n = [...v]; n[idx] = { ...n[idx], state: t.is_error ? 'err' : 'ok' }; return n }),
-        onError: (m) => toast(`Asystent: ${m}`, 'err'),
+        onError: (m) => toast(humanError(m), 'err'),
         onDisconnect: () => { conv.current = null; setState('idle'); const id = convId.current; setTimeout(() => onEnded?.(id), 400) },
       }) as unknown as Conv
       conv.current = c

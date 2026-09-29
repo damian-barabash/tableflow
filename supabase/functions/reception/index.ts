@@ -44,9 +44,17 @@ async function dynamicVars(cid: string, phone: string | null, channel: 'phone' |
 async function reverify(key: string) {
   // the agents API is what we really need; user info is optional (key may be restricted)
   await el('/v1/convai/agents?page_size=1', { key })
-  let account: string | null = null
-  try { const s = await el<{ tier?: string; character_count?: number; character_limit?: number }>('/v1/user/subscription', { key }); account = s.tier ? `plan ${s.tier} · ${s.character_count ?? 0}/${s.character_limit ?? 0} kredytów` : null } catch { /* optional */ }
-  return account
+  let account: string | null = null, billing: string | null = null
+  try {
+    const s = await el<{ tier?: string; status?: string; character_count?: number; character_limit?: number; has_open_invoices?: boolean; open_invoices?: { amount_due_cents?: number }[] }>('/v1/user/subscription', { key })
+    account = s.tier ? `plan ${s.tier} · ${s.character_count ?? 0}/${s.character_limit ?? 0} kredytów` : null
+    // an unpaid invoice blocks every new conversation ("payment_issue") — show it in the admin
+    if (s.status === 'past_due' || s.status === 'unpaid' || s.has_open_invoices) {
+      const due = (s.open_invoices ?? []).reduce((a, i) => a + (i.amount_due_cents ?? 0), 0)
+      billing = `Zaległa płatność w ElevenLabs${due ? ` (${(due / 100).toFixed(2)} USD)` : ''} — rozmowy są zablokowane, dopóki faktura nie zostanie opłacona (ElevenLabs → Billing).`
+    }
+  } catch { /* optional */ }
+  return { account, billing }
 }
 
 /** Import (or re-import after an account switch) a Twilio number into the current ElevenLabs account. */
@@ -180,13 +188,13 @@ Deno.serve(async (req) => {
         await needAdmin()
         const key = String(b.key ?? '').trim()
         if (!/^sk_[A-Za-z0-9]{20,}$/.test(key)) return fail('Nieprawidłowy format klucza (sk_…).')
-        let account: string | null
-        try { account = await reverify(key) } catch (e) { return fail(elMessage(e)) }
+        let account: string | null, billing: string | null
+        try { ({ account, billing } = await reverify(key)) } catch (e) { return fail(elMessage(e)) }
         const p = await platform()
         const hint = `${key.slice(0, 5)}…${key.slice(-5)}`
         const switched = !!p.el_key_hint && p.el_key_hint !== hint && !b.same_account
         await setSecret('rc_el_api_key', key); forgetKey()
-        const upd: Record<string, unknown> = { el_key_hint: hint, el_account: account, el_status: 'ok', el_error: null, el_checked_at: new Date().toISOString() }
+        const upd: Record<string, unknown> = { el_key_hint: hint, el_account: account, el_status: 'ok', el_error: billing, el_checked_at: new Date().toISOString() }
         if (switched) Object.assign(upd, { el_generation: p.el_generation + 1, tools: {}, post_call_webhook_id: null, webhooks_ok: false })
         await patch('rc_platform', 'id=eq.1', upd)
         if (switched) { await setSecret('rc_postcall_secret', null); await db('/rest/v1/rc_numbers?el_phone_id=not.is.null', { method: 'PATCH', body: JSON.stringify({ el_phone_id: null, last_error: 'Nowe konto ElevenLabs — numer do ponownego importu' }) }) }
@@ -210,7 +218,7 @@ Deno.serve(async (req) => {
         await needAdmin()
         const key = await elKey()
         if (!key) return json({ ok: false, status: await adminStatus() })
-        try { const account = await reverify(key); await patch('rc_platform', 'id=eq.1', { el_status: 'ok', el_error: null, el_account: account, el_checked_at: new Date().toISOString() }) }
+        try { const { account, billing } = await reverify(key); await patch('rc_platform', 'id=eq.1', { el_status: 'ok', el_error: billing, el_account: account, el_checked_at: new Date().toISOString() }) }
         catch (e) { await patch('rc_platform', 'id=eq.1', { el_status: 'error', el_error: elMessage(e), el_checked_at: new Date().toISOString() }) }
         return json({ ok: true, status: await adminStatus() })
       }
