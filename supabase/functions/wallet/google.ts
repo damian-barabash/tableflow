@@ -106,9 +106,18 @@ export async function upsertClass(p: Program, company: Company) {
   if (!r.ok) throw new Error(`google_class_${r.status}: ${JSON.stringify(r.body?.error?.message ?? r.body).slice(0, 200)}`)
 }
 
+/** Creates the class only if it doesn't exist yet (design changes go through upsertClass on publish) —
+ *  re-sending an approved class on every customer tap would put it back under review. */
+async function ensureClass(p: Program, company: Company) {
+  const got = await api('GET', `/loyaltyClass/${classId(p)}`)
+  if (got.ok) return
+  const r = await api('POST', '/loyaltyClass', loyaltyClass(p, company))
+  if (!r.ok && r.status !== 409) throw new Error(`google_class_${r.status}: ${JSON.stringify(r.body?.error?.message ?? r.body).slice(0, 200)}`)
+}
+
 /** "Add to Google Wallet" link (the object is created when the customer saves it). */
 export async function saveUrl(card: Card) {
-  await upsertClass(card.program, card.company)
+  await ensureClass(card.program, card.company)
   const now = Math.floor(Date.now() / 1000)
   const token = await jwt({ iss: SA!.client_email, aud: 'google', typ: 'savetowallet', iat: now, origins: [SITE], payload: { loyaltyObjects: [loyaltyObject(card)] } })
   return `https://pay.google.com/gp/v/save/${token}`

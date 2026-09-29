@@ -133,7 +133,10 @@ Deno.serve(async (req) => {
         const other = await rest(`/rest/v1/company_members?select=company_id&user_id=eq.${uid}`)
         const adm = await rest(`/rest/v1/admin_profiles?select=role&user_id=eq.${uid}`)
         let deleted = false
-        if (body.delete_account && !(other.body ?? []).length && !(adm.body ?? []).length && uid !== c.id) { await rest(`/auth/v1/admin/users/${uid}`, { method: 'DELETE' }); deleted = true }
+        if (body.delete_account && !(other.body ?? []).length && !(adm.body ?? []).length && uid !== c.id) {
+          await rest('/storage/v1/object/avatars', { method: 'DELETE', body: JSON.stringify({ prefixes: [`${uid}/avatar.webp`] }) })
+          await rest(`/auth/v1/admin/users/${uid}`, { method: 'DELETE' }); deleted = true
+        }
         await audit(c, 'remove_member', 'user', uid, { deleted }, cid)
         return json({ ok: true, deleted })
       }
@@ -169,6 +172,7 @@ Deno.serve(async (req) => {
         if (!isSuper(c)) return fail('forbidden', 403)
         const uid = String(body.user_id)
         if (uid === c.id) return fail('self')
+        await rest('/storage/v1/object/avatars', { method: 'DELETE', body: JSON.stringify({ prefixes: [`${uid}/avatar.webp`] }) })
         const r = await rest(`/auth/v1/admin/users/${uid}`, { method: 'DELETE' })
         await audit(c, 'delete_user', 'user', uid, { email: body.email ?? null })
         return r.ok ? json({ ok: true }) : fail('delete_failed')

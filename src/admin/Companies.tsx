@@ -9,7 +9,7 @@ import type { Lead } from './Leads'
 export interface AdminCompany {
   id: string; name: string; industry: string | null; status: 'trial' | 'active' | 'paused'; modules: string[]; city: string | null; email: string | null; phone: string | null
   address: string | null; website: string | null; nip: string | null; logo_url: string | null; created_at: string; waitlist_id: string | null
-  members: { user_id: string; role: Role; name: string | null; email: string | null; last_sign_in_at: string | null }[]
+  members: { user_id: string; role: Role; name: string | null; email: string | null; avatar: string | null; last_sign_in_at: string | null }[]
   programs: number; cards: number; stamps_30d: number
 }
 export const MODULES: { id: string; label: string; live: boolean; hint: string }[] = [
@@ -126,7 +126,7 @@ function CompanyModal({ c, onClose, reload }: { c: AdminCompany | null; onClose:
               {!c.members.length ? <Empty title="Brak kont" text="Dodaj konto właściciela — dostanie login i hasło do panelu." /> : (
                 <ul className="ad-members">{c.members.map(m => (
                   <li key={m.user_id}>
-                    <Avatar name={m.name || m.email || '?'} size={30} />
+                    <Avatar name={m.name || m.email || '?'} src={m.avatar} size={30} />
                     <div><b>{m.name || m.email}</b><small>{m.email} · logowanie {fmtAgo(m.last_sign_in_at)}</small></div>
                     <Badge tone={m.role === 'owner' ? 'dark' : m.role === 'manager' ? 'brand' : 'neutral'}>{ROLE_LABEL[m.role]}</Badge>
                     <Menu items={[

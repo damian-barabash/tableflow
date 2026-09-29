@@ -14,6 +14,8 @@ export default defineConfig({
       },
     },
   ],
+  // WASM WebP encoder (Safari avatar fallback) must not be pre-bundled
+  optimizeDeps: { exclude: ['@jsquash/webp'] },
   build: {
     target: 'es2020',
     cssCodeSplit: true,

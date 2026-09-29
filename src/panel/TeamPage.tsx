@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
-import { errText, fn, get } from '../app/api'
+import { errText, fn, rpc } from '../app/api'
 import { Avatar, Badge, Empty, Field, Ic, Loading, Menu, Modal, PageHead, Panel, fmtDate, useConfirm, useCopy, useToast } from '../app/ui'
 import { usePanel, type Role } from './PanelApp'
 
-interface Member { user_id: string; role: Role; display_name: string | null; email: string | null; created_at: string }
+interface Member { user_id: string; role: Role; display_name: string | null; email: string | null; avatar: string | null; last_sign_in_at: string | null; created_at: string }
 export const ROLE_LABEL: Record<Role, string> = { owner: 'Właściciel', manager: 'Menedżer', staff: 'Obsługa' }
 const ROLE_HINT: Record<Role, string> = {
   owner: 'Pełny dostęp: projekt karty, powiadomienia, zespół i ustawienia firmy.',
@@ -17,7 +17,7 @@ export function TeamPage() {
   const [list, setList] = useState<Member[] | null>(null)
   const [add, setAdd] = useState(false)
   const [secret, setSecret] = useState<{ email: string; password: string } | null>(null)
-  const load = useCallback(async () => setList(await get<Member[]>(`company_members?company_id=eq.${company.id}&select=*&order=created_at.asc`).catch(() => [])), [company.id])
+  const load = useCallback(async () => setList(await rpc<Member[]>('company_team', { p_company: company.id }).catch(() => [])), [company.id])
   useEffect(() => { void load() }, [load])
 
   const call = async (body: Record<string, unknown>, ok: string) => {
@@ -37,7 +37,7 @@ export function TeamPage() {
                 <thead><tr><th>Osoba</th><th>Rola</th><th className="ap-table-hide-sm">Od</th><th /></tr></thead>
                 <tbody>{list.map(m => (
                   <tr key={m.user_id}>
-                    <td><div className="ap-cell-user"><Avatar name={m.display_name || m.email || '?'} size={32} /><div><b>{m.display_name || m.email?.split('@')[0]}{m.user_id === access.user_id && <small style={{ display: 'inline', marginLeft: 6 }}>(Ty)</small>}</b><small>{m.email}</small></div></div></td>
+                    <td><div className="ap-cell-user"><Avatar name={m.display_name || m.email || '?'} src={m.avatar} size={32} /><div><b>{m.display_name || m.email?.split('@')[0]}{m.user_id === access.user_id && <small style={{ display: 'inline', marginLeft: 6 }}>(Ty)</small>}</b><small>{m.email}</small></div></div></td>
                     <td><Badge tone={m.role === 'owner' ? 'dark' : m.role === 'manager' ? 'brand' : 'neutral'}>{ROLE_LABEL[m.role]}</Badge></td>
                     <td className="ap-table-hide-sm">{fmtDate(m.created_at)}</td>
                     <td className="num">{canTouch(m) && <Menu items={[

@@ -5,6 +5,7 @@ import { Mark } from '../brand/Logo'
 import { Gate, isSuper, type Access } from '../app/session'
 import { ConfirmProvider, Empty, Ic, Loading, ToastProvider, Avatar, EASE } from '../app/ui'
 import { get, walletStatus } from '../app/api'
+import { ProfileModal } from '../app/profile'
 import { Locked } from './Locked'
 import { LoyaltyPage } from './loyalty/LoyaltyPage'
 import { StatsPage } from './StatsPage'
@@ -22,7 +23,7 @@ export type TabId = 'dzisiaj' | 'kalendarz' | 'rozmowy' | 'klienci' | 'lojalnosc
 
 interface Ctx {
   access: Access; company: Company; role: Role; canManage: boolean; impersonating: boolean
-  reloadCompany: () => Promise<void>; href: (tab: TabId, q?: Record<string, string>) => string
+  reloadCompany: () => Promise<void>; reloadAccess: () => Promise<void>; href: (tab: TabId, q?: Record<string, string>) => string
   wallet: { apple: boolean; google: boolean } | null
 }
 const PanelCtx = createContext<Ctx | null>(null)
@@ -50,13 +51,14 @@ export default function PanelApp() {
   return (
     <ToastProvider><ConfirmProvider>
       <Gate title="Panel firmy" sub="Zaloguj się, aby zarządzać kartami lojalnościowymi, zespołem i statystykami.">
-        {(access, logout) => <PanelShell access={access} logout={logout} />}
+        {(access, logout, reload) => <PanelShell access={access} logout={logout} reloadAccess={reload} />}
       </Gate>
     </ConfirmProvider></ToastProvider>
   )
 }
 
-function PanelShell({ access, logout }: { access: Access; logout: () => Promise<void> }) {
+function PanelShell({ access, logout, reloadAccess }: { access: Access; logout: () => Promise<void>; reloadAccess: () => Promise<void> }) {
+  const [profile, setProfile] = useState(false)
   const loc = useLocation(), nav = useNavigate()
   const q = new URLSearchParams(loc.search)
   const seg = loc.pathname.split('/')[2] as TabId | undefined
@@ -108,7 +110,7 @@ function PanelShell({ access, logout }: { access: Access; logout: () => Promise<
   if (company === undefined) return <div className="ap-gate"><Loading /></div>
   if (!company) return <div className="ap-gate"><Empty title="Nie znaleziono firmy" action={<button className="btn btn--ghost btn--sm" onClick={logout}>Wyloguj</button>} /></div>
 
-  const ctx: Ctx = { access, company, role, canManage: role !== 'staff', impersonating, reloadCompany, href, wallet }
+  const ctx: Ctx = { access, company, role, canManage: role !== 'staff', impersonating, reloadCompany, reloadAccess, href, wallet }
   const locked = (m?: string) => !!m && (!LIVE_MODULES.includes(m) || !company.modules.includes(m))
   const title = [...RECEPCJA, ...FIRMA].find(i => i.id === tab)?.label ?? 'Skaner'
 
@@ -124,8 +126,10 @@ function PanelShell({ access, logout }: { access: Access; logout: () => Promise<
       <div className="ap-side__foot">
         {superAdmin && <Link to="/admin" className="ap-item"><Ic.shield width={17} height={17} />Administracja</Link>}
         <div className="ap-user">
-          <Avatar name={access.name || access.email} size={30} />
-          <div><b>{access.name || access.email.split('@')[0]}</b><small>{impersonating ? 'administrator' : ({ owner: 'Właściciel', manager: 'Menedżer', staff: 'Obsługa' } as const)[role]}</small></div>
+          <button className="ap-user__me" onClick={() => setProfile(true)} title="Mój profil">
+            <Avatar name={access.name || access.email} src={access.avatar} size={30} />
+            <div><b>{access.name || access.email.split('@')[0]}</b><small>{impersonating ? 'administrator' : ({ owner: 'Właściciel', manager: 'Menedżer', staff: 'Obsługa' } as const)[role]}</small></div>
+          </button>
           <button className="ap-icon-btn" onClick={logout} title="Wyloguj" aria-label="Wyloguj"><Ic.logout width={16} height={16} /></button>
         </div>
       </div>
@@ -176,6 +180,7 @@ function PanelShell({ access, logout }: { access: Access; logout: () => Promise<
           )}
         </AnimatePresence>
       </div>
+      <ProfileModal open={profile} onClose={() => setProfile(false)} access={access} onChanged={reloadAccess} />
     </PanelCtx.Provider>
   )
 }

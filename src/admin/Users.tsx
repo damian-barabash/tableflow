@@ -5,7 +5,7 @@ import { Avatar, Badge, Empty, Field, Ic, Loading, Menu, Modal, PageHead, Panel,
 import { Credentials, ROLE_LABEL } from '../panel/TeamPage'
 import type { Role } from '../panel/PanelApp'
 
-interface U { id: string; email: string; name: string | null; created_at: string; last_sign_in_at: string | null; platform_role: string | null; companies: { id: string; name: string; role: Role }[] }
+interface U { id: string; email: string; avatar: string | null; name: string | null; created_at: string; last_sign_in_at: string | null; platform_role: string | null; companies: { id: string; name: string; role: Role }[] }
 const PLATFORM: Record<string, string> = { owner: 'Właściciel platformy', admin: 'Administrator', moderator: 'Edytor treści', viewer: 'Podgląd' }
 
 export function Users({ me }: { me: string }) {
@@ -38,7 +38,7 @@ export function Users({ me }: { me: string }) {
               <thead><tr><th>Konto</th><th>Dostęp</th><th className="ap-table-hide-sm">Ostatnie logowanie</th><th className="ap-table-hide-sm">Utworzone</th><th /></tr></thead>
               <tbody>{list.map(u => (
                 <tr key={u.id}>
-                  <td><div className="ap-cell-user"><Avatar name={u.name || u.email} size={32} /><div><b>{u.name || u.email.split('@')[0]}{u.id === me && <small style={{ display: 'inline', marginLeft: 6 }}>(Ty)</small>}</b><small>{u.email}</small></div></div></td>
+                  <td><div className="ap-cell-user"><Avatar name={u.name || u.email} src={u.avatar} size={32} /><div><b>{u.name || u.email.split('@')[0]}{u.id === me && <small style={{ display: 'inline', marginLeft: 6 }}>(Ty)</small>}</b><small>{u.email}</small></div></div></td>
                   <td><div className="ap-chips">
                     {u.platform_role && <Badge tone="dark">{PLATFORM[u.platform_role] ?? u.platform_role}</Badge>}
                     {u.companies.map(c => <Link key={c.id} to={`/admin/firmy?id=${c.id}`}><Badge tone="brand">{c.name} · {ROLE_LABEL[c.role]}</Badge></Link>)}

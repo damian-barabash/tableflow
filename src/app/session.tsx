@@ -7,7 +7,7 @@ import { SUPABASE_KEY, SUPABASE_URL } from '../lib/supabase'
 import { rpc } from './api'
 
 export interface CompanyRef { id: string; name: string; role: 'owner' | 'manager' | 'staff'; modules: string[]; status: string; logo_url: string | null }
-export interface Access { user_id: string; platform_role: string | null; name: string | null; companies: CompanyRef[]; email: string }
+export interface Access { user_id: string; platform_role: string | null; name: string | null; avatar: string | null; companies: CompanyRef[]; email: string }
 export const isSuper = (a: Access | null) => a?.platform_role === 'owner' || a?.platform_role === 'admin'
 
 /** Loads the session + my_access(); `undefined` while loading, `null` when logged out. */

@@ -304,3 +304,18 @@ body.ap-noscroll { overflow: hidden; }
   .ap-search { max-width: none; }
   .ap-locked__card { margin: 40px auto; }
 }
+
+/* ---------- profile / avatar ---------- */
+.ap-user__me { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; text-align: left; border-radius: 10px; padding: 2px; margin: -2px; }
+.ap-user__me:hover { background: var(--bg-2); }
+.ap-user__me > div { min-width: 0; flex: 1; }
+.ap-avatar-edit { display: flex; align-items: center; gap: 16px; }
+.ap-avatar-edit > div { min-width: 0; }
+.ap-avatar-edit b { display: block; font-weight: 500; font-size: 15px; }
+.ap-avatar-edit small { display: block; color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+.ap-avatar-edit__hint { margin-top: 6px; font-size: 12px !important; color: #a39f97 !important; }
+.ap-avatar-edit__pic { position: relative; flex: 0 0 auto; border-radius: 50%; overflow: hidden; }
+.ap-avatar-edit__pic .ap-avatar { display: grid; }
+.ap-avatar-edit__ov { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(26,25,22,.45); color: #fff; opacity: 0; transition: opacity .2s; border-radius: 50%; }
+.ap-avatar-edit__pic:hover .ap-avatar-edit__ov, .ap-avatar-edit__pic:disabled .ap-avatar-edit__ov { opacity: 1; }
+.ap-avatar-edit__ov .ap-spin { border-color: rgba(255,255,255,.35); border-top-color: #fff; }

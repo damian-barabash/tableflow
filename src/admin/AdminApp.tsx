@@ -5,6 +5,7 @@ import { Mark } from '../brand/Logo'
 import { Gate, isSuper, type Access } from '../app/session'
 import { Avatar, ConfirmProvider, Empty, Ic, ToastProvider, EASE } from '../app/ui'
 import { rpc } from '../app/api'
+import { ProfileModal } from '../app/profile'
 import { Overview } from './Overview'
 import { Analytics } from './Analytics'
 import { Leads } from './Leads'
@@ -31,7 +32,7 @@ export default function AdminApp() {
   return (
     <ToastProvider><ConfirmProvider>
       <Gate title="Administracja" sub="Panel zespołu TableFlow — statystyki, klienci, zgłoszenia i ustawienia strony.">
-        {(access, logout) => isSuper(access) ? <Shell access={access} logout={logout} /> : (
+        {(access, logout, reload) => isSuper(access) ? <Shell access={access} logout={logout} reload={reload} /> : (
           <div className="ap-gate"><div className="ap-login" style={{ alignItems: 'center', textAlign: 'center' }}>
             <Mark size={30} />
             <Empty title="Brak uprawnień administratora" text={access.platform_role === 'moderator' ? 'Masz dostęp do edytora treści strony.' : 'To konto nie ma dostępu do administracji.'}
@@ -43,7 +44,8 @@ export default function AdminApp() {
   )
 }
 
-function Shell({ access, logout }: { access: Access; logout: () => Promise<void> }) {
+function Shell({ access, logout, reload }: { access: Access; logout: () => Promise<void>; reload: () => Promise<void> }) {
+  const [profile, setProfile] = useState(false)
   const loc = useLocation()
   const tab = (loc.pathname.split('/')[2] ?? '') as Tab
   const [drawer, setDrawer] = useState(false)
@@ -62,7 +64,7 @@ function Shell({ access, logout }: { access: Access; logout: () => Promise<void>
       {access.companies.length > 0 && <Link className="ap-item" to="/panel"><Ic.card width={18} height={18} /><span>Mój panel firmy</span></Link>}
       <a className="ap-item" href="/" target="_blank" rel="noreferrer"><Ic.external width={18} height={18} /><span>Otwórz stronę</span></a>
       <div className="ap-side__foot">
-        <div className="ap-user"><Avatar name={access.name || access.email} size={30} /><div><b>{access.name || access.email.split('@')[0]}</b><small>{access.platform_role === 'owner' ? 'Właściciel platformy' : 'Administrator'}</small></div><button className="ap-icon-btn" onClick={logout} title="Wyloguj" aria-label="Wyloguj"><Ic.logout width={16} height={16} /></button></div>
+        <div className="ap-user"><button className="ap-user__me" onClick={() => setProfile(true)} title="Mój profil"><Avatar name={access.name || access.email} src={access.avatar} size={30} /><div><b>{access.name || access.email.split('@')[0]}</b><small>{access.platform_role === 'owner' ? 'Właściciel platformy' : 'Administrator'}</small></div></button><button className="ap-icon-btn" onClick={logout} title="Wyloguj" aria-label="Wyloguj"><Ic.logout width={16} height={16} /></button></div>
       </div>
     </aside>
   )
@@ -87,6 +89,7 @@ function Shell({ access, logout }: { access: Access; logout: () => Promise<void>
         {NAV.filter(n => ['', 'analityka', 'zgloszenia', 'firmy'].includes(n.id)).map(n => { const Icon = Ic[n.icon]; return <Link key={n.id} to={`/admin${n.id ? `/${n.id}` : ''}`} className={tab === n.id ? 'is-active' : ''}><Icon width={20} height={20} />{n.label.split(' ')[0]}</Link> })}
         <button onClick={() => setDrawer(true)}><Ic.menu width={20} height={20} />Więcej</button>
       </nav>
+      <ProfileModal open={profile} onClose={() => setProfile(false)} access={access} onChanged={reload} />
       <AnimatePresence>{drawer && <motion.div className="ap-drawer" initial={{ opacity: 1 }} exit={{ opacity: 1 }} transition={{ duration: .32 }}><motion.div className="ap-drawer__bg" onClick={() => setDrawer(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .25 }} /><motion.div className="ap-drawer__panel" initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} transition={{ duration: .32, ease: EASE }}>{side}</motion.div></motion.div>}</AnimatePresence>
     </div>
   )
