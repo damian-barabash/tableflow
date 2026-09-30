@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
+import { Component, createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { I } from '../components/Icons'
@@ -254,3 +254,20 @@ export function fmtAgo(s: string | null | undefined): string {
 export const fmtDur = (sec: number) => sec < 60 ? `${Math.round(sec)} s` : `${Math.floor(sec / 60)} min ${Math.round(sec % 60)} s`
 export const pct = (a: number, b: number) => b ? Math.round((a / b) * 100) : 0
 export function deltaPct(cur: number, prev: number): number | null { return prev ? ((cur - prev) / prev) * 100 : null }
+
+/** A crash inside one page shows a friendly card instead of a blank white screen. */
+export class ErrorBoundary extends Component<{ children: ReactNode; resetKey?: string }, { error: Error | null }> {
+  state = { error: null as Error | null }
+  static getDerivedStateFromError(error: Error) { return { error } }
+  componentDidCatch(error: Error) { console.error('page crashed', error) }
+  componentDidUpdate(prev: { resetKey?: string }) { if (prev.resetKey !== this.props.resetKey && this.state.error) this.setState({ error: null }) }
+  render() {
+    if (!this.state.error) return this.props.children
+    return (
+      <div className="ap-panel" style={{ marginTop: 20 }}>
+        <Empty icon={<Ic.refresh width={22} height={22} />} title="Coś poszło nie tak na tej stronie" text="Twoje dane są bezpieczne. Spróbuj ponownie — jeśli błąd wróci, daj nam znać."
+          action={<button className="btn btn--primary btn--sm" onClick={() => this.setState({ error: null })}>Spróbuj ponownie</button>} />
+      </div>
+    )
+  }
+}

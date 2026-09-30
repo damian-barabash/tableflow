@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { Mark } from '../brand/Logo'
 import { Gate, isSuper, type Access } from '../app/session'
-import { Avatar, ConfirmProvider, Empty, Ic, ToastProvider, EASE } from '../app/ui'
+import { Avatar, ConfirmProvider, Empty, ErrorBoundary, Ic, ToastProvider, EASE } from '../app/ui'
 import { rpc } from '../app/api'
 import { ProfileModal } from '../app/profile'
 import { Overview } from './Overview'
@@ -86,7 +86,7 @@ function Shell({ access, logout, reload }: { access: Access; logout: () => Promi
       {side}
       <header className="ap-top"><button className="ap-icon-btn" onClick={() => setDrawer(true)} aria-label="Menu"><Ic.menu width={20} height={20} /></button><Mark size={20} /><b>{NAV.find(n => n.id === tab)?.label ?? 'Admin'}</b></header>
       <main className="ap-main"><div className="ap-main__in">
-        <AnimatePresence mode="wait"><motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: .3, ease: EASE }}>{page}</motion.div></AnimatePresence>
+        <AnimatePresence mode="wait"><motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: .3, ease: EASE }}><ErrorBoundary resetKey={tab + loc.search}>{page}</ErrorBoundary></motion.div></AnimatePresence>
       </div></main>
       <nav className="ap-bottom" aria-label="Nawigacja">
         {NAV.filter(n => ['', 'analityka', 'zgloszenia', 'firmy'].includes(n.id)).map(n => { const Icon = Ic[n.icon]; return <Link key={n.id} to={`/admin${n.id ? `/${n.id}` : ''}`} className={tab === n.id ? 'is-active' : ''}><Icon width={20} height={20} />{n.label.split(' ')[0]}</Link> })}

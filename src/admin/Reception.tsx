@@ -24,11 +24,11 @@ export function Reception() {
   const [imp, setImp] = useState(false)
   const [lib, setLib] = useState(false)
   const [report, setReport] = useState<string[]>([])
-  const load = useCallback(async () => setD(await rpc<Data>('admin_reception').catch(() => null)), [])
+  const load = useCallback(async () => { const x = await rpc<Data>('admin_reception').catch(() => null); if (x?.platform) setD(x) }, [])
   useEffect(() => { void load() }, [load])
   const run = async (id: string, action: string, body: Record<string, unknown> = {}, ok?: string) => {
     setBusy(id)
-    try { const r = await call<{ status?: Data; report?: unknown[]; warnings?: string[] }>(action, body); if (r.status) setD(r.status); else await load(); if (ok) toast(ok); return r }
+    try { const r = await call<{ report?: unknown[]; warnings?: string[] }>(action, body); await load(); if (ok) toast(ok); return r }
     catch (e) { toast(errText(e), 'err'); await load(); return null }
     finally { setBusy(null) }
   }
@@ -139,8 +139,8 @@ export function Reception() {
         </Panel>
       </div>
 
-      <ImportNumber open={imp} hasTwilio={!!p.twilio_sid_hint} onClose={() => setImp(false)} onDone={s => { setImp(false); setD(s) }} />
-      <VoiceLibrary open={lib} have={d.voices.map(v => v.voice_id)} onClose={() => setLib(false)} onAdded={s => setD(s)} />
+      <ImportNumber open={imp} hasTwilio={!!p.twilio_sid_hint} onClose={() => setImp(false)} onDone={() => { setImp(false); void load() }} />
+      <VoiceLibrary open={lib} have={d.voices.map(v => v.voice_id)} onClose={() => setLib(false)} onAdded={() => void load()} />
     </>
   )
 }
@@ -153,14 +153,14 @@ function PlayBtn({ url }: { url: string | null }) {
   return <button className={`rc-play ${on ? 'is-on' : ''}`} onClick={() => { if (on) { a.current?.pause(); setOn(false); return } a.current = new Audio(url); a.current.onended = () => setOn(false); void a.current.play(); setOn(true) }} aria-label="Odsłuchaj">{on ? '❚❚' : '▶'}</button>
 }
 
-function ImportNumber({ open, hasTwilio, onClose, onDone }: { open: boolean; hasTwilio: boolean; onClose: () => void; onDone: (s: Data) => void }) {
+function ImportNumber({ open, hasTwilio, onClose, onDone }: { open: boolean; hasTwilio: boolean; onClose: () => void; onDone: () => void }) {
   const toast = useToast()
   const [f, setF] = useState({ phone_number: '', label: '', sid: '', token: '', remember: true })
   const [busy, setBusy] = useState(false)
   useEffect(() => { if (open) setF({ phone_number: '', label: '', sid: '', token: '', remember: true }) }, [open])
   const submit = async () => {
     setBusy(true)
-    try { const r = await call<{ status: Data }>('number_import', { ...f, sid: f.sid || undefined, token: f.token || undefined }); toast('Zaimportowano numer'); onDone(r.status) } catch (e) { toast(errText(e), 'err') }
+    try { await call('number_import', { ...f, sid: f.sid || undefined, token: f.token || undefined }); toast('Zaimportowano numer'); onDone() } catch (e) { toast(errText(e), 'err') }
     setBusy(false)
   }
   return (
@@ -179,7 +179,7 @@ function ImportNumber({ open, hasTwilio, onClose, onDone }: { open: boolean; has
   )
 }
 
-function VoiceLibrary({ open, have, onClose, onAdded }: { open: boolean; have: string[]; onClose: () => void; onAdded: (s: Data) => void }) {
+function VoiceLibrary({ open, have, onClose, onAdded }: { open: boolean; have: string[]; onClose: () => void; onAdded: () => void }) {
   const toast = useToast()
   const [q, setQ] = useState({ search: '', gender: '', language: 'pl' })
   const [list, setList] = useState<V[] | null>(null)
@@ -199,7 +199,7 @@ function VoiceLibrary({ open, have, onClose, onAdded }: { open: boolean; have: s
           <div key={v.voice_id + (v.source ?? '')} className="rc-li">
             <PlayBtn url={v.preview_url} />
             <div><b>{v.name} <Badge>{v.source === 'library' ? 'biblioteka' : 'konto'}</Badge></b><small>{[v.gender, v.accent, v.use_case, v.description].filter(Boolean).join(' · ')}</small></div>
-            {have.includes(v.voice_id) ? <Badge tone="ok">Dodany</Badge> : <button className="btn btn--ghost btn--xs" disabled={!!adding} onClick={async () => { setAdding(v.voice_id); try { const r = await call<{ status: Data }>('voice_add', { voice: v }); onAdded(r.status); toast(`Dodano: ${v.name}`) } catch (e) { toast(errText(e), 'err') } setAdding(null) }}>{adding === v.voice_id ? <Spinner size={12} /> : <><Ic.plus width={12} height={12} /> Dodaj</>}</button>}
+            {have.includes(v.voice_id) ? <Badge tone="ok">Dodany</Badge> : <button className="btn btn--ghost btn--xs" disabled={!!adding} onClick={async () => { setAdding(v.voice_id); try { await call('voice_add', { voice: v }); onAdded(); toast(`Dodano: ${v.name}`) } catch (e) { toast(errText(e), 'err') } setAdding(null) }}>{adding === v.voice_id ? <Spinner size={12} /> : <><Ic.plus width={12} height={12} /> Dodaj</>}</button>}
           </div>
         ))}</div>
       )}

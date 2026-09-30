@@ -41,14 +41,15 @@ export async function clientContext(cid: string, tz: string, client: Client | nu
     if (past.length) {
       const done = past.filter(b => b.status !== 'no_show')
       lines.push(`Wizyty w historii: ${done.length}${past.length === 5 ? '+' : ''}. Ostatnie: ${done.slice(0, 3).map(b => `${spoken(localDate(new Date(b.starts_at), tz))} — ${b.service_name ?? 'wizyta'}${b.resource ? ` (u: ${b.resource.name})` : ''}`).join('; ')}.`)
+      const last = done.find(b => b.resource?.name)?.resource?.name
       const fav = mostCommon(done.map(b => b.resource?.name).filter(Boolean) as string[])
-      if (fav && done.length >= 2) lines.push(`Zwykle przychodzi do: ${fav} — możesz to zaproponować.`)
+      if (last) lines.push(`Ostatnią wizytę miał(a) u osoby: ${last}${fav && fav !== last && done.length >= 3 ? ` (a najczęściej u: ${fav})` : ''}. Gdy umawia podobną usługę, zapytaj naturalnie, czy znowu do tej osoby (np. „Do ${last}, jak ostatnio?” — odmień imię poprawnie), czy tym razem do kogoś innego.`)
       const noShows = past.filter(b => b.status === 'no_show').length
       if (noShows) lines.push(`Uwaga: ${noShows} nieobecność(ci) bez odwołania.`)
     }
     if (next.length) lines.push(`Ma już zaplanowane: ${next.map(b => `${spoken(localDate(new Date(b.starts_at), tz))} o ${localTime(new Date(b.starts_at), tz)} — ${b.service_name ?? 'wizyta'}${b.resource ? ` u ${b.resource.name}` : ''} [id: ${b.id}]`).join('; ')}.`)
     if (client.notes) lines.push(`Notatki o kliencie: ${client.notes.slice(0, 500)}`)
-    if (calls[0]?.summary) lines.push(`Poprzednia rozmowa: ${calls[0].summary.slice(0, 300)}`)
+    if (calls[0]?.summary) lines.push(`Poprzednia rozmowa (${spoken(localDate(new Date(calls[0].started_at), tz))}): ${calls[0].summary.replace(/wirtualn\S*\s*/gi, '').slice(0, 220)}`)
   }
   if (offerLoyalty) {
     const { program, card } = await loyaltyFor(cid, client?.phone ?? null)

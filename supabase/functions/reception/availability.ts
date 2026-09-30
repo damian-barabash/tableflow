@@ -23,7 +23,17 @@ export const DEFAULT_SETTINGS = {
 }
 
 export interface Catalog { settings: Settings; resources: Resource[]; services: Service[]; links: { service_id: string; resource_id: string }[]; hours: Hours[] }
-export async function loadCatalog(cid: string): Promise<Catalog> {
+const catCache = new Map<string, { at: number; cat: Promise<Catalog> }>()
+/** Cached for 20 s — one phone call makes several tool calls in a row; bookings are never cached. */
+export function loadCatalog(cid: string): Promise<Catalog> {
+  const hit = catCache.get(cid)
+  if (hit && Date.now() - hit.at < 20_000) return hit.cat
+  const cat = fetchCatalog(cid)
+  catCache.set(cid, { at: Date.now(), cat })
+  cat.catch(() => catCache.delete(cid))
+  return cat
+}
+async function fetchCatalog(cid: string): Promise<Catalog> {
   const [s, resources, services, links, hours] = await Promise.all([
     rows<Settings>(`rc_settings?company_id=eq.${cid}&select=*`),
     rows<Resource>(`rc_resources?company_id=eq.${cid}&select=*&order=sort.asc,name.asc`),
@@ -113,7 +123,7 @@ export async function findSlots(cat: Catalog, svc: Service, opts: { from: string
           if (t < earliest || t >= horizon) continue
           const clash = busy.some(b => (b.resource_id === null || b.resource_id === r.id) && b.from < t + block && b.to > t)
           if (clash) continue
-          const list = map.get(m) ?? []; list.push(r); map.set(m, list)
+          const list = map.get(m) ?? []; if (!list.includes(r)) list.push(r); map.set(m, list)
         }
       }
     }

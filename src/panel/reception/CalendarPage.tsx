@@ -25,8 +25,9 @@ export function CalendarPage() {
   const [off, setOff] = useState<{ resource_id: string | null; starts_at: string; ends_at: string; reason: string | null }[]>([])
   const [create, setCreate] = useState<{ date: string; time?: string; resource_id?: string } | null>(null)
   const [open, setOpen] = useState<Booking | null>(null)
-  const from = mode === 'week' ? mondayOf(date) : date
-  const days = mode === 'week' ? 7 : 1
+  const mobile = useMedia('(max-width: 760px)')
+  const from = mode === 'week' || mobile ? mondayOf(date) : date
+  const days = mode === 'week' || mobile ? 7 : 1
 
   useEffect(() => { void loadSetup(company.id).then(setS) }, [company.id])
   const load = useCallback(async () => {
@@ -45,6 +46,16 @@ export function CalendarPage() {
   if (!s) return <Loading />
   const label0 = mode === 'week' ? `${dateLabel(from, { day: 'numeric', month: 'short' })} – ${dateLabel(addDays(from, 6), { day: 'numeric', month: 'short', year: 'numeric' })}` : dateLabel(date, { weekday: 'long', day: 'numeric', month: 'long' })
   const label = label0.charAt(0).toUpperCase() + label0.slice(1)
+
+  if (mobile && resources.length && s.services.length) return (
+    <>
+      <MobileCalendar s={s} date={date} focus={focus} bookings={bookings} off={off} grid={q.get('g') === '1'}
+        go={(o) => nav(href('kalendarz', { d: o.d ?? date, ...((o.r ?? focus) ? { r: o.r ?? focus } : {}), ...((o.g ?? q.get('g') === '1') ? { g: '1' } : {}) }), { replace: true })}
+        onNew={(t, r) => setCreate({ date, time: t, resource_id: r ?? (focus || undefined) })} onOpen={setOpen} />
+      <BookingModal setup={s} init={create} onClose={() => setCreate(null)} onSaved={async () => { setCreate(null); await load() }} />
+      <BookingDetail setup={s} booking={open} onClose={() => { setOpen(null); if (q.get('b')) { q.delete('b'); nav({ search: q.toString() }, { replace: true }) } }} onChanged={async () => { await load() }} />
+    </>
+  )
 
   return (
     <>
@@ -79,6 +90,115 @@ export function CalendarPage() {
       <BookingModal setup={s} init={create} onClose={() => setCreate(null)} onSaved={async () => { setCreate(null); await load() }} />
       <BookingDetail setup={s} booking={open} onClose={() => { setOpen(null); if (q.get('b')) { q.delete('b'); nav({ search: q.toString() }, { replace: true }) } }} onChanged={async () => { await load() }} />
     </>
+  )
+}
+
+// ---------------------------------------------------------------- mobile
+function useMedia(q: string) {
+  const [m, setM] = useState(() => typeof window !== 'undefined' && window.matchMedia(q).matches)
+  useEffect(() => { const mq = window.matchMedia(q); const f = () => setM(mq.matches); mq.addEventListener('change', f); return () => mq.removeEventListener('change', f) }, [q])
+  return m
+}
+
+interface MobileProps {
+  s: Setup; date: string; focus: string; bookings: Booking[] | null; grid: boolean
+  off: { resource_id: string | null; starts_at: string; ends_at: string; reason: string | null }[]
+  go: (o: { d?: string; r?: string; g?: boolean }) => void; onNew: (time?: string, resource?: string) => void; onOpen: (b: Booking) => void
+}
+/** Phone calendar: week strip with counts → staff chips → the day as a list (with free gaps) or a one-column grid. */
+function MobileCalendar({ s, date, focus, bookings, off, grid, go, onNew, onOpen }: MobileProps) {
+  const resources = s.resources.filter(r => r.active)
+  const res = new Map(s.resources.map(r => [r.id, r]))
+  const mon = mondayOf(date)
+  const week = Array.from({ length: 7 }, (_, i) => addDays(mon, i))
+  const all = (bookings ?? []).filter(b => b.status !== 'cancelled' && (!focus || b.resource_id === focus))
+  const count = (d: string) => all.filter(b => dayOf(b.starts_at) === d).length
+  const list = all.filter(b => dayOf(b.starts_at) === date)
+  const cancelled = (bookings ?? []).filter(b => b.status === 'cancelled' && dayOf(b.starts_at) === date && (!focus || b.resource_id === focus))
+  const now = minOf(new Date()), isToday = date === today()
+  const touch = useRef<{ x: number; y: number } | null>(null)
+  const swipe = { onTouchStart: (e: React.TouchEvent) => { touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY } },
+    onTouchEnd: (e: React.TouchEvent) => { const t = touch.current; touch.current = null; if (!t) return; const dx = e.changedTouches[0].clientX - t.x, dy = e.changedTouches[0].clientY - t.y; if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.6) go({ d: addDays(date, dx < 0 ? 1 : -1) }) } }
+
+  // free windows of the chosen person/table for the day (only when one is selected — that is what staff asks for)
+  const gaps: [number, number][] = []
+  const who = focus ? res.get(focus) : null
+  if (who) {
+    const wd = weekdayOf(date)
+    const own = s.hours.filter(h => h.resource_id === who.id)
+    const work = (own.length ? own.filter(h => h.weekday === wd) : s.hours.filter(h => !h.resource_id && h.weekday === wd)).map(h => [toMin(h.opens.slice(0, 5)), toMin(h.closes.slice(0, 5))] as [number, number]).sort((a, b) => a[0] - b[0])
+    const busy = [...list.map(b => [minOf(b.starts_at), minOf(b.block_until)] as [number, number]),
+      ...off.filter(o => (o.resource_id === null || o.resource_id === who.id) && dayOf(o.starts_at) <= date && dayOf(new Date(Date.parse(o.ends_at) - 1)) >= date).map(o => [dayOf(o.starts_at) < date ? 0 : minOf(o.starts_at), dayOf(o.ends_at) > date ? 1440 : minOf(o.ends_at)] as [number, number])].sort((a, b) => a[0] - b[0])
+    for (const [o, c] of work) {
+      let cur = isToday ? Math.max(o, Math.ceil(now / 15) * 15) : o
+      for (const [a, b] of busy) { if (b <= cur || a >= c) continue; if (a - cur >= 30) gaps.push([cur, a]); cur = Math.max(cur, b) }
+      if (c - cur >= 30) gaps.push([cur, c])
+    }
+  }
+  type Row = { kind: 'b'; b: Booking; t: number } | { kind: 'gap'; a: number; z: number; t: number } | { kind: 'now'; t: number }
+  const rows: Row[] = [...list.map(b => ({ kind: 'b' as const, b, t: minOf(b.starts_at) })), ...gaps.map(([a, z]) => ({ kind: 'gap' as const, a, z, t: a }))]
+  if (isToday) rows.push({ kind: 'now', t: now })
+  rows.sort((x, y) => x.t - y.t || (x.kind === 'now' ? -1 : 1))
+  const closed = !s.hours.some(h => h.weekday === weekdayOf(date) && (!h.resource_id || !focus || h.resource_id === focus))
+  const title = dateLabel(date, { weekday: 'long', day: 'numeric', month: 'long' })
+
+  return (
+    <div className="rc-m">
+      <div className="rc-m__top">
+        <div className="rc-m__month">
+          <b>{dateLabel(mon, { month: 'long', year: 'numeric' }).replace(/^./, c => c.toUpperCase())}</b>
+          <span>
+            {date !== today() && <button className="btn btn--ghost btn--xs" onClick={() => go({ d: today() })}>Dziś</button>}
+            <button className="ap-icon-btn" onClick={() => go({ d: addDays(date, -7) })} aria-label="Poprzedni tydzień"><Ic.chevronL width={18} height={18} /></button>
+            <button className="ap-icon-btn" onClick={() => go({ d: addDays(date, 7) })} aria-label="Następny tydzień"><Ic.chevronR width={18} height={18} /></button>
+          </span>
+        </div>
+        <div className="rc-m__week">{week.map(d => (
+          <button key={d} className={`rc-m__day ${d === date ? 'is-on' : ''} ${d === today() ? 'is-today' : ''} ${d < today() ? 'is-past' : ''}`} onClick={() => go({ d })}>
+            <small>{WD_SHORT[weekdayOf(d)]}</small><b>{Number(d.slice(8))}</b><i>{count(d) ? <span>{count(d)}</span> : null}</i>
+          </button>
+        ))}</div>
+        <div className="rc-m__chips">
+          <button className={`rc-m__chip ${!focus ? 'is-on' : ''}`} onClick={() => go({ r: '' })}>Wszyscy</button>
+          {resources.map(r => <button key={r.id} className={`rc-m__chip ${focus === r.id ? 'is-on' : ''}`} onClick={() => go({ r: r.id })}><i style={{ background: r.color }} />{r.name}</button>)}
+        </div>
+      </div>
+
+      <div className="rc-m__head">
+        <div><b>{title.replace(/^./, c => c.toUpperCase())}</b><small>{list.length ? `${list.length} ${list.length === 1 ? 'wizyta' : list.length < 5 ? 'wizyty' : 'wizyt'}` : closed ? 'nieczynne' : 'brak wizyt'}{who ? ` · ${who.name}` : ''}</small></div>
+        <Segmented size="sm" value={grid ? 'g' : 'l'} onChange={v => go({ g: v === 'g' })} options={[{ v: 'l', label: 'Lista' }, { v: 'g', label: 'Siatka' }]} />
+      </div>
+
+      <div {...swipe}>
+        {!bookings ? <Loading /> : grid ? (
+          <Grid s={s} from={date} days={1} columns={focus ? resources.filter(r => r.id === focus) : resources} focus="" bookings={bookings} off={off} onEmpty={(_, t, r) => onNew(t, r)} onOpen={onOpen} />
+        ) : !rows.some(r => r.kind !== 'now') ? (
+          <div className="rc-m__empty"><Ic.calendar width={26} height={26} /><b>{closed ? 'Tego dnia nieczynne' : 'Wolny dzień w kalendarzu'}</b><span>{closed ? 'Przesuń palcem, aby zobaczyć inny dzień.' : 'Dodaj wizytę albo poczekaj — rezerwacje z telefonu pojawią się tu same.'}</span>{!closed && <button className="btn btn--primary btn--sm" onClick={() => onNew()}><Ic.plus width={14} height={14} /> Dodaj wizytę</button>}</div>
+        ) : (
+          <div className="rc-m__list">
+            {rows.map((r, i) => r.kind === 'now' ? <div key={`n${i}`} className="rc-now">teraz {hhmm(now)}</div>
+              : r.kind === 'gap' ? (
+                <button key={`g${i}`} className="rc-m__gap" onClick={() => onNew(hhmm(r.a), focus)}>
+                  <span>{hhmm(r.a)}</span><em>Wolne do {hhmm(r.z)} · {Math.round((r.z - r.a) / 15) * 15 >= 60 ? `${Math.floor((r.z - r.a) / 60)} h${(r.z - r.a) % 60 ? ` ${(r.z - r.a) % 60} min` : ''}` : `${r.z - r.a} min`}</em><Ic.plus width={16} height={16} />
+                </button>
+              ) : (() => {
+                const b = r.b, x = b.resource_id ? res.get(b.resource_id) : null, past = minOf(b.ends_at) < now && isToday || date < today()
+                return (
+                  <button key={b.id} className={`rc-m__ev ${past ? 'is-past' : ''} ${b.status === 'pending' ? 'is-pending' : ''}`} onClick={() => onOpen(b)}>
+                    <span className="rc-m__t"><b>{timeOf(b.starts_at)}</b><small>{timeOf(b.ends_at)}</small></span>
+                    <i style={{ background: x?.color ?? '#a39f97' }} />
+                    <div><b>{b.customer_name || 'Klient'}{b.party_size > 1 ? ` · ${b.party_size} os.` : ''}</b><small>{b.service_name}{x && !focus ? ` · ${x.name}` : ''}</small></div>
+                    <span className="rc-m__tags">{b.source === 'phone' && <Badge tone="brand">AI</Badge>}{b.source === 'ai_test' && <Badge>TEST</Badge>}{b.status !== 'confirmed' && <Badge tone={STATUS_LABEL[b.status].tone}>{STATUS_LABEL[b.status].label}</Badge>}</span>
+                  </button>
+                )
+              })())}
+            {cancelled.length > 0 && <p className="ap-muted" style={{ padding: '10px 4px' }}>Odwołane: {cancelled.map(b => `${timeOf(b.starts_at)} ${b.customer_name ?? ''}`).join(', ')}</p>}
+            {!focus && <p className="rc-m__hint">Wybierz osobę u góry, aby zobaczyć jej wolne okienka.</p>}
+          </div>
+        )}
+      </div>
+      <button className="rc-m__fab g" onClick={() => onNew()} aria-label="Nowa rezerwacja"><Ic.plus width={24} height={24} /></button>
+    </div>
   )
 }
 

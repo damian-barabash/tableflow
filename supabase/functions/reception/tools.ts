@@ -113,23 +113,29 @@ export async function runTool(name: string, a: Args, ctx: ToolCtx): Promise<Out>
       const wish = toMin(a.time)
       const first = await findSlots(cat, svc, { from: date, days: 1, party, resourceIds: who ? [who.id] : undefined, forAi: true })
       const day = first[0]
-      const describe = (d: typeof day) => {
-        const times = speakable(d.slots.map(s => s.min), wish, 10)
-        return times.map(m => { const s = d.slots.find(x => x.min === m)!; return who || svc.party_max > 1 ? hhmm(m) : `${hhmm(m)} (${s.resources.map(r => r.name).join(', ')})` })
+      const who3 = (d: typeof day, m: number) => { const x = d.slots.find(v => v.min === m); return who || svc.party_max > 1 || !x ? '' : ` (${[...new Set(x.resources.map(r => r.name))].join(' lub ')})` }
+      const pick = (d: typeof day) => humanPick(d.slots.map(s => s.min), wish).map(m => `${hhmm(m)}${who3(d, m)}`)
+      const range = (d: typeof day) => {
+        // "wolne 9:00–12:00 i 14:00–17:15" — lets her answer "a później?" without reading a list
+        const mins = d.slots.map(x => x.min), parts: string[] = []
+        let a0 = mins[0], prev = mins[0]
+        for (const m of [...mins.slice(1), Infinity]) { if (m - prev > (cat.settings.slot_step_min || 15)) { parts.push(a0 === prev ? hhmm(a0) : `${hhmm(a0)}–${hhmm(prev)}`); a0 = m } prev = m }
+        return parts.slice(0, 4).join(', ')
       }
       const out: Out = { ok: true, usluga: svcLabel(svc), dzien: `${spoken(date)} (${date})`, osob: svc.party_max > 1 ? party : undefined, pracownik: who?.name }
       if (day.slots.length) {
-        out.wolne_godziny = describe(day)
-        out.wszystkich_wolnych = day.slots.length
+        out.propozycje = pick(day)
+        out.wolne_przedzialy = range(day)
+        out.wskazowka = 'Zaproponuj klientowi 2–3 godziny z „propozycje”. Nie czytaj przedziałów, chyba że klient pyta o inną porę.'
         if (wish != null) {
           const exact = day.slots.find(s => s.min === wish)
-          out.prosba = exact ? `Godzina ${hhmm(wish)} jest wolna${who || svc.party_max > 1 ? '' : ` (${exact.resources.map(r => r.name).join(', ')})`}.` : `Godzina ${hhmm(wish)} jest zajęta — zaproponuj najbliższe: ${[...day.slots].sort((x, y) => Math.abs(x.min - wish) - Math.abs(y.min - wish)).slice(0, 3).map(s => hhmm(s.min)).sort().join(', ')}.`
+          out.prosba = exact ? `Godzina ${hhmm(wish)} jest wolna${who3(day, wish)}.` : `Godzina ${hhmm(wish)} jest zajęta — najbliższe wolne: ${[...day.slots].sort((x, y) => Math.abs(x.min - wish) - Math.abs(y.min - wish)).slice(0, 3).map(s => hhmm(s.min)).sort().join(', ')}.`
         }
       } else {
-        out.wolne_godziny = []
+        out.propozycje = []
         out.powod = day.reason
         const next = await findSlots(cat, svc, { from: addDays(date, 1), days: 14, party, resourceIds: who ? [who.id] : undefined, forAi: true })
-        out.najblizsze_dni = next.filter(d => d.slots.length).slice(0, 3).map(d => ({ dzien: `${spoken(d.date)} (${d.date})`, godziny: describe(d).slice(0, 6) }))
+        out.najblizsze_dni = next.filter(d => d.slots.length).slice(0, 2).map(d => ({ dzien: `${spoken(d.date)} (${d.date})`, propozycje: pick(d) }))
       }
       return out
     }
@@ -149,10 +155,16 @@ export async function runTool(name: string, a: Args, ctx: ToolCtx): Promise<Out>
       const [day] = await findSlots(cat, svc, { from: a.date, days: 1, party, resourceIds: who ? [who.id] : undefined, forAi: true })
       const slot = day.slots.find(s => s.min === min)
       if (!slot) return { ok: false, error: `Termin ${hhmm(min)} ${spoken(a.date)} nie jest już wolny.`, wolne_godziny: speakable(day.slots.map(s => s.min), min, 6).map(hhmm) }
-      const res = await pickResource(cat, svc, slot.resources, a.date, party)
-      const client = await clientByPhone(ctx.cid, phone, { source: ctx.channel === 'test' ? 'ai_test' : 'phone', name })
-      if (client && !client.name) await patch('rc_clients', `id=eq.${client.id}`, { name })
-      const callId = await ensureCall(ctx.cid, ctx.conversationId, ctx.agentId, { client_id: client?.id ?? null, outcome: 'booked', channel: ctx.channel, customer_name: name })
+      const loyaltyP = cat.settings.offer_loyalty ? loyaltyFor(ctx.cid, phone) : Promise.resolve({ program: null, card: null })
+      const [res, client, callId] = await Promise.all([
+        pickResource(cat, svc, slot.resources, a.date, party),
+        clientByPhone(ctx.cid, phone, { source: ctx.channel === 'test' ? 'ai_test' : 'phone', name }),
+        ensureCall(ctx.cid, ctx.conversationId, ctx.agentId, { outcome: 'booked', channel: ctx.channel, customer_name: name }),
+      ])
+      void Promise.all([
+        client && !client.name ? patch('rc_clients', `id=eq.${client.id}`, { name }) : null,
+        client && callId ? patch('rc_calls', `id=eq.${callId}`, { client_id: client.id }) : null,
+      ])
       const starts = slot.start, ends = new Date(starts.getTime() + svc.duration_min * 60000), block = new Date(ends.getTime() + svc.buffer_min * 60000)
       const r = await insertRow<{ id: string }>('rc_bookings', {
         company_id: ctx.cid, service_id: svc.id, resource_id: res.id, client_id: client?.id ?? null, call_id: callId, service_name: svc.name,
@@ -170,9 +182,10 @@ export async function runTool(name: string, a: Args, ctx: ToolCtx): Promise<Out>
         czas_trwania: minutesText(svc.duration_min), telefon: prettyPhone(phone), booking_id: r.row?.id,
       }
       if (cat.settings.offer_loyalty) {
-        const { program, card } = await loyaltyFor(ctx.cid, phone)
-        if (program && card) out.karta_lojalnosciowa = `Klient ma już kartę „${program.name}”: ${card.stamps % program.stamps_required}/${program.stamps_required} pieczątek. Przypomnij, żeby pokazał ją ${res.kind === 'staff' ? res.name : 'obsłudze'} przy wizycie — dostanie pieczątkę.`
-        else if (program) out.karta_lojalnosciowa = `Zaproponuj krótko kartę lojalnościową „${program.name}”: ${program.stamps_required} pieczątek = ${program.reward}. Przy wizycie wystarczy poprosić ${res.kind === 'staff' ? res.name : 'obsługę'} o założenie karty (kod QR w lokalu, karta trafia do Apple lub Google Wallet).`
+        const { program, card } = await loyaltyP
+        const who = res.kind === 'staff' ? res.name : 'obsłudze'
+        if (program && card) out.karta_lojalnosciowa = `Klient ma już kartę „${program.name}”: ${card.stamps % program.stamps_required}/${program.stamps_required} pieczątek${card.stamps >= program.stamps_required ? ' i nagrodę do odebrania' : ''}. Przypomnij krótko, żeby pokazał ją ${who} przy wizycie — dostanie pieczątkę.`
+        else if (program) out.karta_lojalnosciowa = `Nie widzisz u siebie karty stałego klienta na ten numer. Powiedz to naturalnie (np. „nie widzę u siebie Pana karty stałego klienta”) i przypomnij, żeby przy wizycie powiedział ${who}, że chce kartę — za ${program.stamps_required} pieczątek jest ${program.reward}. NIE mów, że założyłaś kartę.`
       }
       return out
     }
@@ -245,6 +258,20 @@ export async function runTool(name: string, a: Args, ctx: ToolCtx): Promise<Out>
     }
   }
   return { ok: false, error: 'unknown_tool' }
+}
+
+/** Three times a receptionist would offer: the wish (or nearest) + spread alternatives ≥ 45 min apart,
+ *  or without a wish — morning / midday / afternoon. */
+function humanPick(times: number[], wish: number | null, n = 3): number[] {
+  if (times.length <= n) return times
+  const out: number[] = []
+  const far = (m: number) => out.every(x => Math.abs(x - m) >= 45)
+  const order = wish != null
+    ? [...times].sort((a, b) => Math.abs(a - wish) - Math.abs(b - wish))
+    : [0, .5, .85].map(f => times[Math.min(times.length - 1, Math.round(f * (times.length - 1)))]).concat(times)
+  for (const m of order) { if (out.length >= n) break; if (!out.includes(m) && far(m)) out.push(m) }
+  for (const m of order) { if (out.length >= n) break; if (!out.includes(m)) out.push(m) }
+  return out.sort((a, b) => a - b)
 }
 
 function uuid(v: unknown): string {

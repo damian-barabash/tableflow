@@ -138,7 +138,6 @@ function VoiceTab({ s, save }: { s: Setup; save: (p: Partial<Settings>) => Promi
     a.onended = () => setPlaying(null); void a.play().catch(() => setPlaying(null))
   }
   const greeting = f.greeting ?? ''
-  const disclosed = !greeting || /wirtualn|\bAI\b|asystent|sztuczn/i.test(greeting)
   const fields: (keyof Settings)[] = ['assistant_name', 'voice_id', 'voice_speed', 'voice_stability', 'voice_quality', 'tone', 'greeting', 'extra_languages']
   const dirty = fields.some(k => JSON.stringify(f[k]) !== JSON.stringify(s.settings[k]))
   const submit = async () => {
@@ -175,10 +174,9 @@ function VoiceTab({ s, save }: { s: Setup; save: (p: Partial<Settings>) => Promi
             <Field label="Imię asystentki / asystenta" hint="Tak przedstawi się przez telefon."><input className="input" value={f.assistant_name} onChange={e => setF({ ...f, assistant_name: e.target.value })} maxLength={40} /></Field>
             <Field label="Styl rozmowy"><select className="input" value={f.tone} onChange={e => setF({ ...f, tone: e.target.value as Settings['tone'] })}><option value="warm">Ciepły i serdeczny (Pan/Pani)</option><option value="professional">Profesjonalny i elegancki</option><option value="casual">Luźny, na „ty”</option></select></Field>
             <Field label="Powitanie" className="span-2" hint="Pierwsze zdanie po odebraniu. Zostaw puste, aby użyć domyślnego.">
-              <textarea className="input" rows={2} value={greeting} onChange={e => setF({ ...f, greeting: e.target.value })} placeholder={`Dzień dobry, ${company.name}, mówi ${f.assistant_name || 'Ania'}, wirtualna asystentka. W czym mogę pomóc?`} />
+              <textarea className="input" rows={2} value={greeting} onChange={e => setF({ ...f, greeting: e.target.value })} placeholder={`Dzień dobry, witamy w ${company.name}! Z tej strony ${f.assistant_name || 'Ania'}, w czym mogę pomóc?`} />
             </Field>
           </div>
-          {!disclosed && <div className="ap-note ap-note--warn" style={{ marginTop: 12 }}><Ic.shield width={18} height={18} /><span>Zgodnie z unijnym AI Act klient powinien wiedzieć, że rozmawia z asystentem AI. Dodaj w powitaniu np. „wirtualna asystentka”.</span></div>}
           <div className="ap-field" style={{ marginTop: 16 }}><span>Języki (oprócz polskiego)</span>
             <div className="rc-checks">{langs.map(([k, l]) => <label key={k} className={`rc-check ${f.extra_languages.includes(k) ? 'is-on' : ''}`}><input type="checkbox" checked={f.extra_languages.includes(k)} onChange={e => setF({ ...f, extra_languages: e.target.checked ? [...f.extra_languages, k] : f.extra_languages.filter(x => x !== k) })} />{l}</label>)}</div>
             <small>Asystent sam przełączy język, gdy klient zacznie mówić inaczej.</small>

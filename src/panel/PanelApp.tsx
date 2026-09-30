@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { Mark } from '../brand/Logo'
 import { Gate, isSuper, type Access } from '../app/session'
-import { ConfirmProvider, Empty, Ic, Loading, ToastProvider, Avatar, EASE } from '../app/ui'
+import { ConfirmProvider, Empty, ErrorBoundary, Ic, Loading, ToastProvider, Avatar, EASE } from '../app/ui'
 import { get, walletStatus } from '../app/api'
 import { ProfileModal } from '../app/profile'
 import { Locked } from './Locked'
@@ -186,7 +186,7 @@ function PanelShell({ access, logout, reloadAccess }: { access: Access; logout: 
           <div className="ap-main__in">
             {impersonating && <div className="ap-imp"><Ic.shield width={16} height={16} /><span>Podgląd jako administrator: <b>{company.name}</b> — widzisz i edytujesz wszystko tak jak klient.</span><Link to={`/admin/firmy?id=${company.id}`}>Wróć do administracji</Link></div>}
             <AnimatePresence mode="wait">
-              <motion.div key={tab + company.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: .3, ease: EASE }}>{page}</motion.div>
+              <motion.div key={tab + company.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: .3, ease: EASE }}><ErrorBoundary resetKey={tab + company.id + loc.search}>{page}</ErrorBoundary></motion.div>
             </AnimatePresence>
           </div>
         </main>

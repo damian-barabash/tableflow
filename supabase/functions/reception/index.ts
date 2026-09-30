@@ -65,10 +65,8 @@ async function importNumber(phone: string, label: string, sid?: string | null, t
   return r.phone_number_id
 }
 
-async function adminStatus() {
-  const r = await db('/rest/v1/rpc/admin_reception', { method: 'POST', body: '{}' })
-  return r.body
-}
+/** The admin page reloads its own data (admin_reception needs the admin's JWT, not the service role). */
+async function adminStatus() { return null }
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS })
@@ -83,10 +81,10 @@ Deno.serve(async (req) => {
       const body = await req.json().catch(() => ({}))
       const cid = await companyByAgent(body.agent_id)
       if (!cid) return json({ ok: false, error: 'Asystent nie jest przypisany do firmy.' })
-      const comp = await one<{ status: string }>(`companies?id=eq.${cid}&select=status`)
+      const [comp] = await Promise.all([one<{ status: string }>(`companies?id=eq.${cid}&select=status`), loadCatalog(cid)])   // catalog warms the cache for the tool
       if (comp?.status === 'paused') return json({ ok: false, error: 'Rezerwacje są chwilowo wstrzymane — zostaw wiadomość dla zespołu.' })
       const phone = normPhone(body.caller_phone)
-      const test = !!(await one(`rc_calls?conversation_id=eq.${encodeURIComponent(body.conversation_id ?? '')}&channel=eq.test&select=id`)) || String(body.channel ?? '') === 'test'
+      const test = String(body.channel ?? '') === 'test'
       const out = await runTool(route[1], body, { cid, agentId: body.agent_id, conversationId: body.conversation_id ?? null, callerPhone: phone, channel: test ? 'test' : 'phone' })
       return json(out)
     }

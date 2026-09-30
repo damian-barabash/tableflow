@@ -5,9 +5,14 @@ import { clientByPhone } from './memory.ts'
 
 const OUTCOMES = ['booked', 'rescheduled', 'cancelled', 'info', 'callback', 'other']
 
+const agentCache = new Map<string, { at: number; cid: string }>()
 export async function companyByAgent(agentId: string | null | undefined): Promise<string | null> {
   if (!agentId) return null
-  return (await one<{ company_id: string }>(`rc_agents?agent_id=eq.${encodeURIComponent(agentId)}&select=company_id`))?.company_id ?? null
+  const hit = agentCache.get(agentId)
+  if (hit && Date.now() - hit.at < 300_000) return hit.cid
+  const cid = (await one<{ company_id: string }>(`rc_agents?agent_id=eq.${encodeURIComponent(agentId)}&select=company_id`))?.company_id ?? null
+  if (cid) agentCache.set(agentId, { at: Date.now(), cid })
+  return cid
 }
 
 /** Store / update one conversation (the ElevenLabs "GET conversation" shape, also sent by the post-call webhook). */
