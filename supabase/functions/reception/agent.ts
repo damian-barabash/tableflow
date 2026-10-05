@@ -144,6 +144,7 @@ export async function buildKnowledge(c: CompanyRow, cat: Catalog): Promise<strin
   const faq = kb.filter(k => k.kind === 'faq'), info = kb.filter(k => k.kind !== 'faq')
   if (info.length) L.push(`## Informacje\n${info.map(k => `### ${k.question}\n${k.answer}`).join('\n')}`)
   if (faq.length) L.push(`## Częste pytania\n${faq.map(k => `P: ${k.question}\nO: ${k.answer}`).join('\n\n')}`)
+  L.push('## Czego tu nie ma\nTo jest cała wiedza o firmie. Jeśli klient pyta o coś, czego tu nie ma (np. parking, dojazd, płatność kartą, święta, promocje) — nie wiesz tego: nie zgaduj, powiedz wprost, że nie masz tej informacji, i zaproponuj przekazanie pytania zespołowi.')
   return L.filter(Boolean).join('\n\n')
 }
 
@@ -153,21 +154,23 @@ const TONE: Record<string, string> = {
   professional: 'Uprzejma, rzeczowa i elegancka. Zwracasz się per Pan/Pani, mówisz konkretnie i spokojnie.',
   casual: 'Luźna i sympatyczna, jak w modnym barberze czy kawiarni. Mówisz na „ty”, chyba że klient wyraźnie woli formę Pan/Pani.',
 }
-export function buildPrompt(c: CompanyRow, cat: Catalog, hasTransfer: boolean, expressive: boolean): string {
+export function buildPrompt(c: CompanyRow, cat: Catalog, hasTransfer: boolean): string {
   const s = cat.settings
   return `# Kim jesteś
 Jesteś ${s.assistant_name} — pracujesz na recepcji w „${c.name}”${c.industry ? ` (${c.industry})` : ''}${c.city ? `, ${c.city}` : ''}. Odbierasz telefony od klientów: umawiasz, przekładasz i odwołujesz wizyty, odpowiadasz na pytania o ofertę, ceny, godziny i dojazd. Znasz to miejsce i ludzi, którzy tu pracują. ${TONE[s.tone] ?? TONE.warm}
 
 # Jak mówisz — jak prawdziwa osoba przez telefon
 - Krótko: jedno, najwyżej dwa zdania, potem oddajesz głos. Zero monologów, zero wyliczanek.
-- Mówisz potocznie i naturalnie, NIE jak lektor. Czasem się zawahaj albo „pomyśl na głos”: „yyy”, „eee”, „no”, „hmm”, „znaczy”, „moment…”, „o, jest”, „dobra”, „no to…” — mniej więcej w co drugiej, trzeciej wypowiedzi, szczególnie gdy coś sprawdzasz, liczysz albo się zastanawiasz. Drobna autopoprawka jest OK („na dziesiątą… znaczy, na wpół do jedenastej”). Nie wstawiaj tego mechanicznie w każde zdanie.
-- Potwierdzaj krótko i różnie: „mhm”, „jasne”, „dobrze”, „okej”, „aha, rozumiem”, „świetnie”. Nie powtarzaj w kółko tych samych formułek.
-- Proponujesz najwyżej dwie, trzy godziny naraz: „Mam dziewiątą, wpół do jedenastej albo dwunastą — co Panu pasuje?”. Nigdy nie czytaj całej listy.
-- Daty i godziny mów naturalnie („jutro o wpół do trzeciej”, „w czwartek, drugiego”), ceny słownie („osiemdziesiąt złotych”). Nigdy nie czytaj formatów typu 2026-10-02, 14:30, identyfikatorów, nazw pól ani nawiasów.
+- Mówisz potocznie i naturalnie, NIE jak lektor i nie jak infolinia. Czasem się zawahaj albo „pomyśl na głos”: „yyy”, „no”, „hmm”, „znaczy”, „o, jest”, „dobra”, „no to…” — mniej więcej w co trzeciej wypowiedzi, głównie gdy coś sprawdzasz albo się zastanawiasz. Nie wstawiaj tego mechanicznie.
+- Każdą wypowiedź zaczynaj inaczej. NIE zaczynaj co chwilę od „Dobrze, rozumiem”, „Rozumiem”, „Świetnie” — często po prostu od razu odpowiedz albo zadaj kolejne pytanie.
+- Nie powtarzaj po kliencie wszystkiego, co powiedział. Usługę, dzień i godzinę zbierz w całość tylko RAZ — tuż przed zapisaniem wizyty.
+- Trzymaj jeden, spokojny, ciepły ton przez całą rozmowę — bez nagłego entuzjazmu, wykrzykników i śmiechu.
+- Proponujesz najwyżej dwie, trzy godziny naraz: „Mam dziewiątą, dziesiątą trzydzieści albo dwunastą — co Panu pasuje?”. Nigdy nie czytaj całej listy.
+- GODZINY mówisz zawsze jako godzina i minuty, w zegarze dwudziestoczterogodzinnym: „dziewiąta czterdzieści pięć”, „trzynasta trzydzieści”, „szesnasta piętnaście”, pełne — „dziewiąta”, „siedemnasta”. NIGDY nie mów „kwadrans”, „wpół do”, „za piętnaście”, „za kwadrans”, „druga po południu”. Narzędzia podają gotowe brzmienie w cudzysłowie — użyj go (odmień tylko końcówkę: „o trzynastej czterdzieści pięć”, „na dziewiątą trzydzieści”). Klient może mówić po swojemu („kwadrans po drugiej”) — rozumiesz to, ale sama odpowiadasz „czternasta piętnaście”.
+- Daty mów naturalnie („jutro”, „w czwartek, ósmego”), ceny słownie („osiemdziesiąt złotych”). Nigdy nie czytaj formatów typu 2026-10-02, 14:30, identyfikatorów, nazw pól ani nawiasów.
 - Numer telefonu powtarzaj grupami: „sześćset osiemdziesiąt, trzysta siedemdziesiąt sześć, sześćset osiemdziesiąt jeden”.
-- Mówisz WYŁĄCZNIE po polsku (albo w języku klienta, gdy się przełączy). Nigdy nie wtrącaj angielskich słów, nie mów, co zamierzasz zrobić „w systemie”, nie opisuj swoich myśli ani planu, nie wymieniaj nazw narzędzi. Każde Twoje słowo jest czytane klientowi na głos.${expressive ? `
-- Możesz rzadko (najwyżej raz na kilka wypowiedzi) użyć znacznika dźwięku w nawiasie kwadratowym — tylko z tej listy, po angielsku: [laughs], [chuckles], [sighs], [thoughtful], [warmly]. Żadnych innych znaczników, nigdy po polsku.` : `
-- Nie używaj żadnych nawiasów ani znaczników.`}
+- Mówisz WYŁĄCZNIE po polsku (albo w języku klienta, gdy się przełączy). Nigdy nie wtrącaj angielskich słów, nie mów, co zamierzasz zrobić „w systemie”, nie opisuj swoich myśli ani planu, nie wymieniaj nazw narzędzi. Każde Twoje słowo jest czytane klientowi na głos.
+- Nie używaj żadnych nawiasów, znaczników ani opisów dźwięków (typu [śmiech], [thoughtful]) — tylko zwykły tekst do powiedzenia.
 
 # Słuchanie i przerywanie
 - Gdy klient mówi dłużej — pozwól mu skończyć, wyłap wszystko, co ważne, i odpowiedz na całość (np. usługa + dzień + osoba w jednym zdaniu klienta).
@@ -177,7 +180,9 @@ Jesteś ${s.assistant_name} — pracujesz na recepcji w „${c.name}”${c.indus
 - Mów w języku klienta: domyślnie po polsku; gdy ktoś mówi po angielsku, ukraińsku lub inaczej — przełącz się (language_detection).
 
 # Kontekst tej rozmowy
-- Teraz jest: {{system__time}}. Z tej daty wyliczaj „dziś”, „jutro”, „w piątek”, „za tydzień”.
+- Kalendarz (strefa czasowa firmy). Dzień tygodnia i datę ZAWSZE odczytuj stąd, nigdy nie licz w pamięci — „w przyszły czwartek” to najbliższy czwartek z tej listy (a jeśli dziś jest czwartek albo klient mówi „nie w ten, w następny” — kolejny):
+{{calendar}}
+- Jeśli narzędzie zwróci inny dzień tygodnia, niż powiedział klient — to Ty pomyliłaś datę: popraw się i sprawdź właściwy dzień.
 - Numer dzwoniącego: {{caller_phone}}
 - Co wiemy o dzwoniącym:
 {{client_context}}
@@ -185,18 +190,27 @@ Jesteś ${s.assistant_name} — pracujesz na recepcji w „${c.name}”${c.indus
 # Pamięć o klientach
 - Stałego klienta witasz jak znajomego: używasz imienia („Pani Anno”, „Panie Marku”, albo samo imię przy „ty”), możesz nawiązać do ostatniej wizyty.
 - Jeśli klient był już u konkretnej osoby, a umawia się na podobną usługę — zapytaj: „Do Kasi, jak ostatnio, czy tym razem do kogoś innego?”.
-- Jeśli imię klienta jest w kontekście — znasz je, NIE pytaj o nie drugi raz (co najwyżej upewnij się: „na Pana Dmitrija, tak?”).
+- Jeśli imię klienta jest w kontekście — znasz je, NIE pytaj o nie drugi raz (co najwyżej upewnij się: „na Pana Dmitrija, tak?”). Imiona odmieniaj poprawnie; gdy nie masz pewności co do wołacza, użyj samego „proszę Pana” / „proszę Pani”.
 - Nowego klienta zapytaj o imię w naturalnym momencie. Narzędzie save_client wywołuj dopiero, gdy naprawdę usłyszysz imię albo coś wartego zapamiętania (preferencja, alergia, okazja) — nigdy z wymyślonymi danymi.
 - Numeru dzwoniącego nie trzeba dyktować — jest znany. Pytaj o numer tylko, gdy jest nieznany albo klient chce podać inny, i wtedy powtórz go do potwierdzenia.
 
 # Jak umawiasz wizytę
-1. Ustal usługę (pomóż dobrać, jeśli klient nie wie), dzień, ewentualnie osobę i liczbę osób.
+1. Ustal usługę (pomóż dobrać, jeśli klient nie wie), dzień, ewentualnie osobę i liczbę osób. Słuchaj szczegółów: gdy mowa o dziecku, synu, córce — to usługa dziecięca (jeśli jest w ofercie), a nie „dwóch panów”.
 2. ZAWSZE sprawdź termin narzędziem check_availability — nigdy nie zgaduj i nie obiecuj godziny bez sprawdzenia. Z wyniku proponuj godziny z pola „propozycje”.
-3. Gdy klient wybierze — potwierdź krótko jednym zdaniem i upewnij się, że znasz imię.
-4. Zapisz przez book_appointment, potem podsumuj jednym, dwoma zdaniami (dzień, godzina, u kogo).
-5. Jeśli wynik zawiera „karta_lojalnosciowa” — powiedz o tym raz, krótko i naturalnie, dokładnie w tym sensie, co tam napisano. Nigdy nie mów, że założyłaś kartę — kartę zakłada się tylko na miejscu.
+3. Gdy klient wybierze godzinę: jeśli imię klienta jest w kontekście — NIE pytaj o nie, od razu zapisuj. Jeśli go nie znasz — zapytaj. Jeśli numer dzwoniącego to „nieznany” — poproś wprost o numer telefonu („Poproszę jeszcze numer telefonu”) i powtórz go; nie pytaj wtedy, czy „numer, z którego Pan dzwoni” jest dobry. Dopiero potem zapisuj.
+4. Zapisz przez book_appointment. Dopiero PO wyniku narzędzia powiedz, że wizyta jest umówiona — jednym, dwoma zdaniami (dzień, godzina, u kogo). Nigdy nie mów „zarezerwowałam”, zanim narzędzie potwierdzi.
+5. Jeśli wynik zawiera „karta_lojalnosciowa” — wspomnij o tym raz, jednym krótkim zdaniem. Nigdy nie mów, że założyłaś kartę — kartę zakłada się tylko na miejscu.
 6. Zapytaj, czy możesz jeszcze w czymś pomóc, pożegnaj się ciepło i zakończ połączenie (end_call).
 Przełożenie lub odwołanie: najpierw find_bookings, upewnij się, o którą wizytę chodzi, potem reschedule_booking albo cancel_booking.
+
+Sprawdzanie w kalendarzu:
+- Gdy musisz coś sprawdzić albo zapisać — powiedz najwyżej dwa, trzy słowa („już patrzę”, „sekundkę”, „moment”) i W TEJ SAMEJ CHWILI wywołaj narzędzie. Nigdy nie mów „już patrzę”, „sprawdzam” ani „moment”, jeśli w tej samej wypowiedzi nie wywołujesz narzędzia (np. gdy dopiero dopytujesz o dzień) — klient czekałby w ciszy.
+- Po wyniku od razu podaj konkret („Mam dziewiątą albo trzynastą czterdzieści pięć”). Nie powtarzaj, że sprawdzasz, i nie streszczaj, czego szukałaś.
+- Pytanie o coś, czego NIE MA w wiedzy firmy (np. parking, dojazd, święta, płatność kartą)? Nie zgaduj i nie odpowiadaj „na logikę” — powiedz od razu wprost, że tego nie wiesz, i zaproponuj, że przekażesz pytanie zespołowi (leave_message). Bez „sprawdzę”.
+
+Dwie osoby albo dwie usługi:
+- Dwie osoby przychodzą razem (np. rodzic z dzieckiem, para): JEDNO wywołanie check_availability z „service” dla pierwszej osoby i „second_service” dla drugiej — dostaniesz godziny pasujące obojgu (równocześnie albo jedna po drugiej). Zapis tak samo: jedno book_appointment z „second_service”. Nie sprawdzaj dwóch usług osobno i nie łącz wyników sama.
+- Jedna osoba chce dwie rzeczy naraz (np. strzyżenie i broda): poszukaj w ofercie usługi łączonej i umów ją. Jeśli takiej nie ma — umów dwie wizyty jedna po drugiej. Nie mów, że umówiłaś coś, czego nie zapisałaś.
 
 # Wiedza o firmie
 Ofertę, ceny, czas usług, zespół, godziny otwarcia, zasady i odpowiedzi na częste pytania masz w dokumencie wiedzy firmy. Odpowiadasz tylko na jego podstawie i na podstawie wyników narzędzi. Czego nie wiesz — nie zmyślasz: mówisz, że dopytasz, i zostawiasz wiadomość (leave_message).
@@ -205,6 +219,7 @@ Ofertę, ceny, czas usług, zespół, godziny otwarcia, zasady i odpowiedzi na c
 - Nie przedstawiasz się jako program ani sztuczna inteligencja — jesteś po prostu ${s.assistant_name} z recepcji. Jeśli jednak ktoś wprost i na poważnie zapyta, czy rozmawia z człowiekiem, nie kłam: powiedz lekko, że jesteś asystentką głosową „${c.name}”, i od razu wróć do sprawy albo zaproponuj kontakt z zespołem.
 - Nie podajesz danych innych klientów ani szczegółów grafiku poza wolnymi terminami.
 - Nie obiecujesz rabatów ani wyjątków, których nie ma w wiedzy firmy. Bez porad medycznych, prawnych i finansowych.
+- Nie obiecujesz SMS-ów ani e-maili z potwierdzeniem czy przypomnieniem — nie wysyłasz ich. Jeśli klient o to prosi, powiedz, że wizyta jest zapisana w kalendarzu, i w razie potrzeby dopisz prośbę w uwagach do wizyty. Nie zbieraj adresu e-mail w tym celu.
 - Rozmowy nie na temat grzecznie sprowadzasz do spraw firmy. Przy agresji lub spamie — uprzejmie kończysz.
 - Gdy narzędzie zwróci błąd — nie czytasz go, tylko mówisz po ludzku, co się stało, i proponujesz rozwiązanie.${hasTransfer ? '\n- Gdy klient wyraźnie chce rozmawiać z kimś z zespołu albo sprawa wymaga decyzji — przełącz połączenie (transfer_to_number). Jeśli się nie da — zostaw wiadomość.' : '\n- Gdy klient chce rozmawiać z kimś z zespołu — zostaw wiadomość z prośbą o oddzwonienie (leave_message) i powiedz, że ktoś oddzwoni.'}${s.after_hours_message ? `\n- Poza godzinami otwarcia: ${s.after_hours_message}` : ''}${s.instructions ? `\n\n# Dodatkowe wskazówki właściciela\n${s.instructions}` : ''}`
 }
@@ -223,13 +238,28 @@ const LANG_FIRST: Record<string, (c: string, n: string) => string> = {
 }
 
 // ---------------------------------------------------------------- deploy
-async function ensureVoice(voiceId: string) {
-  try { await el(`/v1/voices/${voiceId}`); return } catch { /* not in this account */ }
+interface VoiceInfo { name: string; category: string; high_quality_base_model_ids?: string[] }
+async function ensureVoice(voiceId: string): Promise<VoiceInfo | null> {
+  try { return await el<VoiceInfo>(`/v1/voices/${voiceId}`) } catch { /* not in this account */ }
   const v = await one<{ public_owner_id: string | null; name: string }>(`rc_voices?voice_id=eq.${voiceId}&select=public_owner_id,name`)
   if (v?.public_owner_id) await elJson(`/v1/voices/add/${v.public_owner_id}/${voiceId}`, 'POST', { new_name: v.name }).catch(() => {})
+  return el<VoiceInfo>(`/v1/voices/${voiceId}`).catch(() => null)
 }
 
-export async function syncCompany(cid: string): Promise<{ agent_id: string; warnings: string[] }> {
+/** Professional voice clones keep their timbre only on the models they were trained for — on v3 the voice
+ *  drifts and can sound like another person mid-call. Pick the best model the voice really supports. */
+const CLONE_MODELS = ['eleven_v4_turbo', 'eleven_turbo_v2_5', 'eleven_flash_v2_5']
+export function ttsModels(voice: VoiceInfo | null, natural: boolean, preferred: string): string[] {
+  if (!natural) return ['eleven_flash_v2_5']
+  const trained = voice?.high_quality_base_model_ids ?? []
+  if (voice?.category === 'professional' && !trained.includes(preferred)) {
+    const fit = CLONE_MODELS.filter(m => trained.includes(m))
+    return fit.length ? fit : ['eleven_turbo_v2_5', 'eleven_flash_v2_5']
+  }
+  return [...new Set([preferred, 'eleven_turbo_v2_5', 'eleven_flash_v2_5'])]
+}
+
+export async function syncCompany(cid: string): Promise<{ agent_id: string; warnings: string[]; tts_model: string }> {
   const p = await platform()
   if (p.el_status !== 'ok') throw new Error('Konto ElevenLabs nie jest skonfigurowane — administrator musi dodać klucz API.')
   if (TOOL_DEFS.some(d => !p.tools?.[d.name])) await setupAccount()
@@ -249,7 +279,7 @@ export async function syncCompany(cid: string): Promise<{ agent_id: string; warn
 
     // 2. voice (library voices are added to the account on first use)
     const voiceId = s.voice_id || (await one<{ voice_id: string }>('rc_voices?enabled=eq.true&select=voice_id&order=sort.asc'))?.voice_id || undefined
-    if (voiceId) await ensureVoice(voiceId)
+    const voice = voiceId ? await ensureVoice(voiceId) : null
 
     const keywords = [...new Set([c.name, ...cat.resources.filter(r => r.active).map(r => r.name), ...cat.services.filter(x => x.active).map(x => x.name)].flatMap(x => x.split(/[\s,/]+/)).filter(w => w.length > 2))].slice(0, 50)
     const transfer = s.transfer_phone?.replace(/[^\d+]/g, '')
@@ -262,9 +292,9 @@ export async function syncCompany(cid: string): Promise<{ agent_id: string; warn
           language: s.language || 'pl',
           first_message: s.greeting?.trim() || defaultGreeting(c, s),
           disable_first_message_interruptions: false,
-          dynamic_variables: { dynamic_variable_placeholders: { caller_phone: '', client_context: 'Brak danych o kliencie.', client_name: '', channel: 'phone' } },
+          dynamic_variables: { dynamic_variable_placeholders: { caller_phone: '', client_context: 'Brak danych o kliencie.', client_name: '', channel: 'phone', calendar: 'Teraz: {{system__time}}' } },
           prompt: {
-            prompt: buildPrompt(c, cat, !!transfer, ttsModel.startsWith('eleven_v3')),
+            prompt: buildPrompt(c, cat, !!transfer),
             llm: plat.default_llm || 'gemini-2.5-flash',
             temperature: 0.55,
             thinking_budget: 0,
@@ -279,11 +309,9 @@ export async function syncCompany(cid: string): Promise<{ agent_id: string; warn
           },
         },
         tts: {
-          model_id: ttsModel, ...(voiceId ? { voice_id: voiceId } : {}), stability: Number(s.voice_stability ?? 0.45), similarity_boost: 0.8, speed: Number(s.voice_speed ?? 1),
-          ...(ttsModel.startsWith('eleven_v3') ? { expressive_mode: true, suggested_audio_tags: [
-            { tag: 'laughs', description: 'krótki, naturalny śmiech, gdy klient żartuje' }, { tag: 'chuckles', description: 'lekki uśmiech w głosie' },
-            { tag: 'thoughtful', description: 'gdy się zastanawiasz albo sprawdzasz' }, { tag: 'warmly', description: 'ciepło, przy powitaniu stałego klienta' }, { tag: 'sighs', description: 'rzadko, lekkie westchnienie' },
-          ] } : {}),
+          // one steady voice: no audio tags (they bend the tone for a few words and sound synthetic), stability never below 0.5
+          model_id: ttsModel, ...(voiceId ? { voice_id: voiceId } : {}), stability: Math.max(0.5, Number(s.voice_stability ?? 0.6)), similarity_boost: 0.8, speed: Number(s.voice_speed ?? 1),
+          expressive_mode: false, suggested_audio_tags: [],
         },
         asr: { quality: 'high', keywords },
         // phone-like turn taking: background noise / "mhm" do not cut her off, real speech does
@@ -291,7 +319,8 @@ export async function syncCompany(cid: string): Promise<{ agent_id: string; warn
           turn_timeout: 8, turn_eagerness: 'normal', speculative_turn: true, spelling_patience: 'auto',
           interruption_ignore_terms: ['mhm', 'mhmm', 'aha', 'yhm', 'ehe', 'tak', 'no', 'okej', 'ok', 'dobrze', 'jasne', 'super', 'rozumiem', 'no tak', 'aha, dobrze'],
           interruption_ignore_term_languages: ['pl'], merge_with_default_ignore_terms: true,
-          soft_timeout_config: { timeout_seconds: 1.8, message: 'Yyy…', additional_soft_timeout_messages: ['Mhm, sekundkę…', 'Moment…', 'Już patrzę…'], use_llm_generated_message: false, randomize_fillers: true, max_soft_timeouts_per_generation: 2 },
+          // a filler only when she is really slow, and only once — each filler is a separate TTS take
+          soft_timeout_config: { timeout_seconds: 2.5, message: 'Momencik…', additional_soft_timeout_messages: [], use_llm_generated_message: false, randomize_fillers: false, max_soft_timeouts_per_generation: 1, disable_until_first_user_message: true },
         },
         vad: { background_voice_detection: true },
         conversation: { max_duration_seconds: 900, client_events: ['conversation_initiation_metadata', 'ping', 'audio', 'interruption', 'user_transcript', 'agent_response', 'agent_response_correction', 'agent_tool_request', 'agent_tool_response', 'vad_score'] },
@@ -310,10 +339,11 @@ export async function syncCompany(cid: string): Promise<{ agent_id: string; warn
       },
     })
 
-    const natural = s.voice_quality !== 'fast'
-    const models = natural ? [plat.default_tts_model || 'eleven_v3_conversational', 'eleven_flash_v2_5'] : ['eleven_flash_v2_5']
+    const preferred = plat.default_tts_model || 'eleven_v3_conversational'
+    const models = ttsModels(voice, s.voice_quality !== 'fast', preferred)
+    if (s.voice_quality !== 'fast' && models[0] !== preferred) warnings.push(`Głos „${voice?.name ?? voiceId}” to profesjonalny klon — na modelu ${preferred} zmieniałby barwę w trakcie rozmowy, dlatego użyto ${models[0]}.`)
     let agentId = sameAccount ? state?.agent_id ?? null : null
-    let lastErr: unknown = null
+    let lastErr: unknown = null, ttsUsed = models[0]
     for (const m of [...new Set(models)]) {
       try {
         if (agentId) {
@@ -322,6 +352,7 @@ export async function syncCompany(cid: string): Promise<{ agent_id: string; warn
         }
         if (!agentId) agentId = (await elJson<{ agent_id: string }>('/v1/convai/agents/create', 'POST', build(m))).agent_id
         if (m !== models[0]) warnings.push(`Model głosu ${models[0]} niedostępny na tym koncie — użyto ${m}.`)
+        ttsUsed = m
         lastErr = null
         break
       } catch (e) { lastErr = e; if (!(e instanceof ElError && /model|tts|v3/i.test(JSON.stringify(e.detail)))) break }
@@ -333,7 +364,7 @@ export async function syncCompany(cid: string): Promise<{ agent_id: string; warn
 
     // 3. numbers of this company point to this agent; auto-assign a free number if it has none
     await linkNumbers(cid, agentId!, c.modules.includes('reception'))
-    return { agent_id: agentId!, warnings }
+    return { agent_id: agentId!, warnings, tts_model: ttsUsed }
   } catch (e) {
     const msg = elMessage(e)
     await db('/rest/v1/rc_agents?on_conflict=company_id', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ company_id: cid, sync_error: msg }) })

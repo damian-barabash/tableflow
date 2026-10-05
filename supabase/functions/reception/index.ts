@@ -12,7 +12,7 @@ import { hookToken, linkNumbers, platform, setupAccount, syncCompany } from './a
 import { companyByAgent, ingest, ingestFailure, pullCalls } from './calls.ts'
 import { clientByPhone, clientContext } from './memory.ts'
 import { findSlots, loadCatalog } from './availability.ts'
-import { hhmm, isDate } from './time.ts'
+import { calendarText, hhmm, isDate } from './time.ts'
 
 async function tokenOk(url: URL) {
   const k = url.searchParams.get('k') ?? ''
@@ -37,6 +37,7 @@ async function dynamicVars(cid: string, phone: string | null, channel: 'phone' |
     caller_phone: phone ? `+${phone}` : 'nieznany',
     client_name: client?.name ?? '',
     client_context: await clientContext(cid, cat.settings.timezone, client, cat.settings.offer_loyalty),
+    calendar: calendarText(new Date(), cat.settings.timezone),
     channel,
   }
 }
@@ -94,7 +95,7 @@ Deno.serve(async (req) => {
       let cid = await companyByAgent(body.agent_id)
       if (!cid && body.called_number) cid = (await one<{ company_id: string }>(`rc_numbers?phone_number=eq.${encodeURIComponent('+' + (normPhone(body.called_number) ?? ''))}&select=company_id`))?.company_id ?? null
       const phone = normPhone(body.caller_id)
-      const vars = cid ? await dynamicVars(cid, phone, 'phone') : { caller_phone: phone ? `+${phone}` : 'nieznany', client_name: '', client_context: 'Brak danych o kliencie.', channel: 'phone' }
+      const vars = cid ? await dynamicVars(cid, phone, 'phone') : { caller_phone: phone ? `+${phone}` : 'nieznany', client_name: '', client_context: 'Brak danych o kliencie.', calendar: calendarText(new Date(), 'Europe/Warsaw'), channel: 'phone' }
       return json({ type: 'conversation_initiation_client_data', dynamic_variables: vars })
     }
     if (route[0] === 'hook') {

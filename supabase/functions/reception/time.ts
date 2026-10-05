@@ -65,3 +65,24 @@ export function spoken(date: string): string {
   const [, m, d] = date.split('-').map(Number)
   return `${WEEKDAYS[weekday(date)]}, ${d} ${MONTHS[m - 1]}`
 }
+
+const ONES = ['zero', 'jeden', 'dwa', 'trzy', 'cztery', 'pięć', 'sześć', 'siedem', 'osiem', 'dziewięć', 'dziesięć', 'jedenaście', 'dwanaście', 'trzynaście', 'czternaście', 'piętnaście', 'szesnaście', 'siedemnaście', 'osiemnaście', 'dziewiętnaście']
+const TENS = ['', '', 'dwadzieścia', 'trzydzieści', 'czterdzieści', 'pięćdziesiąt']
+const HOURS = ['zero', 'pierwsza', 'druga', 'trzecia', 'czwarta', 'piąta', 'szósta', 'siódma', 'ósma', 'dziewiąta', 'dziesiąta', 'jedenasta', 'dwunasta', 'trzynasta', 'czternasta', 'piętnasta', 'szesnasta', 'siedemnasta', 'osiemnasta', 'dziewiętnasta', 'dwudziesta', 'dwudziesta pierwsza', 'dwudziesta druga', 'dwudziesta trzecia']
+/** How a receptionist reads a clock time out loud: 585 → "dziewiąta czterdzieści pięć", 780 → "trzynasta" (never "kwadrans", "wpół do"). */
+export function spokenTime(min: number): string {
+  const h = Math.floor(min / 60) % 24, m = min % 60
+  if (!m) return HOURS[h]
+  const mm = m < 10 ? `zero ${ONES[m]}` : m < 20 ? ONES[m] : `${TENS[Math.floor(m / 10)]}${m % 10 ? ` ${ONES[m % 10]}` : ''}`
+  return `${HOURS[h]} ${mm}`
+}
+/** "13:45" → `13:45 („trzynasta czterdzieści pięć”)` — the form tools hand to the agent. */
+export const sayTime = (min: number) => `${hhmm(min)} („${spokenTime(min)}”)`
+
+/** The next days as a lookup table for the prompt — the LLM must not do weekday arithmetic in its head. */
+export function calendarText(now: Date, tz: string, days = 15): string {
+  const today = localDate(now, tz), p = parts(now, tz)
+  const label = (i: number) => i === 0 ? 'dziś' : i === 1 ? 'jutro' : i === 2 ? 'pojutrze' : ''
+  const lines = Array.from({ length: days }, (_, i) => { const d = addDays(today, i); return `${d} — ${spoken(d)}${label(i) ? ` (${label(i)})` : ''}` })
+  return `Teraz: ${spoken(today)}, godzina ${pad(p.h)}:${pad(p.mi)}.\n${lines.join('\n')}`
+}

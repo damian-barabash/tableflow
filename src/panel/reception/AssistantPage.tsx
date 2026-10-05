@@ -166,7 +166,7 @@ function VoiceTab({ s, save }: { s: Setup; save: (p: Partial<Settings>) => Promi
               <Segmented value={f.voice_quality} onChange={v => setF({ ...f, voice_quality: v })} options={[{ v: 'natural', label: 'Naturalna' }, { v: 'fast', label: 'Szybka' }]} />
             </Field>
             <Field label="Tempo mowy"><div className="rc-range"><input type="range" min={0.8} max={1.15} step={0.01} value={f.voice_speed} onChange={e => setF({ ...f, voice_speed: Number(e.target.value) })} /><output>{Math.round(f.voice_speed * 100)}%</output></div></Field>
-            <Field label="Ekspresja" hint="Mniej = spokojniej i równo, więcej = żywiej i bardziej emocjonalnie."><div className="rc-range"><input type="range" min={0} max={1} step={0.05} value={1 - f.voice_stability} onChange={e => setF({ ...f, voice_stability: Math.round((1 - Number(e.target.value)) * 100) / 100 })} /><output>{Math.round((1 - f.voice_stability) * 100)}%</output></div></Field>
+            <Field label="Ekspresja" hint="Mniej = spokojniej i równo, więcej = żywiej i bardziej emocjonalnie."><div className="rc-range"><input type="range" min={0} max={1} step={0.05} value={Math.min(1, (1 - f.voice_stability) * 2)} onChange={e => setF({ ...f, voice_stability: Math.round((1 - Number(e.target.value) / 2) * 100) / 100 })} /><output>{Math.round(Math.min(1, (1 - f.voice_stability) * 2) * 100)}%</output></div></Field>
           </div>
         </Panel>
         <Panel title="Osobowość">

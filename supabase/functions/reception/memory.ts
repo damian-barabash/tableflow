@@ -1,7 +1,7 @@
 // Client memory: who is calling (by phone), their visits, upcoming bookings, notes and loyalty card.
 // Used when a call starts (dynamic variables for the agent) and by the tools.
 import { db, insertRow, normPhone, one, rows } from './shared.ts'
-import { localDate, localTime, spoken } from './time.ts'
+import { localDate, parts, sayTime, spoken } from './time.ts'
 
 export interface Client { id: string; company_id: string; name: string | null; phone: string | null; email: string | null; notes: string | null; tags: string[]; source: string }
 
@@ -47,7 +47,7 @@ export async function clientContext(cid: string, tz: string, client: Client | nu
       const noShows = past.filter(b => b.status === 'no_show').length
       if (noShows) lines.push(`Uwaga: ${noShows} nieobecność(ci) bez odwołania.`)
     }
-    if (next.length) lines.push(`Ma już zaplanowane: ${next.map(b => `${spoken(localDate(new Date(b.starts_at), tz))} o ${localTime(new Date(b.starts_at), tz)} — ${b.service_name ?? 'wizyta'}${b.resource ? ` u ${b.resource.name}` : ''} [id: ${b.id}]`).join('; ')}.`)
+    if (next.length) lines.push(`Ma już zaplanowane: ${next.map(b => `${spoken(localDate(new Date(b.starts_at), tz))} o ${sayTime(parts(new Date(b.starts_at), tz).h * 60 + parts(new Date(b.starts_at), tz).mi)} — ${b.service_name ?? 'wizyta'}${b.resource ? ` u ${b.resource.name}` : ''} [id: ${b.id}]`).join('; ')}.`)
     if (client.notes) lines.push(`Notatki o kliencie: ${client.notes.slice(0, 500)}`)
     if (calls[0]?.summary) lines.push(`Poprzednia rozmowa (${spoken(localDate(new Date(calls[0].started_at), tz))}): ${calls[0].summary.replace(/wirtualn\S*\s*/gi, '').slice(0, 220)}`)
   }

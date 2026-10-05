@@ -19,7 +19,7 @@ interface Busy { resource_id: string | null; from: number; to: number; booking_i
 export const DEFAULT_SETTINGS = {
   assistant_name: 'Ania', timezone: 'Europe/Warsaw', slot_step_min: 15, min_notice_min: 60, max_days_ahead: 60, ai_booking_status: 'confirmed',
   allow_cancel: true, allow_reschedule: true, cancel_notice_min: 120, offer_loyalty: true, ask_name: true, language: 'pl', extra_languages: ['en', 'uk'],
-  tone: 'warm', voice_quality: 'natural', voice_speed: 1, voice_stability: 0.45,
+  tone: 'warm', voice_quality: 'natural', voice_speed: 1, voice_stability: 0.6,
 }
 
 export interface Catalog { settings: Settings; resources: Resource[]; services: Service[]; links: { service_id: string; resource_id: string }[]; hours: Hours[] }
