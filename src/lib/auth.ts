@@ -2,7 +2,14 @@ import { SUPABASE_KEY, SUPABASE_URL } from './supabase'
 
 export interface Session { access_token: string; refresh_token: string; expires_at: number; user: { id: string; email: string; login: string } }
 const KEY = 'tf_editor_auth'
-const DOMAIN = 'tableflow.pl'
+const DOMAIN = 'tableflow.studio'
+
+/** Short login ("jakub") or full e-mail → account e-mail. Old @tableflow.pl logins map to the new domain (accounts moved 2026-11-23). */
+export function loginEmail(login: string): string {
+  const v = login.trim().toLowerCase()
+  if (!v.includes('@')) return `${v}@${DOMAIN}`
+  return v.endsWith('@tableflow.pl') ? v.replace(/@tableflow\.pl$/, `@${DOMAIN}`) : v
+}
 
 export function readSession(): Session | null {
   try { const v = localStorage.getItem(KEY); return v ? JSON.parse(v) as Session : null } catch { return null }
@@ -15,7 +22,7 @@ function toSession(j: { access_token: string; refresh_token: string; expires_in:
 
 /** Login accepts a short login ("jakub") or a full e-mail. */
 export async function signIn(login: string, password: string): Promise<{ ok: true; session: Session } | { ok: false; error: string }> {
-  const email = login.includes('@') ? login.trim() : `${login.trim().toLowerCase()}@${DOMAIN}`
+  const email = loginEmail(login)
   const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) })
   const j = await res.json().catch(() => ({}))
   if (!res.ok || !j.access_token) return { ok: false, error: j.error_description || j.msg || j.message || 'invalid' }

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { Logo, Orb } from '../brand/Logo'
 import { I } from '../components/Icons'
-import { getValidSession, readSession, signIn, signOut } from '../lib/auth'
+import { getValidSession, loginEmail, readSession, signIn, signOut } from '../lib/auth'
 import { SUPABASE_KEY, SUPABASE_URL } from '../lib/supabase'
 import { rpc } from './api'
 
@@ -47,7 +47,7 @@ function Login({ title, sub, onLogin }: { title: string; sub: string; onLogin: (
   const submit = async (e: React.FormEvent) => {
     e.preventDefault(); setBusy(true); setErr('')
     if (mode === 'forgot') {
-      const email = login.includes('@') ? login.trim() : `${login.trim().toLowerCase()}@tableflow.pl`
+      const email = loginEmail(login)
       const res = await fetch(`${SUPABASE_URL}/auth/v1/recover?redirect_to=${encodeURIComponent(window.location.origin + window.location.pathname)}`, { method: 'POST', headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) })
       setBusy(false)
       if (res.ok) setMode('sent'); else setErr(res.status === 429 ? 'Zbyt wiele prób — spróbuj za godzinę.' : 'Nie udało się wysłać wiadomości.')
