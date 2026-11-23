@@ -2,8 +2,23 @@
  * Single source of truth for per-route SEO: used by the app (<Seo>) and by scripts/prerender.mjs
  * (Node imports this file directly via type stripping — keep it free of imports and non-erasable TS).
  */
-export const SITE_URL = 'https://tableflow.pl'
+import { INDUSTRIES } from './industries.ts'
+
+export const SITE_URL = 'https://tableflow.studio'
 export const SITE_NAME = 'TableFlow AI'
+export const CONTACT_EMAIL = 'contact@tableflow.studio'
+
+/** Language versions of the home page: each has its own indexable URL (hreflang cluster). */
+export const LOCALE_HOME = { pl: '/', en: '/en', ru: '/ru', fr: '/fr', es: '/es' } as const
+export type SeoLocale = keyof typeof LOCALE_HOME
+export const HREFLANG: Record<SeoLocale, string> = { pl: 'pl', en: 'en', ru: 'ru', fr: 'fr', es: 'es' }
+/** Locale carried by the URL (/en, /ru…), 'pl' for the bare home page, null elsewhere. */
+export function localeFromPath(path: string): SeoLocale | null {
+  const p = path.replace(/\/+$/, '') || '/'
+  for (const [l, home] of Object.entries(LOCALE_HOME)) if (p === home) return l as SeoLocale
+  return null
+}
+export const isHomePath = (path: string) => localeFromPath(path) !== null
 
 interface SeoDict {
   meta: { title: string; description: string }
@@ -21,6 +36,12 @@ export interface RouteSeo {
   /** app / personal pages: noindex, nofollow + Disallow */
   private?: boolean
   priority?: number
+  /** hreflang alternates (language → absolute path) */
+  alternates?: Partial<Record<SeoLocale | 'x-default', string>>
+  /** language of the indexed content (default pl) */
+  lang?: SeoLocale
+  /** PL-only content (industry pages): the body is not translated */
+  plOnly?: boolean
   changefreq?: 'weekly' | 'monthly' | 'yearly'
   title: (d: SeoDict) => string
   description: (d: SeoDict) => string
@@ -39,8 +60,12 @@ const policy = (k: 'privacy' | 'cookies' | 'terms') => ({
   description: (d: SeoDict) => clip(d.policies[k].intro),
 })
 
+const HOME_ALTS = { ...LOCALE_HOME, 'x-default': '/' }
 export const ROUTES: RouteSeo[] = [
-  { path: '/', file: 'index.html', index: true, sitemap: true, priority: 1, changefreq: 'weekly', title: d => d.meta.title, description: d => d.meta.description },
+  { path: '/', file: 'index.html', index: true, sitemap: true, priority: 1, changefreq: 'weekly', alternates: HOME_ALTS, lang: 'pl', title: d => d.meta.title, description: d => d.meta.description },
+  ...(['en', 'ru', 'fr', 'es'] as const).map((l): RouteSeo => ({ path: LOCALE_HOME[l], file: `${l}.html`, index: true, sitemap: true, priority: 0.8, changefreq: 'weekly', alternates: HOME_ALTS, lang: l, title: d => d.meta.title, description: d => d.meta.description })),
+  // industry landing pages (PL search intent)
+  ...INDUSTRIES.map((i): RouteSeo => ({ path: `/${i.slug}`, file: `${i.slug}.html`, index: true, sitemap: true, priority: 0.9, changefreq: 'monthly', plOnly: true, lang: 'pl', title: () => i.title, description: () => i.description })),
   { path: '/polityka-prywatnosci', file: 'polityka-prywatnosci.html', index: true, sitemap: true, priority: 0.3, changefreq: 'yearly', ...policy('privacy') },
   { path: '/polityka-cookies', file: 'polityka-cookies.html', index: true, sitemap: true, priority: 0.3, changefreq: 'yearly', ...policy('cookies') },
   { path: '/regulamin', file: 'regulamin.html', index: true, sitemap: true, priority: 0.3, changefreq: 'yearly', ...policy('terms') },

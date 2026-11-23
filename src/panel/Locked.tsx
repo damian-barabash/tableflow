@@ -25,8 +25,8 @@ export function Locked({ tab, enabledButNotLive }: { tab: TabId; enabledButNotLi
           <h2>Moduł niedostępny w Twoim pakiecie</h2>
           <p>{i.lead}</p>
           <ul>{i.points.map(p => <li key={p}><Ic.check width={15} height={15} />{p}</li>)}</ul>
-          <p style={{ fontSize: 13 }}>{enabledButNotLive ? 'Moduł jest w Twoim pakiecie — włączymy go automatycznie, gdy będzie gotowy.' : 'Chcesz go włączyć? Napisz do nas: hello@tableflow.pl'}</p>
-          <a className="btn btn--ghost btn--sm" href={`mailto:hello@tableflow.pl?subject=${encodeURIComponent(`TableFlow — moduł ${i.title}`)}`}>Zapytaj o dostęp</a>
+          <p style={{ fontSize: 13 }}>{enabledButNotLive ? 'Moduł jest w Twoim pakiecie — włączymy go automatycznie, gdy będzie gotowy.' : 'Chcesz go włączyć? Napisz do nas: contact@tableflow.studio'}</p>
+          <a className="btn btn--ghost btn--sm" href={`mailto:contact@tableflow.studio?subject=${encodeURIComponent(`TableFlow — moduł ${i.title}`)}`}>Zapytaj o dostęp</a>
         </div>
       </div>
     </>

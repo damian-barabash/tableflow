@@ -5,6 +5,7 @@ import { Logo, Mark } from '../brand/Logo'
 import { I } from '../components/Icons'
 import { Rich } from '../components/Rich'
 import { useI18n } from '../i18n'
+import { LOCALE_HOME } from '../seo/routes'
 import { joinWaitlistContact, logEvent, type ContactResult } from '../lib/supabase'
 import { analyticsAllowed } from '../lib/consent'
 import './karta.css'
@@ -93,7 +94,7 @@ export function Karta({ ready = true }: { ready?: boolean }) {
         </AnimatePresence>
 
         <div className="kcard__qr">
-          <img src="/qr-karta.svg" alt="QR: tableflow.pl/karta" width={88} height={88} />
+          <img src="/qr-karta.svg" alt="QR: tableflow.studio/karta" width={88} height={88} />
           <span>{t.card.powered}</span>
         </div>
       </motion.div>
@@ -142,7 +143,7 @@ export function Karta({ ready = true }: { ready?: boolean }) {
           </motion.section>
         )}
       </AnimatePresence>
-      <Link to="/" className="link karta__back" style={{ fontSize: 14 }}><I.chevronL width={14} height={14} /> {t.card.back}</Link>
+      <Link to={LOCALE_HOME[locale]} className="link karta__back" style={{ fontSize: 14 }}><I.chevronL width={14} height={14} /> {t.card.back}</Link>
     </main>
   )
 }

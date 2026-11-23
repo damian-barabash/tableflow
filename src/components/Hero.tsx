@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { Rich } from './Rich'
 import { I } from './Icons'
@@ -9,6 +10,9 @@ import './hero.css'
 
 const EASE = [0.22, 1, 0.36, 1] as const
 const INDUSTRY_ICONS = [I.msg, I.users, I.star, I.doc, I.pin, I.settings, I.bolt, I.star]  // kawiarnie, barbershopy, beauty, gabinety, restauracje, warsztaty, fitness, weterynarze
+
+// hero chips (same order in every dictionary) → industry landing pages; fitness / vets have no page yet
+const HERO_INDUSTRY_PAGES = ['recepcja-ai-kawiarnia', 'recepcja-ai-barbershop', 'recepcja-ai-salon-kosmetyczny', 'recepcja-ai-gabinet', 'recepcja-ai-restauracja', 'recepcja-ai-warsztat-samochodowy']
 
 export function Hero({ ready }: { ready: boolean }) {
   const { t } = useI18n()
@@ -27,7 +31,11 @@ export function Hero({ ready }: { ready: boolean }) {
           </div>
           <div className="hero__works">
             <span>{t.hero.worksFor}:</span>
-            <ul>{t.hero.industries.map((name, i) => { const Ic = INDUSTRY_ICONS[i % INDUSTRY_ICONS.length]; return <li key={name}><Ic width={14} height={14} />{name}</li> })}</ul>
+            <ul>{t.hero.industries.map((name, i) => {
+              const Ic = INDUSTRY_ICONS[i % INDUSTRY_ICONS.length]
+              const slug = HERO_INDUSTRY_PAGES[i]
+              return <li key={name}>{slug ? <Link to={`/${slug}`}><Ic width={14} height={14} aria-hidden="true" />{name}</Link> : <><Ic width={14} height={14} aria-hidden="true" />{name}</>}</li>
+            })}</ul>
           </div>
         </motion.div>
         <motion.div {...fade(3)}><Rich as="p" className="sub hero__note lang-swap" html={t.hero.note} path="hero.note" /></motion.div>

@@ -93,7 +93,7 @@ function Connection({ s, st, onTested }: { s: Setup; st: Status | null; onTested
             <div className="ap-stack" style={{ gap: 10 }}>
               <div className="rc-li"><span className="rc-ico is-warn"><Ic.phone width={16} height={16} /></span><div><b>Tryb testowy</b><small>Nie masz jeszcze numeru. Rozmawiaj z asystentem powyżej — działa dokładnie tak jak przez telefon.</small></div></div>
               <p className="ap-muted">Po podłączeniu numeru możesz przekierować na niego swój obecny numer (przekierowanie u operatora, gdy nie odbierasz albo zawsze).</p>
-              <a className="btn btn--ghost btn--sm" style={{ alignSelf: 'flex-start' }} href="mailto:hello@tableflow.pl?subject=Numer%20dla%20recepcji%20AI">Poproś o numer</a>
+              <a className="btn btn--ghost btn--sm" style={{ alignSelf: 'flex-start' }} href="mailto:contact@tableflow.studio?subject=Numer%20dla%20recepcji%20AI">Poproś o numer</a>
             </div>
           )}
         </Panel>

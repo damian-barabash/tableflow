@@ -33,3 +33,14 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+  indexnow:
+    # tells Bing / Yandex / Seznam / Naver about every URL of the fresh deploy (IndexNow; Google ignores it)
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping IndexNow
+        run: |
+          KEY=cc543022bb283e16861f9f53641613e2
+          URLS=$(curl -fsSL https://tableflow.studio/sitemap.xml | grep -o '<loc>[^<]*' | sed 's/<loc>//' | python3 -c "import json,sys;print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))")
+          curl -sS -X POST https://api.indexnow.org/indexnow -H 'Content-Type: application/json; charset=utf-8' \
+            -d "{\"host\":\"tableflow.studio\",\"key\":\"$KEY\",\"keyLocation\":\"https://tableflow.studio/$KEY.txt\",\"urlList\":$URLS}" -w '\nIndexNow HTTP %{http_code}\n' || true

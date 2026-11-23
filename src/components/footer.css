@@ -6,7 +6,7 @@
 .foot__kv a { color: #fff; }
 .foot__status { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px 0 10px; border-radius: var(--r-md); background: #1a1916; font-size: 13px; color: #ddd9d1; }
 .foot__status i { width: 8px; height: 8px; border-radius: 50%; background: var(--tf-mauve); box-shadow: 0 0 0 4px rgba(167,132,163,.25); }
-.foot__cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.foot__cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
 .foot__cols h4 { font-size: 13px; font-weight: 500; color: #7d786f; margin: 0 0 14px; letter-spacing: .04em; text-transform: uppercase; }
 .foot__cols a, .foot__cols button { display: block; font-size: 15px; color: #e6e3dd; padding: 6px 0; text-align: left; transition: color .2s; }
 .foot__cols a:hover, .foot__cols button:hover { color: #fff; }

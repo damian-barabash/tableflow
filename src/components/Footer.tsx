@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Logo } from '../brand/Logo'
 import { LOCALES, LOCALE_NAMES, useI18n } from '../i18n'
+import { INDUSTRIES } from '../seo/industries'
+import { LOCALE_HOME } from '../seo/routes'
 import { SECTION_IDS } from './Nav'
 import './footer.css'
 
@@ -31,7 +33,7 @@ function useBigMark() {
 export function Footer() {
   const { t, locale, setLocale } = useI18n()
   const box = useBigMark()
-  const to = (id: string) => ({ pathname: '/', hash: id })
+  const to = (id: string) => ({ pathname: LOCALE_HOME[locale], hash: id })
   const year = new Date().getFullYear()
   const L = t.footer.links
   return (
@@ -41,7 +43,7 @@ export function Footer() {
           <div className="foot__brand">
             <Logo size={30} light />
             <p className="foot__tag lang-swap">{t.footer.tagline}</p>
-            <div className="foot__kv"><span>{t.footer.contact}:</span><a href="mailto:hello@tableflow.pl">hello@tableflow.pl</a></div>
+            <div className="foot__kv"><span>{t.footer.contact}:</span><a href="mailto:contact@tableflow.studio">contact@tableflow.studio</a></div>
             <span className="foot__status"><i /> {t.footer.status}</span>
           </div>
           <div className="foot__cols">
@@ -53,6 +55,10 @@ export function Footer() {
               <Link to={to(SECTION_IDS.loyalty)}>{L.loyalty}</Link>
               <Link to={to(SECTION_IDS.faq)}>{L.faq}</Link>
               <Link to={to(SECTION_IDS.waitlist)}>{L.waitlist}</Link>
+            </div>
+            <div>
+              <h4>{t.common.footerIndustries}</h4>
+              {INDUSTRIES.map(i => <Link key={i.slug} to={`/${i.slug}`}>{i.name}</Link>)}
             </div>
             <div>
               <h4>{t.footer.legal}</h4>

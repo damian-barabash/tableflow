@@ -40,7 +40,7 @@ export function ScannerPage() {
     setLoading(false)
   }, [company.id, toast])
 
-  // ?c=CODE (tableflow.pl/s?c=… scanned with the phone camera)
+  // ?c=CODE (tableflow.studio/s?c=… scanned with the phone camera)
   useEffect(() => { const c = new URLSearchParams(loc.search).get('c'); if (c) void open(c) }, [loc.search, open])
 
   const stop = useCallback(() => { stream.current?.getTracks().forEach(t => t.stop()); stream.current = null; setCam('off') }, [])

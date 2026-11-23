@@ -6,7 +6,7 @@ Lądowanie produktu **TableFlow AI** (recepcja AI: odbiera telefony, zapisuje kl
 
 - React 19 + Vite 7 + TypeScript, `motion` (animacje), `react-router-dom` (BrowserRouter, czyste adresy `/regulamin`, `/karta`; stare `/#/…` przekierowywane w `main.tsx`; `base: '/'`).
 - Backend: Supabase **TableFlow Backend** (`ahtjgghocwegyepxoeru`, eu-west-1) — bez supabase-js, dwa RPC przez `fetch` (`src/lib/supabase.ts`).
-- Deploy: GitHub Pages przez `.github/workflows/deploy.yml` (push na `main` → build → Pages). W repo: Settings → Pages → Source = **GitHub Actions**, Custom domain **tableflow.pl** (`public/CNAME`).
+- Deploy: GitHub Pages przez `.github/workflows/deploy.yml` (push na `main` → build → Pages). W repo: Settings → Pages → Source = **GitHub Actions**, Custom domain **tableflow.studio** (`public/CNAME`).
 
 ## Skrypty
 
@@ -38,7 +38,7 @@ node scripts/visual.mjs  # kadry preloadera, asystenta języka, sticky slidera
 - `src/mocks/` — makiety produktu (rozmowa AI, dashboard kalendarza).
 - **`/edit-mod`** — wizualny edytor treści (login moderatora: `jakub` / `dmytrii` → `@tableflow.pl`; hasła poza repo). Edycja **tylko po polsku**; „Opublikuj” zapisuje PL i tłumaczy **tylko zmienione** teksty na EN/RU/FR/ES przez edge function `translate` (Barabash AI; klucz w sekretach Supabase `BAI_KEY`/`BAI_URL`, nigdy w repo). Nagłówki/leady to bloki rich (`<Rich>`, znaczniki `<g>` = gradient, `<b>`, `<span style>`) — zaznaczenie tekstu pokazuje pasek: pogrubienie, rozmiar, kolor, gradient wł./wył. Silnik: `src/editor/engine.ts`, UI: `src/pages/EditMod.tsx`, funkcja: `supabase/functions/translate/index.ts`.
 - Strony: `/` (landing), `/polityka-prywatnosci`, `/polityka-cookies`, `/regulamin`, **`/karta`** (strona za kodem QR z makiet: karta z pieczątkami → ostatnia pieczątka → zapis na newsletter e-mail/telefon).
-- QR: `node scripts/qr.mjs` → `public/qr-karta.svg` (prawdziwy kod → `https://tableflow.pl/#/karta?src=qr`).
+- QR: `node scripts/qr.mjs` → `public/qr-karta.svg` (prawdziwy kod → `https://tableflow.studio/#/karta?src=qr`).
 
 ## Supabase (migracja `landing_waitlist_admin_foundation`)
 

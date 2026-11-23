@@ -2,7 +2,7 @@ import './styles/global.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import { I18nProvider } from './i18n'
+import { I18nProvider, preloadUrlLocale } from './i18n'
 import App from './App'
 
 // Clean URLs (indexable). Legacy hash routes (old links, printed QR: /#/karta?src=qr) → /karta?src=qr.
@@ -23,10 +23,11 @@ import App from './App'
 
 const root = document.getElementById('root')!
 // the prerendered snapshot is only for crawlers / no-JS; React takes over from a clean container
-root.removeAttribute('data-prerendered')
-root.textContent = ''
-
-createRoot(root).render(
+// (after the language chunk of /en, /ru… is loaded, so the first frame is already in that language)
+void preloadUrlLocale().catch(() => undefined).then(() => {
+  root.removeAttribute('data-prerendered')
+  root.textContent = ''
+  createRoot(root).render(
   <StrictMode>
     <I18nProvider>
       <BrowserRouter>
@@ -35,3 +36,4 @@ createRoot(root).render(
     </I18nProvider>
   </StrictMode>,
 )
+})

@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Orb } from '../brand/Logo'
 import { I } from './Icons'
-import { detectLanguage, readStoredLocale, useI18n, LOCALE_NAMES, type Detection } from '../i18n'
+import { detectLanguage, readStoredLocale, useI18n, LOCALE_NAMES, type Detection, urlLocale } from '../i18n'
+import { routeFor } from '../seo/routes'
 import { analyticsAllowed } from '../lib/consent'
 import { logEvent } from '../lib/supabase'
 import './lang-assistant.css'
@@ -26,6 +27,10 @@ export function LangAssistant({ ready }: { ready: boolean }) {
     if (!ready || started.current) return
     started.current = true
     if (readStoredLocale()) return                       // user already chose → silent
+    if (urlLocale()) return                              // the URL already names a language (/en, /ru…)
+    if (routeFor(window.location.pathname)?.plOnly) return  // Polish-only page (industry landing)
+    // crawlers render with an English UI language: never switch what they index
+    if (navigator.webdriver || /bot|crawl|spider|slurp|lighthouse|inspectiontool|headless/i.test(navigator.userAgent)) return
     const d = detectLanguage()
     if (d.code === 'pl') return                          // system is Polish → nothing happens
     later(() => {

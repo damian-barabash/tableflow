@@ -118,7 +118,7 @@ function MyCard() {
   const req = c.program.stamps_required
   const ready = c.stamps >= req
   const plat = platform()
-  const scanUrl = `https://tableflow.pl/s?c=${c.code}`
+  const scanUrl = `https://tableflow.studio/s?c=${c.code}`
   const apple = <a key="a" className={`cp-wbtn cp-wbtn--apple ${!wallet?.apple ? 'is-off' : ''}`} href={wallet?.apple ? `${WALLET_URL}/apple/pass?t=${token}` : undefined} aria-disabled={!wallet?.apple}><I.apple width={20} height={20} /><span><small>Dodaj do</small>Apple Wallet</span></a>
   const google = <a key="g" className={`cp-wbtn cp-wbtn--google ${!wallet?.google ? 'is-off' : ''}`} href={wallet?.google ? `${WALLET_URL}/google/save?t=${token}` : undefined} aria-disabled={!wallet?.google}><GIcon /><span><small>Dodaj do</small>Portfela Google</span></a>
 
@@ -160,7 +160,7 @@ function MyCard() {
 }
 function GIcon() { return <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.3-.2-1.9H12v3.6h5.4a4.6 4.6 0 0 1-2 3v2.5h3.3c1.9-1.8 2.9-4.4 2.9-7.2z" /><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.7-2.5l-3.3-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3v2.6A10 10 0 0 0 12 22z" /><path fill="#FBBC05" d="M6.4 13.9a6 6 0 0 1 0-3.8V7.5H3a10 10 0 0 0 0 9z" /><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3 7.5l3.4 2.6C7.2 7.8 9.4 6 12 6z" /></svg> }
 
-/** QR on the pass encodes tableflow.pl/s?c=CODE: staff (logged in) → scanner; anyone else → neutral info. */
+/** QR on the pass encodes tableflow.studio/s?c=CODE: staff (logged in) → scanner; anyone else → neutral info. */
 function StampLink() {
   const nav = useNavigate()
   const code = new URLSearchParams(useLocation().search).get('c') ?? ''

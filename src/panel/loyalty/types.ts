@@ -31,7 +31,7 @@ export const redeem = (id: string) => rpc<StampResult>('loyalty_redeem', { p_car
 /** Push the new state to Apple/Google Wallet (fire-and-forget). */
 export const notifyWallet = (id: string) => { void fn('wallet/notify', { card_id: id }).catch(() => {}) }
 
-export const siteOrigin = () => (/^https?:\/\/(localhost|127\.)/.test(window.location.origin) ? window.location.origin : 'https://tableflow.pl')
+export const siteOrigin = () => (/^https?:\/\/(localhost|127\.)/.test(window.location.origin) ? window.location.origin : 'https://tableflow.studio')
 export const joinUrl = (slug: string) => `${siteOrigin()}/dolacz?p=${slug}`
 export const cardUrl = (token: string) => `${siteOrigin()}/moja-karta?t=${token}`
 

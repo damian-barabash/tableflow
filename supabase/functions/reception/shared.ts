@@ -3,7 +3,7 @@ export const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? ''
 const SERVICE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 const ANON = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
 export const FN_URL = `${SUPABASE_URL}/functions/v1/reception`
-export const SITE = Deno.env.get('SITE_URL') ?? 'https://tableflow.pl'
+export const SITE = Deno.env.get('SITE_URL') ?? 'https://tableflow.studio'
 
 export const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS' }
 export const json = (b: unknown, status = 200) => new Response(JSON.stringify(b), { status, headers: { ...CORS, 'Content-Type': 'application/json' } })

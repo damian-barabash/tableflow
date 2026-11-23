@@ -65,7 +65,7 @@ export function ApplePass({ design, data }: { design: Design; data: CardData }) 
         <div className="lc-field lc-field--r"><small style={{ color: design.label }}>NAGRODA</small><b>{data.reward}</b></div>
       </div>
       {ready > 0 && <div className="lc-apple__fields"><div className="lc-field"><small style={{ color: design.label }}>DO ODEBRANIA</small><b>{ready} {ready === 1 ? 'nagroda' : 'nagrody'}</b></div></div>}
-      <div className="lc-apple__qr"><div><Qr text={data.qr || 'https://tableflow.pl/s?c=DEMO2345'} /><small>{data.code || 'DEMO2345'}</small></div></div>
+      <div className="lc-apple__qr"><div><Qr text={data.qr || 'https://tableflow.studio/s?c=DEMO2345'} /><small>{data.code || 'DEMO2345'}</small></div></div>
     </div>
   )
 }
@@ -84,7 +84,7 @@ export function GooglePass({ design, data }: { design: Design; data: CardData })
         <div><small>Pieczątki</small><b>{shown}/{data.required}</b></div>
         <div><small>Nagrody</small><b>{ready}</b></div>
       </div>
-      <div className="lc-google__qr"><Qr text={data.qr || 'https://tableflow.pl/s?c=DEMO2345'} /><small>{data.code || 'DEMO2345'}</small></div>
+      <div className="lc-google__qr"><Qr text={data.qr || 'https://tableflow.studio/s?c=DEMO2345'} /><small>{data.code || 'DEMO2345'}</small></div>
       <StripCanvas design={design} total={data.required} filled={shown} />
     </div>
   )

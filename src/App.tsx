@@ -1,5 +1,5 @@
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
-import { Route, Routes, useLocation } from 'react-router-dom'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence } from 'motion/react'
 import { Nav } from './components/Nav'
 import { Footer } from './components/Footer'
@@ -15,20 +15,45 @@ import { Seo } from './seo/Seo'
 import { AnnouncementBar } from './components/AnnouncementBar'
 import { useTracking } from './lib/track'
 import { useI18n } from './i18n'
+import { NotFound } from './pages/NotFound'
+import { INDUSTRIES } from './seo/industries'
+import { LOCALE_HOME, isHomePath, localeFromPath } from './seo/routes'
 
 // app areas load on demand — the landing bundle stays as it was
 const PanelApp = lazy(() => import('./panel/PanelApp'))
 const AdminApp = lazy(() => import('./admin/AdminApp'))
 const CardPages = lazy(() => import('./public/CardPages'))
+// industry landing pages: content (≈10 KB gz) loads with the page
+const IndustryPage = lazy(() => import('./pages/IndustryPage'))
 const AppLoading = () => <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}><span className="tf-orb is-active" style={{ width: 34, height: 34 }} /></div>
 
 function useHashScroll() {
   const loc = useLocation()
   useEffect(() => {
-    if (loc.pathname !== '/') return
+    if (!isHomePath(loc.pathname)) return
     const id = decodeURIComponent(loc.hash.slice(1))
     if (id) setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }), 50)
   }, [loc])
+}
+
+/**
+ * Keeps the language and the home URL in sync: /en, /ru, /fr, /es are separate indexable pages.
+ * Navigation → the URL decides the language; a language switch on a home page → move to that language's URL.
+ */
+function useLocaleUrl() {
+  const { locale, setLocale } = useI18n()
+  const { pathname, search, hash } = useLocation()
+  const navigate = useNavigate()
+  const lastPath = useRef<string | null>(null)
+  useEffect(() => {
+    const urlL = localeFromPath(pathname)
+    const navigated = lastPath.current !== pathname
+    lastPath.current = pathname
+    if (urlL === null) return
+    if (navigated && urlL !== 'pl') { if (urlL !== locale) void setLocale(urlL, { animate: false, persist: false }); return }
+    if (locale !== urlL) navigate({ pathname: LOCALE_HOME[locale], search, hash }, { replace: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, locale])
 }
 
 export default function App() {
@@ -37,6 +62,7 @@ export default function App() {
   const [ready, setReady] = useState(reduced)
   const done = useCallback(() => { setIntro(false); setReady(true) }, [])
   useHashScroll()
+  useLocaleUrl()
   const path = useLocation().pathname
   const { locale } = useI18n()
   useDesync(`${intro}-${path}`)
@@ -52,12 +78,13 @@ export default function App() {
       <AnnouncementBar />
       <Nav />
       <Routes>
-        <Route path="/" element={<Home ready={ready} />} />
+        {Object.values(LOCALE_HOME).map(p => <Route key={p} path={p} element={<Home ready={ready} />} />)}
+        {INDUSTRIES.map(i => <Route key={i.slug} path={`/${i.slug}`} element={<Suspense fallback={<AppLoading />}><IndustryPage slug={i.slug} ready={ready} /></Suspense>} />)}
         <Route path="/polityka-prywatnosci" element={<Policy kind="privacy" />} />
         <Route path="/polityka-cookies" element={<Policy kind="cookies" />} />
         <Route path="/regulamin" element={<Policy kind="terms" />} />
         <Route path="/karta" element={<Karta ready={ready} />} />
-        <Route path="*" element={<Home ready={ready} />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
       <CookieBanner ready={ready} />

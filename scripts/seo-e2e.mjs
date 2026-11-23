@@ -36,11 +36,11 @@ const head = page => page.evaluate(() => ({
 let p, h
 // 1. clean policy URL
 p = await open('/regulamin'); h = await head(p)
-ok(p._status === 200 && h.url === '/regulamin' && /^Regulamin/.test(h.h1) && h.canonical === 'https://tableflow.pl/regulamin' && !h.prer && !p._errors.length, `/regulamin 200 → ${JSON.stringify(h)} ${p._errors}`)
+ok(p._status === 200 && h.url === '/regulamin' && /^Regulamin/.test(h.h1) && h.canonical === 'https://tableflow.studio/regulamin' && !h.prer && !p._errors.length, `/regulamin 200 → ${JSON.stringify(h)} ${p._errors}`)
 // footer link to FAQ from a policy → home + scroll
 await p.evaluate(() => [...document.querySelectorAll('footer a')].find(a => a.getAttribute('href') === '/#faq').click()); await sleep(1500)
 h = await head(p); const y = await p.evaluate(() => Math.round(document.getElementById('faq').getBoundingClientRect().top))
-ok(h.url === '/#faq' && Math.abs(y) < 200 && h.canonical === 'https://tableflow.pl/', `footer FAQ → ${h.url}, faq top ${y}, canonical ${h.canonical}`)
+ok(h.url === '/#faq' && Math.abs(y) < 200 && h.canonical === 'https://tableflow.studio/', `footer FAQ → ${h.url}, faq top ${y}, canonical ${h.canonical}`)
 // FAQ: second answer in DOM, opens on click
 const faq = await p.evaluate(async () => { const it = document.querySelectorAll('.faq__item')[1]; const a = it.querySelector('.faq__a'); const before = a.getBoundingClientRect().height; it.querySelector('button').click(); await new Promise(r => setTimeout(r, 700)); return { text: a.textContent.length, before, after: a.getBoundingClientRect().height, n: document.querySelectorAll('.faq__a p').length } })
 ok(faq.n >= 7 && faq.before === 0 && faq.after > 20 && faq.text > 20, `FAQ answers in DOM ${JSON.stringify(faq)}`)
@@ -63,9 +63,31 @@ const login = await p.evaluate(() => !!document.querySelector('input[type=passwo
 ok(p._status === 200 && login && h.robots === 'noindex, nofollow' && !p._errors.length, `/edit-mod login form, ${h.robots}`); await p.close()
 p = await open('/#/edit-mod?page=karta'); h = await head(p); ok(h.url.startsWith('/edit-mod'), `legacy editor → ${h.url}`); await p.close()
 // 4. unknown path → 404 status, noindex
-p = await open('/nie-ma-takiej'); h = await head(p); ok(p._status === 404 && h.robots.startsWith('noindex') && h.canonical === null, `unknown → ${p._status} ${h.robots}`); await p.close()
+p = await open('/nie-ma-takiej'); h = await head(p)
+const nf = await p.evaluate(() => ({ eyebrow: document.querySelector('.nf .eyebrow')?.textContent, links: document.querySelectorAll('.nf .ip-others a').length }))
+ok(p._status === 404 && h.robots.startsWith('noindex') && h.canonical === null && nf.eyebrow === '404' && nf.links >= 7, `unknown → ${p._status} ${h.robots} real 404 page ${JSON.stringify(nf)}`); await p.close()
+// 4b. language URLs: /en is English, indexable, with a 5-language hreflang cluster; switching language moves the URL
+const alts = pg => pg.evaluate(() => [...document.querySelectorAll('link[rel=alternate][hreflang]')].map(l => `${l.hreflang}=${new URL(l.href).pathname}`).sort().join(','))
+p = await open('/en'); h = await head(p)
+ok(p._status === 200 && h.url === '/en' && /AI receptionist/i.test(h.h1) && h.canonical === 'https://tableflow.studio/en' && (await p.evaluate(() => document.documentElement.lang)) === 'en' && !p._errors.length, `/en → ${JSON.stringify(h)} ${p._errors}`)
+ok(await alts(p) === 'en=/en,es=/es,fr=/fr,pl=/,ru=/ru,x-default=/', `/en hreflang ${await alts(p)}`)
+await p.evaluate(() => [...document.querySelectorAll('footer button')].find(b => b.textContent === 'Polski').click()); await sleep(1500)
+h = await head(p); ok(h.url === '/' && /Recepcja AI/.test(h.h1) && h.canonical === 'https://tableflow.studio/', `switch to Polski → ${h.url} ${h.h1}`)
+await p.evaluate(() => [...document.querySelectorAll('footer button')].find(b => b.textContent === 'Русский').click()); await sleep(1500)
+h = await head(p); ok(h.url === '/ru' && h.canonical === 'https://tableflow.studio/ru', `switch to Русский → ${h.url}`); await p.close()
+p = await open('/fr', { noJs: true }); ok(p._status === 200 && /réception|IA/i.test(await p.evaluate(() => document.querySelector('h1')?.textContent || '')), `/fr no-JS snapshot in French`); await p.close()
+// 4c. industry landing pages
+p = await open('/recepcja-ai-barbershop'); h = await head(p)
+const ip = await p.evaluate(() => ({ faq: document.querySelectorAll('.faq__a p').length, others: document.querySelectorAll('.ip-others a').length, ld: [...document.querySelectorAll('script[type="application/ld+json"]')].length }))
+ok(p._status === 200 && /barbershop/i.test(h.h1) && h.robots.startsWith('index') && h.canonical === 'https://tableflow.studio/recepcja-ai-barbershop' && ip.faq >= 4 && ip.others === 6 && !p._errors.length, `industry page ${JSON.stringify({ ...h, ...ip })} ${p._errors}`)
+await p.evaluate(() => [...document.querySelectorAll('.ip-others a')].find(a => a.getAttribute('href') === '/recepcja-ai-restauracja').click()); await sleep(1200)
+h = await head(p); ok(h.url === '/recepcja-ai-restauracja' && /stolik/i.test(h.h1) && h.title.includes('restauracja'), `industry → industry ${h.url} ${h.title}`); await p.close()
+p = await open('/recepcja-ai-gabinet', { noJs: true })
+ok(p._status === 200 && (await p.evaluate(() => document.querySelectorAll('.faq__a p').length)) >= 4, 'industry no-JS snapshot with FAQ'); await p.close()
+p = await open('/'); await p.evaluate(() => document.getElementById('industries').scrollIntoView())
+ok((await p.evaluate(() => [...document.querySelectorAll('.ind__more')].map(a => a.getAttribute('href')))).length === 5, 'home carousel links to industry pages'); await p.close()
 // 5. home anchors on the same page
-p = await open('/'); h = await head(p); ok(h.canonical === 'https://tableflow.pl/' && !h.prer && h.robots.startsWith('index'), `home ${JSON.stringify(h)}`)
+p = await open('/'); h = await head(p); ok(h.canonical === 'https://tableflow.studio/' && !h.prer && h.robots.startsWith('index'), `home ${JSON.stringify(h)}`)
 await p.evaluate(() => document.querySelector('.nav__links a[href="#industries"]').click()); await sleep(1200)
 ok((await p.evaluate(() => Math.abs(document.getElementById('industries').getBoundingClientRect().top))) < 150, 'nav anchor scroll on home')
 ok(!p._errors.length, `home errors ${p._errors}`); await p.close()

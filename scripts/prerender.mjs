@@ -11,7 +11,12 @@ import { createServer } from 'node:http'
 import { readFileSync, writeFileSync, existsSync, statSync, mkdirSync } from 'node:fs'
 import { join, extname, dirname } from 'node:path'
 import { pl } from '../src/i18n/pl.ts'
-import { ROUTES, SITE_URL, SITE_NAME, ROBOTS_INDEX, ROBOTS_NOINDEX, ROBOTS_PRIVATE, DISALLOW, clip } from '../src/seo/routes.ts'
+import { en } from '../src/i18n/en.ts'
+import { ru } from '../src/i18n/ru.ts'
+import { fr } from '../src/i18n/fr.ts'
+import { es } from '../src/i18n/es.ts'
+import { ROUTES, SITE_URL, SITE_NAME, CONTACT_EMAIL, HREFLANG, ROBOTS_INDEX, ROBOTS_NOINDEX, ROBOTS_PRIVATE, DISALLOW, clip } from '../src/seo/routes.ts'
+import { INDUSTRIES } from '../src/seo/industry-content.ts'
 
 const DIST = 'dist'
 const SUPABASE_URL = 'https://ahtjgghocwegyepxoeru.supabase.co'
@@ -20,9 +25,9 @@ const TODAY = new Date().toISOString().slice(0, 10)
 const template = readFileSync(join(DIST, 'index.html'), 'utf8')
 
 // ---------- dictionary + published CMS overrides (PL) ----------
-async function publishedOverrides() {
+async function publishedOverrides(locale = 'pl') {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/site_content?locale=eq.pl&status=eq.published&select=data`, {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/site_content?locale=eq.${locale}&status=eq.published&select=data`, {
       headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }, signal: AbortSignal.timeout(8000),
     })
     const rows = res.ok ? await res.json() : []
@@ -39,7 +44,19 @@ function applyOverrides(dict, ov) {
   }
   return out
 }
-const d = applyOverrides(pl, await publishedOverrides())
+const BASE = { pl, en, ru, fr, es }
+const DICTS = {}
+for (const [l, dict] of Object.entries(BASE)) DICTS[l] = applyOverrides(dict, await publishedOverrides(l))
+const d = DICTS.pl
+const dictOf = r => DICTS[r.lang || 'pl']
+const BCP47 = { pl: 'pl-PL', en: 'en', ru: 'ru', fr: 'fr', es: 'es' }
+const OG_LOCALE = { pl: 'pl_PL', en: 'en_GB', ru: 'ru_RU', fr: 'fr_FR', es: 'es_ES' }
+const industryOf = r => INDUSTRIES.find(i => `/${i.slug}` === r.path)
+const abs = p => `${SITE_URL}${p === '/' ? '/' : p}`
+/** hreflang alternates of an indexable route: the home language cluster, otherwise the page itself (pl + x-default). */
+const altsOf = r => r.alternates
+  ? Object.entries(r.alternates).map(([l, p]) => [l === 'x-default' ? l : HREFLANG[l], abs(p)])
+  : [['pl', abs(r.path)], ['x-default', abs(r.path)]]
 const text = s => String(s).replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()
 
 // "17 września 2026" → 2026-09-17 (policy lastmod)
@@ -59,38 +76,59 @@ const organization = {
   logo: { '@type': 'ImageObject', '@id': `${SITE_URL}/#logo`, url: `${SITE_URL}/icon-512.png`, width: 512, height: 512, caption: SITE_NAME },
   image: { '@id': `${SITE_URL}/#logo` },
   description: text(d.meta.description),
-  email: 'hello@tableflow.pl',
+  email: CONTACT_EMAIL,
   // operator of the service — same data as in the policies / footer
   legalName: 'Maksym Yehorov Maksikon',
   taxID: '9512594289',
   identifier: [{ '@type': 'PropertyValue', propertyID: 'NIP', value: '9512594289' }, { '@type': 'PropertyValue', propertyID: 'REGON', value: '528375783' }],
   address: { '@type': 'PostalAddress', streetAddress: 'ul. Zamiany 18 lok. 46', postalCode: '02-786', addressLocality: 'Warszawa', addressCountry: 'PL' },
-  contactPoint: [{ '@type': 'ContactPoint', contactType: 'customer support', email: 'hello@tableflow.pl', availableLanguage: ['Polish', 'English'] }],
+  contactPoint: [{ '@type': 'ContactPoint', contactType: 'customer support', email: CONTACT_EMAIL, availableLanguage: ['Polish', 'English'] }],
   areaServed: { '@type': 'Country', name: 'Polska' },
 }
-const website = { '@type': 'WebSite', '@id': SITE_ID, url: `${SITE_URL}/`, name: SITE_NAME, alternateName: ['TableFlow', 'tableflow.pl'], description: text(d.meta.description), inLanguage: 'pl-PL', publisher: { '@id': ORG_ID } }
+const website = { '@type': 'WebSite', '@id': SITE_ID, url: `${SITE_URL}/`, name: SITE_NAME, alternateName: ['TableFlow', 'tableflow.studio'], inLanguage: ['pl-PL', 'en', 'ru', 'fr', 'es'], description: text(d.meta.description), publisher: { '@id': ORG_ID } }
 const ogImage = { '@type': 'ImageObject', '@id': `${SITE_URL}/#ogimage`, url: `${SITE_URL}/og.png`, width: 1200, height: 630, caption: `${SITE_NAME} — recepcja AI dla każdej branży` }
 
 function graphFor(r) {
-  const url = urlOf(r), title = r.title(d), description = r.description(d)
+  const dd = dictOf(r)
+  const url = urlOf(r), title = r.title(dd), description = r.description(dd)
   const page = {
-    '@type': 'WebPage', '@id': `${url}#webpage`, url, name: title, description, inLanguage: 'pl-PL',
+    '@type': 'WebPage', '@id': `${url}#webpage`, url, name: title, description, inLanguage: BCP47[r.lang || 'pl'],
     isPartOf: { '@id': SITE_ID }, publisher: { '@id': ORG_ID }, dateModified: lastmod(r),
   }
-  if (r.path === '/') {
+  const ind = industryOf(r)
+  if (ind) {
+    page.breadcrumb = { '@id': `${url}#breadcrumb` }
+    page.mainEntity = { '@id': `${url}#service` }
+    const service = {
+      '@type': 'Service', '@id': `${url}#service`, name: `${SITE_NAME} — recepcja AI: ${ind.name}`,
+      serviceType: 'Recepcja AI: odbieranie połączeń i rezerwacja wizyt', description: ind.description,
+      provider: { '@id': ORG_ID }, areaServed: { '@type': 'Country', name: 'Polska' }, availableLanguage: ['Polish', 'English'],
+      audience: { '@type': 'BusinessAudience', audienceType: ind.name },
+      hasOfferCatalog: { '@type': 'OfferCatalog', name: 'Co dostajesz', itemListElement: ind.features.map(f => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: f.t, description: f.d } })) },
+    }
+    const faq = { '@type': 'FAQPage', '@id': `${url}#faq`, inLanguage: 'pl-PL', isPartOf: { '@id': `${url}#webpage` },
+      mainEntity: ind.faq.map(it => ({ '@type': 'Question', name: it.q, acceptedAnswer: { '@type': 'Answer', text: it.a } })) }
+    const crumbs = { '@type': 'BreadcrumbList', '@id': `${url}#breadcrumb`, itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE_NAME, item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: ind.name, item: url },
+    ] }
+    return [organization, website, page, service, faq, crumbs]
+  }
+  if (r.alternates) {   // home page in any language
+    const d = dd
     page.about = { '@id': ORG_ID }
     page.primaryImageOfPage = { '@id': `${SITE_URL}/#ogimage` }
-    page.mainEntity = { '@id': `${SITE_URL}/#service` }
+    page.mainEntity = { '@id': `${url}#service` }
     const service = {
-      '@type': 'Service', '@id': `${SITE_URL}/#service`, name: `${SITE_NAME} — recepcja AI`,
-      serviceType: 'Recepcja AI: odbieranie połączeń i rezerwacja wizyt',
+      '@type': 'Service', '@id': `${url}#service`, name: `${SITE_NAME} — recepcja AI`,
+      serviceType: text(d.platform.h2),
       description: text(d.hero.sub), provider: { '@id': ORG_ID }, brand: { '@type': 'Brand', name: SITE_NAME },
       areaServed: { '@type': 'Country', name: 'Polska' }, availableLanguage: ['Polish', 'English'],
       audience: { '@type': 'BusinessAudience', audienceType: d.hero.industries.map(text).join(', ') },
       hasOfferCatalog: { '@type': 'OfferCatalog', name: text(d.platform.h2), itemListElement: d.platform.cards.map(c => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: text(c.title), description: text(c.desc) } })) },
     }
     const faq = {
-      '@type': 'FAQPage', '@id': `${SITE_URL}/#faq`, url: `${SITE_URL}/#faq`, inLanguage: 'pl-PL', isPartOf: { '@id': `${url}#webpage` },
+      '@type': 'FAQPage', '@id': `${url}#faq`, url: `${url}#faq`, inLanguage: BCP47[r.lang || 'pl'], isPartOf: { '@id': `${url}#webpage` },
       mainEntity: d.faq.items.map(it => ({ '@type': 'Question', name: text(it.q), acceptedAnswer: { '@type': 'Answer', text: text(it.a) } })),
     }
     return [organization, website, ogImage, page, service, faq]
@@ -160,6 +198,7 @@ function setAttr(html, re, value) {
   return html.replace(re, (_m, pre, post) => `${pre}${esc(value)}${post}`)
 }
 function page(r, body) {
+  const d = dictOf(r)
   const url = urlOf(r), title = r.title(d), desc = r.description(d)
   const robots = r.private ? ROBOTS_PRIVATE : r.index ? ROBOTS_INDEX : ROBOTS_NOINDEX
   let h = template
@@ -170,13 +209,17 @@ function page(r, body) {
   h = setAttr(h, /(<meta property="og:url" content=")[^"]*(")/, url)
   if (r.index) {
     h = setAttr(h, /(<link rel="canonical" href=")[^"]*(")/, url)
-    h = h.replace(/(<link rel="alternate" hreflang="[^"]+" href=")[^"]*(")/g, (_m, a, b) => `${a}${url}${b}`)
+    h = h.replace(/\s*<link rel="alternate" hreflang="[^"]+" href="[^"]*" \/>/g, '')
+    h = h.replace(/(<link rel="canonical" href="[^"]*" \/>)/, (m) => m + altsOf(r).map(([hl, href]) => `\n    <link rel="alternate" hreflang="${hl}" href="${href}" />`).join(''))
     h = h.replace('<!--seo:jsonld-->', jsonLd(graphFor(r)))
-    if (r.path !== '/') h = h.replace('<meta property="og:type" content="website" />', '<meta property="og:type" content="article" />')
+    if (!r.alternates && !industryOf(r)) h = h.replace('<meta property="og:type" content="website" />', '<meta property="og:type" content="article" />')
   } else {
     // noindex pages: no canonical / hreflang (mixed signals), no structured data
     h = h.replace(/\s*<link rel="canonical" href="[^"]*" \/>/, '').replace(/\s*<link rel="alternate" hreflang="[^"]+" href="[^"]*" \/>/g, '').replace('<!--seo:jsonld-->', '')
   }
+  const lang = r.lang || 'pl'
+  h = h.replace('<html lang="pl"', `<html lang="${lang}"`)
+  h = setAttr(h, /(<meta property="og:locale" content=")[^"]*(")/, OG_LOCALE[lang])
   if (body) h = h.replace('<div id="root"></div>', `<div id="root" data-prerendered>${body}</div>`)
   return h
 }
@@ -206,8 +249,7 @@ ${ROUTES.filter(r => r.sitemap).map(r => `  <url>
     <lastmod>${lastmod(r)}</lastmod>
     <changefreq>${r.changefreq}</changefreq>
     <priority>${r.priority.toFixed(1)}</priority>
-    <xhtml:link rel="alternate" hreflang="pl" href="${urlOf(r)}" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="${urlOf(r)}" />${r.path === '/' ? `
+${altsOf(r).map(([hl, href]) => `    <xhtml:link rel="alternate" hreflang="${hl}" href="${href}" />`).join('\n')}${r.alternates ? `
     <image:image><image:loc>${SITE_URL}/og.png</image:loc></image:image>` : ''}
   </url>`).join('\n')}
 </urlset>
@@ -236,11 +278,12 @@ writeFileSync(join(DIST, 'llms.txt'), [
   sec(d.app.h2, [text(d.app.sub), '', ...d.app.features.map(f => `- **${text(f.title)}**: ${text(f.desc)}`)]),
   sec(d.faq.h2, d.faq.items.flatMap(it => [`### ${text(it.q)}`, '', text(it.a), ''])),
   sec('Linki', [
-    `- [Strona główna](${SITE_URL}/): opis produktu i lista oczekujących`,
+    `- [Strona główna](${SITE_URL}/): opis produktu i lista oczekujących (wersje językowe: ${['en', 'ru', 'fr', 'es'].map(l => `${SITE_URL}/${l}`).join(', ')})`,
+    ...INDUSTRIES.map(i => `- [Recepcja AI — ${i.name}](${SITE_URL}/${i.slug}): ${i.description}`),
     `- [${d.policies.privacy.title}](${SITE_URL}/polityka-prywatnosci)`,
     `- [${d.policies.cookies.title}](${SITE_URL}/polityka-cookies)`,
     `- [${d.policies.terms.title}](${SITE_URL}/regulamin)`,
-    `- Kontakt: hello@tableflow.pl`,
+    `- Kontakt: ${CONTACT_EMAIL}`,
     `- Operator: ${text(d.footer.company)}`,
   ]),
 ].join('\n'))

@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Mark } from '../brand/Logo'
+import { Link } from 'react-router-dom'
+import { industryByScenario } from '../seo/industries'
 import { I } from './Icons'
 import { useI18n } from '../i18n'
 import { Rich } from './Rich'
@@ -86,8 +88,8 @@ export function Industries() {
               <Rich as="p" className="lead lang-swap" style={{ marginTop: 14 }} html={t.industries.sub} path="industries.sub" />
             </div>
             <div className="ind__arrows hide-mobile">
-              <button aria-label="prev" onClick={() => go(Math.max(0, idx - 1))} disabled={idx === 0}><I.chevronL /></button>
-              <button aria-label="next" onClick={() => go(Math.min(n - 1, idx + 1))} disabled={idx >= n - 1}><I.chevronR /></button>
+              <button aria-label="←" onClick={() => go(Math.max(0, idx - 1))} disabled={idx === 0}><I.chevronL /></button>
+              <button aria-label="→" onClick={() => go(Math.min(n - 1, idx + 1))} disabled={idx >= n - 1}><I.chevronR /></button>
             </div>
           </div>
         </div>
@@ -105,6 +107,7 @@ export function Industries() {
                   </div>
                 </div>
                 <p className="ind__desc lang-swap"><b>{s.industry}.</b> {s.outcome}</p>
+                {industryByScenario(s.id) && <Link className="link ind__more" to={`/${industryByScenario(s.id)!.slug}`}>{t.common.industriesHead}: {industryByScenario(s.id)!.name} <I.chevronR className="arrow" width={14} height={14} aria-hidden="true" /></Link>}
               </article>
             ))}
           </div>
@@ -112,7 +115,7 @@ export function Industries() {
         <div className="container">
           <div className="ind__progress" aria-hidden="true"><i ref={prog} /></div>
           <div className="ind__foot">
-            <div className="ind__dots">{t.industries.scenarios.map((_, i) => <button key={i} className={i === idx ? 'is-active' : ''} onClick={() => go(i)} aria-label={`${i + 1}`} />)}</div>
+            <div className="ind__dots">{t.industries.scenarios.map((_, i) => <button key={i} className={i === idx ? 'is-active' : ''} onClick={() => go(i)} aria-label={t.industries.scenarios[i].industry} aria-current={i === idx ? 'true' : undefined} />)}</div>
             <div className="ind__swipe only-mobile" aria-hidden="true">
               <button className="ind__swipe-btn" onClick={() => go(Math.max(0, idx - 1))} disabled={idx === 0}><I.chevronL width={18} height={18} /></button>
               <span className="ind__swipe-hint"><I.arrow width={18} height={18} /></span>

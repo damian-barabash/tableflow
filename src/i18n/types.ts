@@ -73,6 +73,6 @@ export interface Dict {
     question: string; keepPl: string; useEn: string; hint: string
   }
   policies: { privacy: Policy; cookies: Policy; terms: Policy }
-  common: { back: string; updated: string }
+  common: { back: string; updated: string; notFoundTitle: string; notFoundText: string; industriesHead: string; footerIndustries: string; plOnly: string }
   card: { won: string; title: string; business: string; stamps: string; stampsLeft: string; scanned: string; reward: string; newsletterTitle: string; newsletterSub: string; email: string; phone: string; emailPh: string; phonePh: string; consent: string; submit: string; success: string; exists: string; invalidEmail: string; invalidPhone: string; error: string; powered: string; back: string }
 }

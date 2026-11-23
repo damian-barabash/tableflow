@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { Mark } from '../brand/Logo'
 import { I } from './Icons'
 import { useI18n } from '../i18n'
@@ -8,7 +9,6 @@ import './loyalty.css'
 export function Loyalty() {
   const { t } = useI18n()
   const c = t.loyalty.card
-  const go = (e: React.MouseEvent) => { e.preventDefault(); document.getElementById(SECTION_IDS.waitlist)?.scrollIntoView({ behavior: 'smooth' }) }
   return (
     <section className="section loy" id={SECTION_IDS.loyalty}>
       <div className="container loy__in">
@@ -16,7 +16,7 @@ export function Loyalty() {
           <Rich as="h2" className="h2 lang-swap" html={t.loyalty.h2} path="loyalty.h2" />
           <Rich as="p" className="lead lang-swap" style={{ marginTop: 18 }} html={t.loyalty.sub} path="loyalty.sub" />
           <ul className="loy__bullets lang-swap">{t.loyalty.bullets.map(b => <li key={b}><I.check width={16} height={16} />{b}</li>)}</ul>
-          <a href={`#${SECTION_IDS.waitlist}`} onClick={go} className="btn btn--ghost lang-swap" style={{ marginTop: 28 }}>{t.loyalty.cta} <I.arrow className="arrow" width={16} height={16} /></a>
+          <Link to="/karta?src=landing" className="btn btn--ghost lang-swap" style={{ marginTop: 28 }}>{t.loyalty.cta} <I.arrow className="arrow" width={16} height={16} /></Link>
         </div>
         <div className="loy__visual rv" data-delay="1">
           <div className="loy__col" data-px="0.14">
@@ -29,7 +29,7 @@ export function Loyalty() {
               <div><small>{c.nextReward.toUpperCase()}</small><b>30</b></div>
             </div>
             <div className="wpass__stamps" aria-label={c.stamps}>{Array.from({ length: 10 }).map((_, i) => <i key={i} className={i < 7 ? 'is-on' : ''} />)}</div>
-            <div className="wpass__code"><img className="wpass__qr" src="/qr-karta.svg" alt="QR: tableflow.pl/karta" width={92} height={92} /><span>TF · 8841 2290 07</span></div>
+            <div className="wpass__code"><img className="wpass__qr" src="/qr-karta.svg" alt="QR: tableflow.studio/karta" width={92} height={92} /><span>TF · 8841 2290 07</span></div>
           </div>
           {/* Add-to-wallet buttons */}
           <div className="loy__btns">

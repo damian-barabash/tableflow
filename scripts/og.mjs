@@ -22,7 +22,7 @@ p{margin:0;font-size:30px;color:#52504b;letter-spacing:-.01em}
 </style></head><body><div class="blob2"></div><div class="blob"></div><div class="grain"></div>
 <div class="c"><div class="logo">${mark(110)}<div class="word">TableFlow<span class="ai">AI<i></i></span></div></div>
 <p>Recepcja AI, która odbiera telefony i zapisuje klientów.</p></div>
-<div class="url">tableflow.pl</div>
+<div class="url">tableflow.studio</div>
 </body></html>`, { waitUntil: 'networkidle0' })
 await page.evaluate(() => document.fonts.ready)
 await page.screenshot({ path: 'public/og.png' })

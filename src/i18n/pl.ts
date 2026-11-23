@@ -2,8 +2,8 @@ import type { Dict } from './types'
 
 export const pl: Dict = {
   meta: {
-    title: 'TableFlow AI — Recepcja AI, która odbiera telefony i zapisuje klientów',
-    description: 'TableFlow AI odbiera połączenia, umawia klientów do kalendarza, powiadamia zespół w aplikacji i prowadzi program lojalnościowy w Apple Wallet i Google Wallet. Od kawiarni po barbershopy.',
+    title: 'Recepcja AI 24/7 — odbiera telefony i umawia wizyty | TableFlow AI',
+    description: 'Wirtualna recepcjonistka AI dla salonów, barberów, restauracji i gabinetów: odbiera telefony 24/7, umawia wizyty i prowadzi kartę lojalnościową w Wallet.',
   },
   nav: { features: 'Funkcje', industries: 'Branże', app: 'Aplikacja', loyalty: 'Lojalność', faq: 'FAQ', cta: 'Dołącz do listy', lang: 'Język', menu: 'Menu' },
   hero: {
@@ -11,7 +11,7 @@ export const pl: Dict = {
     sub: 'Klient dzwoni na Twój numer. TableFlow odbiera, sprawdza kalendarz, umawia wizytę do konkretnej osoby i powiadamia zespół w aplikacji. Zero nieodebranych połączeń, pełna historia, statystyki i lojalność w jednym miejscu.',
     ctaPrimary: 'Dołącz do listy oczekujących',
     ctaSecondary: 'Zobacz, jak działa',
-    note: 'Bez karty · Start w dniu premiery · Dla każdej branży',
+    note: 'Zapis bez opłat · Start w dniu premiery · Dla każdej branży',
     worksFor: 'Działa dla',
     industries: ['Kawiarnie', 'Barbershopy', 'Salony beauty', 'Gabinety', 'Restauracje', 'Warsztaty', 'Studia fitness', 'Weterynarze'],
   },
@@ -21,7 +21,7 @@ export const pl: Dict = {
     inputPlaceholder: 'Chcę się umówić na jutro po 15:00',
     replies: 'Recepcja AI',
     dashboard: {
-      url: 'app.tableflow.pl',
+      url: 'app.tableflow.studio',
       sidebar: ['Dzisiaj', 'Kalendarz', 'Rozmowy', 'Klienci', 'Lojalność', 'Statystyki', 'Zespół', 'Ustawienia'],
       section1: 'Recepcja',
       section2: 'Firma',
@@ -38,7 +38,7 @@ export const pl: Dict = {
   voices: {
     title: 'Tak brzmi Twoja nowa recepcja',
     items: [
-      { text: '„Dzień dobry, tu Barber Bracia. Strzyżenie u Marka? Jutro o 14:30 jest wolne — rezerwuję i wysyłam potwierdzenie SMS-em.”', who: 'Recepcja AI', role: 'Barbershop · rozmowa telefoniczna' },
+      { text: '„Dzień dobry, tu Barber Bracia. Strzyżenie u Marka? Jutro o 14:30 jest wolne — rezerwuję i wpisuję do kalendarza.”', who: 'Recepcja AI', role: 'Barbershop · rozmowa telefoniczna' },
       { text: '„Stolik dla czterech osób w sobotę o 19:00 — mam miejsce przy oknie. Czy będzie jakaś alergia, o której powinna wiedzieć kuchnia?”', who: 'Recepcja AI', role: 'Restauracja · rezerwacja stolika' },
       { text: '„Widzę, że to Pani trzecia wizyta w tym miesiącu. Dodaję punkty do karty lojalnościowej w Wallet — została jedna do darmowej kawy.”', who: 'Recepcja AI', role: 'Kawiarnia · program lojalnościowy' },
     ],
@@ -89,16 +89,16 @@ export const pl: Dict = {
     scenarios: [
       { id: 'barber', name: 'Barber Bracia', industry: 'Barbershop', agent: 'Recepcja AI',
         lines: [{ who: 'client', text: 'Dzień dobry, chciałbym się ostrzyc u Marka, najlepiej jutro po pracy.' }, { who: 'ai', text: 'Marek ma jutro wolne 17:30 i 18:15. Które pasuje? Strzyżenie trwa 45 minut.' }],
-        steps: ['Sprawdzam grafik Marka', 'Wolne: 17:30, 18:15', 'Rezerwuję 17:30 · SMS wysłany'], outcome: 'Wizyta w kalendarzu, zespół dostał push' },
+        steps: ['Sprawdzam grafik Marka', 'Wolne: 17:30, 18:15', 'Rezerwuję 17:30 u Marka'], outcome: 'Wizyta w kalendarzu, zespół dostał push' },
       { id: 'cafe', name: 'Kawiarnia Ziarno', industry: 'Kawiarnia', agent: 'Recepcja AI',
-        lines: [{ who: 'client', text: 'Robicie rezerwacje na warsztaty z latte art w sobotę?' }, { who: 'ai', text: 'Tak, zostały 2 miejsca o 11:00. Zapisać na Pani numer? Dodam też kartę lojalnościową do Wallet.' }],
-        steps: ['Sprawdzam wydarzenia', 'Zostały 2 miejsca', 'Rezerwuję + karta Wallet'], outcome: 'Miejsce zajęte, karta wysłana SMS-em' },
+        lines: [{ who: 'client', text: 'Robicie rezerwacje na warsztaty z latte art w sobotę?' }, { who: 'ai', text: 'Tak, zostały 2 miejsca o 11:00. Zapisać na Pani numer? A kartę lojalnościową dostanie Pani na miejscu.' }],
+        steps: ['Sprawdzam wydarzenia', 'Zostały 2 miejsca', 'Rezerwuję + karta Wallet'], outcome: 'Miejsce zajęte, zaproszenie do karty lojalnościowej' },
       { id: 'beauty', name: 'Studio Ola', industry: 'Salon beauty', agent: 'Recepcja AI',
         lines: [{ who: 'client', text: 'Muszę przełożyć jutrzejszy manicure na przyszły tydzień.' }, { who: 'ai', text: 'Odwołuję jutro 12:00. Ola ma wolne we wtorek 12:00 lub czwartek 16:00 — co wybrać?' }],
-        steps: ['Znajduję rezerwację', 'Zwalniam termin', 'Proponuję nowe sloty'], outcome: 'Termin przeniesiony, lista rezerwowa powiadomiona' },
+        steps: ['Znajduję rezerwację', 'Zwalniam termin', 'Proponuję nowe sloty'], outcome: 'Termin przeniesiony, stary slot znów wolny' },
       { id: 'resto', name: 'Trattoria Nonna', industry: 'Restauracja', agent: 'Recepcja AI',
         lines: [{ who: 'client', text: 'Stolik dla sześciu osób w piątek około 20:00, urodziny.' }, { who: 'ai', text: 'Mam stolik w sali głównej o 20:00. Dopisuję notatkę „urodziny” dla kuchni. Potwierdzić na ten numer?' }],
-        steps: ['Sprawdzam plan sali', 'Stolik 6 os. · 20:00', 'Notatka dla kuchni'], outcome: 'Rezerwacja z notatką, potwierdzenie SMS' },
+        steps: ['Sprawdzam plan sali', 'Stolik 6 os. · 20:00', 'Notatka dla kuchni'], outcome: 'Rezerwacja z notatką dla kuchni' },
       { id: 'garage', name: 'Auto Max Serwis', industry: 'Warsztat', agent: 'Recepcja AI',
         lines: [{ who: 'client', text: 'Wymiana opon na zimowe, kiedy najszybciej?' }, { who: 'ai', text: 'Najbliższy termin to jutro 9:00, około 40 minut. Podać rejestrację, żeby przygotować opony z przechowalni?' }],
         steps: ['Sprawdzam stanowiska', 'Jutro 9:00 · 40 min', 'Pytam o rejestrację'], outcome: 'Wizyta zapisana, mechanik dostał push' },
@@ -106,9 +106,9 @@ export const pl: Dict = {
   },
   loyalty: {
     h2: 'Lojalność, która mieszka w Wallet klienta',
-    sub: 'Recepcja AI wydaje kartę w rozmowie lub SMS-em. Klient dodaje ją do Apple Wallet albo Google Wallet, a Ty skanujesz ją w aplikacji i dodajesz punkty w sekundę.',
+    sub: 'Klient skanuje kod QR w lokalu, a Recepcja AI przypomina o karcie w rozmowie. Klient dodaje ją do Apple Wallet albo Google Wallet, a Ty skanujesz ją w aplikacji i dodajesz punkty w sekundę.',
     bullets: ['Karty punktowe, pieczątkowe i rabatowe w jednym programie', 'Automatyczne punkty za każdą wizytę umówioną przez AI', 'Powiadomienia na ekranie blokady, gdy nagroda jest gotowa', 'Skaner w aplikacji zespołu — bez dodatkowego sprzętu'],
-    cta: 'Zobacz program lojalnościowy',
+    cta: 'Zobacz demo karty',
     card: { business: 'Kawiarnia Ziarno', member: 'Anna Kowalska', points: 'Punkty', tier: 'Status', nextReward: 'Do nagrody', stamps: 'Pieczątki' },
     scan: { title: 'Skaner', hint: 'Nakieruj kamerę na kartę klienta', result: 'Anna Kowalska · Gold', addPoints: 'Dodaj 10 pkt' },
     walletApple: 'Dodaj do Apple Wallet',
@@ -145,7 +145,7 @@ export const pl: Dict = {
   history: {
     h2: 'Wiesz, dlaczego każda rezerwacja wygląda tak, a nie inaczej',
     sub: 'Otwórz dowolną rozmowę i zobacz transkrypcję, sprawdzone reguły, dostępność i wykonane akcje, które doprowadziły do wpisu w kalendarzu.',
-    bullets: ['Transkrypcja i nagranie każdego połączenia', 'Reguły biznesowe, których użyło AI (czas trwania, bufory, godziny)', 'Ślad każdej akcji: rezerwacja, SMS, karta, powiadomienie'],
+    bullets: ['Transkrypcja i nagranie każdego połączenia', 'Reguły biznesowe, których użyło AI (czas trwania, bufory, godziny)', 'Ślad każdej akcji: rezerwacja, zmiana, karta, prośba o kontakt'],
     demo: {
       client: 'Czy mogę odwołać wizytę na jutro bez opłaty?',
       ai: 'Tak — do 24 godzin przed wizytą odwołanie jest bezpłatne. Anulowałam termin na jutro 12:00 i zwolniłam miejsce.',
@@ -179,7 +179,7 @@ export const pl: Dict = {
       { q: 'Dla jakich firm jest TableFlow?', a: 'Dla każdej firmy, w której klienci umawiają się na termin: kawiarnie i restauracje, barbershopy, salony beauty, gabinety, warsztaty, studia fitness, gabinety weterynaryjne. Jeśli dziś ktoś u Ciebie odbiera telefon i wpisuje wizytę do kalendarza — TableFlow zrobi to za niego.' },
       { q: 'Czy muszę zmieniać numer telefonu?', a: 'Nie. Możesz przekierować obecny numer na TableFlow (na stałe lub tylko poza godzinami pracy) albo wziąć nowy numer od nas.' },
       { q: 'W jakich językach rozmawia AI?', a: 'Na start po polsku i angielsku, w kolejnych miesiącach rosyjski, francuski i hiszpański. AI rozpoznaje język rozmówcy automatycznie.' },
-      { q: 'Jak działa program lojalnościowy?', a: 'Tworzysz program (punkty, pieczątki lub rabaty). Recepcja AI wydaje kartę w rozmowie lub SMS-em, klient dodaje ją do Wallet, a Twój zespół skanuje ją w aplikacji. Punkty za wizyty umówione przez AI naliczają się same.' },
+      { q: 'Jak działa program lojalnościowy?', a: 'Tworzysz program (punkty, pieczątki lub rabaty). klient zapisuje się kodem QR w lokalu, dodaje ją do Wallet, a Twój zespół skanuje ją w aplikacji. Punkty za wizyty umówione przez AI naliczają się same.' },
       { q: 'Kiedy start i ile to kosztuje?', a: 'Pracujemy nad premierą. Zostaw adres e-mail na liście oczekujących — dostaniesz wcześniejszy dostęp i cennik jako pierwszy. Bez zobowiązań.' },
       { q: 'Czy TableFlow działa z Booksy lub Versum?', a: 'Przygotowujemy integracje z Booksy i Versum. Kalendarz będzie synchronizowany w obie strony: wizyty umówione przez recepcję AI pojawią się w Twoim systemie, a rezerwacje z niego zablokują terminy w TableFlow. Klienci i usługi zostaną zaimportowani, więc nie musisz zmieniać narzędzi.' },
     ],
@@ -235,20 +235,20 @@ export const pl: Dict = {
     useEn: 'Continue in English',
     hint: 'Możesz zmienić język w każdej chwili w menu.',
   },
-  common: { back: 'Wróć na stronę główną', updated: 'Ostatnia aktualizacja' },
+  common: { back: 'Wróć na stronę główną', updated: 'Ostatnia aktualizacja', notFoundTitle: 'Nie ma takiej strony', notFoundText: 'Link mógł się zmienić albo wygasnąć. Zacznij od strony głównej albo wybierz swoją branżę.', industriesHead: 'Recepcja AI dla Twojej branży', footerIndustries: 'Rozwiązania dla branż', plOnly: 'Strona dostępna po polsku' },
   card: { won: 'Gratulacje! Wygrałeś zapis do newslettera 🎉', title: 'Karta lojalnościowa', business: 'TableFlow AI · demo', stamps: 'Pieczątki do nagrody', stampsLeft: 'Została 1 pieczątka', scanned: 'Zeskanowano! Ostatnia pieczątka przybita.', reward: 'Nagroda odblokowana', newsletterTitle: 'Teraz możesz zapisać się do naszego newslettera', newsletterSub: 'Damy znać o premierze TableFlow AI. Wybierz, jak mamy się z Tobą kontaktować.', email: 'E-mail', phone: 'Telefon', emailPh: 'Twój adres e-mail', phonePh: '+48 600 000 000', consent: 'Zgadzam się na kontakt w sprawie premiery TableFlow AI zgodnie z', submit: 'Zapisz mnie', success: 'Gotowe! Jesteś na liście.', exists: 'Ten kontakt już jest na liście — dziękujemy!', invalidEmail: 'Podaj poprawny adres e-mail.', invalidPhone: 'Podaj poprawny numer telefonu.', error: 'Coś poszło nie tak. Spróbuj ponownie.', powered: 'Powered by TableFlow AI', back: 'Wróć na stronę główną' },
   policies: {
     privacy: {
       title: 'Polityka prywatności',
       updated: '17 września 2026',
-      intro: 'Niniejsza polityka opisuje, jakie dane osobowe zbieramy na stronie tableflow.pl (dalej „Strona”), w jakim celu i na jakiej podstawie, oraz jakie prawa przysługują Ci w związku z ich przetwarzaniem.',
+      intro: 'Niniejsza polityka opisuje, jakie dane osobowe zbieramy na stronie tableflow.studio (dalej „Strona”), w jakim celu i na jakiej podstawie, oraz jakie prawa przysługują Ci w związku z ich przetwarzaniem.',
       sections: [
-        { h: '1. Administrator danych', p: ['Administratorem danych osobowych jest Maksym Yehorov Maksikon, ul. Zamiany 18 lok. 46, 02-786 Warszawa, NIP 9512594289, REGON 528375783 (dalej „my”) — firma obsługująca serwis TableFlow AI. Kontakt w sprawach ochrony danych: hello@tableflow.pl.'] },
+        { h: '1. Administrator danych', p: ['Administratorem danych osobowych jest Maksym Yehorov Maksikon, ul. Zamiany 18 lok. 46, 02-786 Warszawa, NIP 9512594289, REGON 528375783 (dalej „my”) — firma obsługująca serwis TableFlow AI. Kontakt w sprawach ochrony danych: contact@tableflow.studio.'] },
         { h: '2. Jakie dane zbieramy', p: ['Na Stronie zbieramy wyłącznie dane, które przekazujesz nam dobrowolnie w formularzu listy oczekujących:'], list: ['adres e-mail,', 'rodzaj firmy i jej nazwę (opcjonalnie),', 'wybrany język strony,', 'znacznik czasu i treść udzielonej zgody, identyfikator przeglądarki (user agent) oraz parametry kampanii (UTM), jeśli trafiłeś do nas z linku.'] },
         { h: '3. Cel i podstawa przetwarzania', p: ['Dane z formularza przetwarzamy, aby poinformować Cię o premierze TableFlow AI, wcześniejszym dostępie i cenniku (art. 6 ust. 1 lit. a RODO — Twoja zgoda). Dane techniczne o działaniu Strony (anonimowe zdarzenia, np. wybór języka lub decyzja o cookies) przetwarzamy w naszym prawnie uzasadnionym interesie, jakim jest ulepszanie Strony (art. 6 ust. 1 lit. f RODO); nie łączymy ich z Twoją tożsamością.'] },
         { h: '4. Jak długo przechowujemy dane', p: ['Adres e-mail przechowujemy do czasu wycofania zgody lub do 24 miesięcy od premiery produktu, w zależności od tego, co nastąpi wcześniej. Anonimowe zdarzenia techniczne przechowujemy do 12 miesięcy.'] },
         { h: '5. Odbiorcy danych', p: ['Dane przechowujemy w infrastrukturze Supabase (Unia Europejska, region eu-west-1) oraz publikujemy Stronę za pośrednictwem GitHub Pages. Do wysyłki wiadomości możemy korzystać z dostawcy usług e-mail działającego na nasze zlecenie. Nie sprzedajemy danych i nie przekazujemy ich innym podmiotom do celów marketingowych.'] },
-        { h: '6. Twoje prawa', p: ['Masz prawo dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania, przenoszenia oraz wycofania zgody w dowolnym momencie (bez wpływu na zgodność z prawem przetwarzania sprzed wycofania). Możesz też wnieść skargę do Prezesa Urzędu Ochrony Danych Osobowych. Aby skorzystać z praw, napisz na hello@tableflow.pl lub kliknij link rezygnacji w dowolnej wiadomości od nas.'] },
+        { h: '6. Twoje prawa', p: ['Masz prawo dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania, przenoszenia oraz wycofania zgody w dowolnym momencie (bez wpływu na zgodność z prawem przetwarzania sprzed wycofania). Możesz też wnieść skargę do Prezesa Urzędu Ochrony Danych Osobowych. Aby skorzystać z praw, napisz na contact@tableflow.studio lub kliknij link rezygnacji w dowolnej wiadomości od nas.'] },
         { h: '7. Pliki cookie', p: ['Zasady użycia plików cookie opisuje osobna Polityka cookies.'] },
         { h: '8. Zmiany polityki', p: ['Możemy aktualizować tę politykę wraz z rozwojem produktu. Aktualna wersja jest zawsze dostępna na Stronie, a data ostatniej zmiany widnieje u góry dokumentu.'] },
       ],
@@ -256,9 +256,9 @@ export const pl: Dict = {
     cookies: {
       title: 'Polityka cookies',
       updated: '17 września 2026',
-      intro: 'Wyjaśniamy, jakich plików cookie i podobnych technologii (np. localStorage) używa strona tableflow.pl oraz jak możesz nimi zarządzać.',
+      intro: 'Wyjaśniamy, jakich plików cookie i podobnych technologii (np. localStorage) używa strona tableflow.studio oraz jak możesz nimi zarządzać.',
       sections: [
-        { h: '1. Czym są pliki cookie', p: ['Serwis tableflow.pl prowadzi Maksym Yehorov Maksikon, ul. Zamiany 18 lok. 46, 02-786 Warszawa, NIP 9512594289, REGON 528375783.', 'Pliki cookie to niewielkie pliki tekstowe zapisywane w przeglądarce. Podobną rolę pełni pamięć localStorage, w której strona może zapisać ustawienia bez wysyłania ich na serwer.'] },
+        { h: '1. Czym są pliki cookie', p: ['Serwis tableflow.studio prowadzi Maksym Yehorov Maksikon, ul. Zamiany 18 lok. 46, 02-786 Warszawa, NIP 9512594289, REGON 528375783.', 'Pliki cookie to niewielkie pliki tekstowe zapisywane w przeglądarce. Podobną rolę pełni pamięć localStorage, w której strona może zapisać ustawienia bez wysyłania ich na serwer.'] },
         { h: '2. Z czego korzystamy', p: ['Strona nie używa cookies reklamowych ani śledzących między witrynami. Zapisujemy:'], list: ['tf_consent — Twoją decyzję dotyczącą cookies (niezbędne, 12 miesięcy),', 'tf_lang — wybrany język strony (niezbędne, 12 miesięcy),', 'tf_intro — informację, że intro zostało już wyświetlone w tej sesji (niezbędne, do zamknięcia karty),', 'anonimowe statystyki użycia — wyłącznie po wyrażeniu zgody; nie zawierają identyfikatora użytkownika.'] },
         { h: '3. Dostawcy zewnętrzni', p: ['Czcionki ładujemy z Google Fonts; przy ich pobieraniu Google może otrzymać Twój adres IP. Strona jest hostowana na GitHub Pages, który może zapisywać logi techniczne serwera.'] },
         { h: '4. Jak zarządzać', p: ['Możesz w każdej chwili usunąć pliki cookie i dane witryny w ustawieniach przeglądarki. Odrzucenie statystyk nie wpływa na działanie strony.'] },
@@ -267,11 +267,11 @@ export const pl: Dict = {
     terms: {
       title: 'Regulamin listy oczekujących',
       updated: '17 września 2026',
-      intro: 'Regulamin określa zasady zapisu na listę oczekujących TableFlow AI oraz korzystania ze strony tableflow.pl.',
+      intro: 'Regulamin określa zasady zapisu na listę oczekujących TableFlow AI oraz korzystania ze strony tableflow.studio.',
       sections: [
-        { h: '1. Usługodawca', p: ['Serwis tableflow.pl oraz listę oczekujących prowadzi Maksym Yehorov Maksikon, ul. Zamiany 18 lok. 46, 02-786 Warszawa, NIP 9512594289, REGON 528375783 (dalej „my”).'] },
+        { h: '1. Usługodawca', p: ['Serwis tableflow.studio oraz listę oczekujących prowadzi Maksym Yehorov Maksikon, ul. Zamiany 18 lok. 46, 02-786 Warszawa, NIP 9512594289, REGON 528375783 (dalej „my”).'] },
         { h: '2. Lista oczekujących', p: ['Zapis na listę jest bezpłatny i dobrowolny. Wpisanie adresu e-mail oznacza chęć otrzymania informacji o premierze, wcześniejszym dostępie i cenniku produktu. Nie stanowi zawarcia umowy ani zobowiązania do zakupu.'] },
-        { h: '3. Wiadomości', p: ['Wysyłamy wyłącznie wiadomości związane z premierą TableFlow AI. Z listy można się wypisać w dowolnym momencie, klikając link w wiadomości lub pisząc na hello@tableflow.pl.'] },
+        { h: '3. Wiadomości', p: ['Wysyłamy wyłącznie wiadomości związane z premierą TableFlow AI. Z listy można się wypisać w dowolnym momencie, klikając link w wiadomości lub pisząc na contact@tableflow.studio.'] },
         { h: '4. Treści na stronie', p: ['Zrzuty ekranu, przykładowe rozmowy, nazwy firm i osób pokazane na Stronie są ilustracjami działania produktu, nie relacją z rzeczywistych wdrożeń. Wskazane wartości mają charakter docelowy i mogą ulec zmianie przed premierą.'] },
         { h: '5. Własność intelektualna', p: ['Nazwa TableFlow AI, logotyp oraz treści Strony są naszą własnością. Możesz je cytować z podaniem źródła; komercyjne wykorzystanie wymaga zgody.'] },
         { h: '6. Odpowiedzialność', p: ['Strona ma charakter informacyjny. Dokładamy starań, by działała bez przerw, ale nie gwarantujemy nieprzerwanej dostępności. Nie odpowiadamy za skutki decyzji podjętych wyłącznie na podstawie treści Strony.'] },

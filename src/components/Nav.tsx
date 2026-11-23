@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { Logo } from '../brand/Logo'
 import { I } from './Icons'
 import { LOCALES, LOCALE_NAMES, useI18n } from '../i18n'
+import { LOCALE_HOME, isHomePath } from '../seo/routes'
 import './nav.css'
 
 export const SECTION_IDS = { features: 'features', industries: 'industries', app: 'app', loyalty: 'loyalty', faq: 'faq', waitlist: 'waitlist' } as const
@@ -15,7 +16,7 @@ export function Nav() {
   const [open, setOpen] = useState(false)
   const [langOpen, setLangOpen] = useState(false)
   const loc = useLocation()
-  const home = loc.pathname === '/'
+  const home = isHomePath(loc.pathname)
 
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 8)
@@ -31,11 +32,11 @@ export function Nav() {
   }, [langOpen])
 
   const navigate = useNavigate()
-  const href = (id: string) => home ? `#${id}` : `/#${id}`
+  const href = (id: string) => home ? `#${id}` : `${LOCALE_HOME[locale]}#${id}`
   const go = (id: string) => (e: React.MouseEvent) => {
     e.preventDefault()
     setOpen(false)
-    if (!home) { navigate({ pathname: '/', hash: id }); return }
+    if (!home) { navigate({ pathname: LOCALE_HOME[locale], hash: id }); return }
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
   const links: [string, string][] = [
@@ -45,7 +46,7 @@ export function Nav() {
   return (
     <header className={`nav ${scrolled ? 'is-scrolled' : ''}`}>
       <div className="container nav__in">
-        <Link to="/" className="nav__logo" aria-label="TableFlow AI"><Logo size={28} /></Link>
+        <Link to={LOCALE_HOME[locale]} className="nav__logo" aria-label="TableFlow AI"><Logo size={28} /></Link>
         <nav className="nav__links hide-mobile" aria-label="Main">
           {links.map(([label, id]) => <a key={id} href={href(id)} onClick={go(id)} className="nav__link lang-swap">{label}</a>)}
         </nav>

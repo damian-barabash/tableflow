@@ -43,7 +43,7 @@ export function passJson(card: Card) {
   if (i.terms) back.push({ key: 'terms', label: 'Regulamin', value: String(i.terms) })
   back.push({ key: 'online', label: 'Karta online', value: v.cardUrl, attributedValue: `<a href="${v.cardUrl}">Otwórz kartę</a>` })
   back.push({ key: 'code', label: 'Numer karty', value: card.code })
-  back.push({ key: 'by', label: 'Obsługiwane przez', value: 'TableFlow AI · tableflow.pl' })
+  back.push({ key: 'by', label: 'Obsługiwane przez', value: 'TableFlow AI · tableflow.studio' })
   return {
     formatVersion: 1,
     passTypeIdentifier: PASS_TYPE_ID,

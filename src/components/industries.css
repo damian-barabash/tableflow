@@ -33,6 +33,8 @@
 .ind__out svg { color: #5fd39c; }
 .ind__desc { font-size: 16px; line-height: 1.5; color: #bdb8ae; padding-right: 8px; }
 .ind__desc b { color: #fff; font-weight: 500; }
+.ind__more { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 15px; color: #fff; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(255,255,255,.35); }
+.ind__more:hover { text-decoration-color: #fff; }
 .ind__dots { display: flex; gap: 8px; margin-top: 16px; }
 .ind__dots button { width: 8px; height: 8px; border-radius: 4px; background: #3a3833; transition: width .3s var(--ease), background .3s; }
 .ind__dots button.is-active { width: 26px; background: var(--tf-mauve); }

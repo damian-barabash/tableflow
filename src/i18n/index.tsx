@@ -3,6 +3,7 @@ import type { Dict, Locale } from './types'
 import { LOCALES, LOCALE_NAMES } from './types'
 import { pl } from './pl'
 import { applyOverrides, fetchPublished, type Overrides } from '../lib/content'
+import { localeFromPath } from '../seo/routes'
 
 export type { Locale, Dict }
 export { LOCALES, LOCALE_NAMES }
@@ -20,6 +21,14 @@ export async function loadDict(l: Locale): Promise<Dict> {
   return cache[l] as Dict
 }
 export const DEFAULT_LOCALE: Locale = 'pl'
+/** Language set by the URL (/en, /ru, /fr, /es). The bare home page and other paths return null. */
+export function urlLocale(): Locale | null {
+  if (typeof window === 'undefined') return null
+  const l = localeFromPath(window.location.pathname)
+  return l && l !== 'pl' ? l : null
+}
+/** main.tsx awaits this before the first render, so /en renders English without a Polish flash. */
+export async function preloadUrlLocale(): Promise<void> { const l = urlLocale(); if (l) await loadDict(l) }
 const STORAGE_KEY = 'tf_lang'
 
 export function isLocale(x: unknown): x is Locale {
@@ -79,8 +88,9 @@ function applyDocument(l: Locale, _d: Dict) {
 }
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE)
-  const [dict, setDict] = useState<Dict>(pl)
+  const initial = urlLocale()
+  const [locale, setLocaleState] = useState<Locale>(initial && cache[initial] ? initial : DEFAULT_LOCALE)
+  const [dict, setDict] = useState<Dict>(initial && cache[initial] ? cache[initial] as Dict : pl)
   const [switching, setSwitching] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [published, setPublished] = useState<Partial<Record<Locale, Overrides>>>({})
@@ -97,6 +107,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   // Stored choice from a previous visit: load the chunk (hidden behind the intro) and apply without animation.
   useEffect(() => {
+    if (urlLocale()) return   // an explicit language URL (/en…) wins over the stored choice
     const stored = readStoredLocale()
     if (!stored || stored === DEFAULT_LOCALE) return
     let alive = true

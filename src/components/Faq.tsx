@@ -26,7 +26,7 @@ export function Faq() {
             </div>
           ))}
         </div>
-        <p className="faq__more center sub rv lang-swap">{t.faq.more} <a className="link" href="mailto:hello@tableflow.pl">{t.faq.contact} <I.chevronR className="arrow" width={14} height={14} /></a></p>
+        <p className="faq__more center sub rv lang-swap">{t.faq.more} <a className="link" href="mailto:contact@tableflow.studio">{t.faq.contact} <I.chevronR className="arrow" width={14} height={14} /></a></p>
       </div>
     </section>
   )

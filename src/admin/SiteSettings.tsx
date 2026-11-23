@@ -51,7 +51,7 @@ export function SiteSettings() {
   if (!ann || !an) return <Loading />
   return (
     <>
-      <PageHead title="Strona" sub="Treści, komunikaty i ustawienia strony tableflow.pl." />
+      <PageHead title="Strona" sub="Treści, komunikaty i ustawienia strony tableflow.studio." />
       <div className="ap-grid ap-grid--2">
         <Panel title="Edytor treści" sub="Edycja tekstów bezpośrednio na stronie — po polsku, pozostałe języki tłumaczy AI przy publikacji.">
           <ul className="ad-locales">{(Object.keys(LOCALE_NAMES) as Locale[]).map(l => <li key={l}><span>{LOCALE_NAMES[l]}</span>{pub(l) ? <small>opublikowano {fmtAgo(pub(l)!.updated_at)}</small> : <small>treść domyślna</small>}</li>)}</ul>
@@ -84,7 +84,7 @@ export function SiteSettings() {
             <li><a href="/sitemap.xml" target="_blank" rel="noreferrer"><Ic.doc width={16} height={16} />sitemap.xml</a></li>
             <li><a href="/robots.txt" target="_blank" rel="noreferrer"><Ic.doc width={16} height={16} />robots.txt</a></li>
             <li><a href="/llms.txt" target="_blank" rel="noreferrer"><Ic.doc width={16} height={16} />llms.txt (dla asystentów AI)</a></li>
-            <li><a href="https://search.google.com/search-console?resource_id=sc-domain:tableflow.pl" target="_blank" rel="noreferrer"><Ic.search width={16} height={16} />Google Search Console</a></li>
+            <li><a href="https://search.google.com/search-console?resource_id=sc-domain:tableflow.studio" target="_blank" rel="noreferrer"><Ic.search width={16} height={16} />Google Search Console</a></li>
             <li><a href="https://supabase.com/dashboard/project/ahtjgghocwegyepxoeru" target="_blank" rel="noreferrer"><Ic.settings width={16} height={16} />Supabase — baza danych</a></li>
           </ul>
         </Panel>

@@ -2,7 +2,7 @@ import type { Dict } from './types'
 
 export const en: Dict = {
   meta: {
-    title: 'TableFlow AI — The AI receptionist that answers calls and books clients',
+    title: 'AI Receptionist 24/7 — answers calls and books appointments | TableFlow AI',
     description: 'TableFlow AI answers your phone, books clients into the calendar, notifies your team in the app and runs a loyalty program in Apple Wallet and Google Wallet. From coffee shops to barbershops.',
   },
   nav: { features: 'Features', industries: 'Industries', app: 'App', loyalty: 'Loyalty', faq: 'FAQ', cta: 'Join the waitlist', lang: 'Language', menu: 'Menu' },
@@ -11,7 +11,7 @@ export const en: Dict = {
     sub: 'A client calls your number. TableFlow picks up, checks the calendar, books an appointment with the right person and notifies your team in the app. Zero missed calls, full history, sales stats and loyalty in one place.',
     ctaPrimary: 'Join the waitlist',
     ctaSecondary: 'See how it works',
-    note: 'No card · Live on launch day · Built for every industry',
+    note: 'Free to join · Live on launch day · Built for every industry',
     worksFor: 'Works for',
     industries: ['Coffee shops', 'Barbershops', 'Beauty salons', 'Clinics', 'Restaurants', 'Garages', 'Fitness studios', 'Vets'],
   },
@@ -21,7 +21,7 @@ export const en: Dict = {
     inputPlaceholder: 'I’d like to book tomorrow after 3 pm',
     replies: 'AI Receptionist',
     dashboard: {
-      url: 'app.tableflow.pl',
+      url: 'app.tableflow.studio',
       sidebar: ['Today', 'Calendar', 'Calls', 'Clients', 'Loyalty', 'Analytics', 'Team', 'Settings'],
       section1: 'Reception',
       section2: 'Business',
@@ -38,7 +38,7 @@ export const en: Dict = {
   voices: {
     title: 'This is what your new reception sounds like',
     items: [
-      { text: '“Hi, this is Barber Brothers. A haircut with Mark? Tomorrow at 2:30 pm is free — I’m booking it and sending a confirmation by SMS.”', who: 'AI Receptionist', role: 'Barbershop · phone call' },
+      { text: '“Hi, this is Barber Brothers. A haircut with Mark? Tomorrow at 2:30 pm is free — I’m booking it into the calendar.”', who: 'AI Receptionist', role: 'Barbershop · phone call' },
       { text: '“A table for four on Saturday at 7 pm — I have one by the window. Any allergies the kitchen should know about?”', who: 'AI Receptionist', role: 'Restaurant · table booking' },
       { text: '“I see this is your third visit this month. I’m adding points to your Wallet card — one more to a free coffee.”', who: 'AI Receptionist', role: 'Coffee shop · loyalty program' },
     ],
@@ -89,16 +89,16 @@ export const en: Dict = {
     scenarios: [
       { id: 'barber', name: 'Barber Brothers', industry: 'Barbershop', agent: 'AI Receptionist',
         lines: [{ who: 'client', text: 'Hi, I’d like a haircut with Mark, ideally tomorrow after work.' }, { who: 'ai', text: 'Mark has 5:30 pm and 6:15 pm free tomorrow. Which works? A haircut takes 45 minutes.' }],
-        steps: ['Checking Mark’s schedule', 'Free: 5:30 pm, 6:15 pm', 'Booking 5:30 pm · SMS sent'], outcome: 'Booked in the calendar, team got a push' },
+        steps: ['Checking Mark’s schedule', 'Free: 5:30 pm, 6:15 pm', 'Booking 5:30 pm with Mark'], outcome: 'Booked in the calendar, team got a push' },
       { id: 'cafe', name: 'Ziarno Coffee', industry: 'Coffee shop', agent: 'AI Receptionist',
-        lines: [{ who: 'client', text: 'Do you take bookings for the latte art workshop on Saturday?' }, { who: 'ai', text: 'Yes, 2 seats left at 11 am. Shall I book them to your number? I’ll add a loyalty card to your Wallet too.' }],
-        steps: ['Checking events', '2 seats left', 'Booking + Wallet card'], outcome: 'Seat taken, card sent by SMS' },
+        lines: [{ who: 'client', text: 'Do you take bookings for the latte art workshop on Saturday?' }, { who: 'ai', text: 'Yes, 2 seats left at 11 am. Shall I book them to your number? You can get our loyalty card on site.' }],
+        steps: ['Checking events', '2 seats left', 'Booking + Wallet card'], outcome: 'Seat taken, loyalty card suggested' },
       { id: 'beauty', name: 'Studio Ola', industry: 'Beauty salon', agent: 'AI Receptionist',
         lines: [{ who: 'client', text: 'I need to move tomorrow’s manicure to next week.' }, { who: 'ai', text: 'Cancelling tomorrow 12:00. Ola is free Tuesday 12:00 or Thursday 4 pm — which one?' }],
         steps: ['Finding the booking', 'Freeing the slot', 'Offering new slots'], outcome: 'Rescheduled, waiting list notified' },
       { id: 'resto', name: 'Trattoria Nonna', industry: 'Restaurant', agent: 'AI Receptionist',
         lines: [{ who: 'client', text: 'A table for six on Friday around 8 pm, it’s a birthday.' }, { who: 'ai', text: 'I have a table in the main room at 8 pm. Adding a “birthday” note for the kitchen. Confirm to this number?' }],
-        steps: ['Checking floor plan', 'Table for 6 · 8 pm', 'Note for the kitchen'], outcome: 'Booked with a note, SMS confirmation' },
+        steps: ['Checking floor plan', 'Table for 6 · 8 pm', 'Note for the kitchen'], outcome: 'Booked with a note for the kitchen' },
       { id: 'garage', name: 'Auto Max Service', industry: 'Garage', agent: 'AI Receptionist',
         lines: [{ who: 'client', text: 'Winter tyre change — what’s the earliest slot?' }, { who: 'ai', text: 'The earliest is tomorrow 9 am, about 40 minutes. Could I take your plate number to prepare the tyres from storage?' }],
         steps: ['Checking bays', 'Tomorrow 9 am · 40 min', 'Asking for the plate'], outcome: 'Booked, mechanic got a push' },
@@ -106,9 +106,9 @@ export const en: Dict = {
   },
   loyalty: {
     h2: 'Loyalty that lives in your client’s Wallet',
-    sub: 'The AI receptionist issues a card in the call or by SMS. The client adds it to Apple Wallet or Google Wallet, and you scan it in the app and add points in a second.',
+    sub: 'Clients scan a QR code at your place and the AI receptionist mentions the card on calls. The client adds it to Apple Wallet or Google Wallet, and you scan it in the app and add points in a second.',
     bullets: ['Points, stamp and discount cards in one program', 'Automatic points for every visit booked by the AI', 'Lock-screen notifications when a reward is ready', 'Scanner in the team app — no extra hardware'],
-    cta: 'See the loyalty program',
+    cta: 'Try the card demo',
     card: { business: 'Ziarno Coffee', member: 'Anna Kowalska', points: 'Points', tier: 'Tier', nextReward: 'To reward', stamps: 'Stamps' },
     scan: { title: 'Scanner', hint: 'Point the camera at the client’s card', result: 'Anna Kowalska · Gold', addPoints: 'Add 10 pts' },
     walletApple: 'Add to Apple Wallet',
@@ -145,7 +145,7 @@ export const en: Dict = {
   history: {
     h2: 'Know why every booking happened the way it did',
     sub: 'Open any conversation and see the transcript, the rules checked, availability and the actions that led to the calendar entry.',
-    bullets: ['Transcript and recording of every call', 'Business rules the AI used (durations, buffers, hours)', 'A trace of every action: booking, SMS, card, notification'],
+    bullets: ['Transcript and recording of every call', 'Business rules the AI used (durations, buffers, hours)', 'A trace of every action: booking, change, card, callback request'],
     demo: {
       client: 'Can I cancel tomorrow’s appointment without a fee?',
       ai: 'Yes — cancellations up to 24 hours before are free. I’ve cancelled tomorrow 12:00 and released the slot.',
@@ -179,7 +179,7 @@ export const en: Dict = {
       { q: 'Which businesses is TableFlow for?', a: 'Any business where clients book a time: coffee shops and restaurants, barbershops, beauty salons, clinics, garages, fitness studios, vets. If someone answers the phone and writes a visit into a calendar today — TableFlow does it for them.' },
       { q: 'Do I have to change my phone number?', a: 'No. Forward your current number to TableFlow (permanently or only out of hours) or take a new number from us.' },
       { q: 'Which languages does the AI speak?', a: 'Polish and English at launch, with Russian, French and Spanish in the following months. The AI detects the caller’s language automatically.' },
-      { q: 'How does the loyalty program work?', a: 'You create a program (points, stamps or discounts). The AI receptionist issues a card in the call or by SMS, the client adds it to Wallet, and your team scans it in the app. Points for AI-booked visits are added automatically.' },
+      { q: 'How does the loyalty program work?', a: 'You create a program (points, stamps or discounts). the client joins with a QR code at your place, adds it to Wallet, and your team scans it in the app. Points for AI-booked visits are added automatically.' },
       { q: 'When is launch and what does it cost?', a: 'We are working towards launch. Leave your e-mail on the waitlist — you’ll get early access and pricing first. No commitment.' },
       { q: 'Does TableFlow work with Booksy or Versum?', a: 'We are building integrations with Booksy and Versum. The calendar will sync both ways: appointments booked by the AI receptionist appear in your system, and bookings made there block the slot in TableFlow. Clients and services are imported, so you don’t have to switch tools.' },
     ],
@@ -235,20 +235,20 @@ export const en: Dict = {
     useEn: 'Continue in English',
     hint: 'You can change the language any time in the menu.',
   },
-  common: { back: 'Back to the homepage', updated: 'Last updated' },
+  common: { back: 'Back to the homepage', updated: 'Last updated', notFoundTitle: 'Page not found', notFoundText: 'The link may have changed or expired. Start from the homepage.', industriesHead: 'AI receptionist for your industry', footerIndustries: 'Industries', plOnly: 'This page is available in Polish' },
   card: { won: 'Congrats! You’ve won a spot in our newsletter 🎉', title: 'Loyalty card', business: 'TableFlow AI · demo', stamps: 'Stamps to reward', stampsLeft: '1 stamp left', scanned: 'Scanned! Last stamp added.', reward: 'Reward unlocked', newsletterTitle: 'Now you can join our newsletter', newsletterSub: 'We’ll let you know about the TableFlow AI launch. Choose how we should reach you.', email: 'E-mail', phone: 'Phone', emailPh: 'Your e-mail address', phonePh: '+44 7700 000000', consent: 'I agree to be contacted about the TableFlow AI launch in line with the', submit: 'Sign me up', success: 'Done! You’re on the list.', exists: 'This contact is already on the list — thank you!', invalidEmail: 'Please enter a valid e-mail address.', invalidPhone: 'Please enter a valid phone number.', error: 'Something went wrong. Please try again.', powered: 'Powered by TableFlow AI', back: 'Back to the homepage' },
   policies: {
     privacy: {
       title: 'Privacy Policy',
       updated: '17 September 2026',
-      intro: 'This policy describes which personal data we collect on tableflow.pl (the “Site”), for what purpose and on what basis, and which rights you have regarding its processing.',
+      intro: 'This policy describes which personal data we collect on tableflow.studio (the “Site”), for what purpose and on what basis, and which rights you have regarding its processing.',
       sections: [
-        { h: '1. Data controller', p: ['The controller of your personal data is Maksym Yehorov Maksikon, ul. Zamiany 18 lok. 46, 02-786 Warszawa, NIP 9512594289, REGON 528375783 (“we”), the company operating TableFlow AI. Data protection contact: hello@tableflow.pl.'] },
+        { h: '1. Data controller', p: ['The controller of your personal data is Maksym Yehorov Maksikon, ul. Zamiany 18 lok. 46, 02-786 Warszawa, NIP 9512594289, REGON 528375783 (“we”), the company operating TableFlow AI. Data protection contact: contact@tableflow.studio.'] },
         { h: '2. What we collect', p: ['On the Site we only collect data you provide voluntarily in the waitlist form:'], list: ['e-mail address,', 'type and name of your business (optional),', 'chosen site language,', 'the time and content of your consent, browser identifier (user agent) and campaign parameters (UTM) if you arrived via a link.'] },
         { h: '3. Purpose and legal basis', p: ['We process form data to inform you about the TableFlow AI launch, early access and pricing (Art. 6(1)(a) GDPR — your consent). Technical data about how the Site works (anonymous events such as language choice or cookie decision) is processed in our legitimate interest of improving the Site (Art. 6(1)(f) GDPR); we do not link it to your identity.'] },
         { h: '4. Retention', p: ['We keep your e-mail until you withdraw consent or for 24 months after product launch, whichever comes first. Anonymous technical events are kept for up to 12 months.'] },
         { h: '5. Recipients', p: ['Data is stored in Supabase infrastructure (European Union, region eu-west-1) and the Site is published via GitHub Pages. We may use an e-mail service provider acting on our behalf to send messages. We do not sell data or pass it to third parties for marketing.'] },
-        { h: '6. Your rights', p: ['You have the right to access, rectify, erase, restrict processing, port your data and withdraw consent at any time (without affecting the lawfulness of prior processing). You may also lodge a complaint with your supervisory authority. To exercise your rights, write to hello@tableflow.pl or click the unsubscribe link in any message from us.'] },
+        { h: '6. Your rights', p: ['You have the right to access, rectify, erase, restrict processing, port your data and withdraw consent at any time (without affecting the lawfulness of prior processing). You may also lodge a complaint with your supervisory authority. To exercise your rights, write to contact@tableflow.studio or click the unsubscribe link in any message from us.'] },
         { h: '7. Cookies', p: ['Cookie usage is described in a separate Cookie Policy.'] },
         { h: '8. Changes', p: ['We may update this policy as the product evolves. The current version is always available on the Site, with the date of the last change at the top.'] },
       ],
@@ -256,9 +256,9 @@ export const en: Dict = {
     cookies: {
       title: 'Cookie Policy',
       updated: '17 September 2026',
-      intro: 'Here we explain which cookies and similar technologies (e.g. localStorage) tableflow.pl uses and how you can manage them.',
+      intro: 'Here we explain which cookies and similar technologies (e.g. localStorage) tableflow.studio uses and how you can manage them.',
       sections: [
-        { h: '1. What cookies are', p: ['tableflow.pl is operated by Maksym Yehorov Maksikon, ul. Zamiany 18 lok. 46, 02-786 Warszawa, NIP 9512594289, REGON 528375783.', 'Cookies are small text files stored in your browser. localStorage plays a similar role, letting the site save settings without sending them to a server.'] },
+        { h: '1. What cookies are', p: ['tableflow.studio is operated by Maksym Yehorov Maksikon, ul. Zamiany 18 lok. 46, 02-786 Warszawa, NIP 9512594289, REGON 528375783.', 'Cookies are small text files stored in your browser. localStorage plays a similar role, letting the site save settings without sending them to a server.'] },
         { h: '2. What we use', p: ['The Site uses no advertising or cross-site tracking cookies. We store:'], list: ['tf_consent — your cookie decision (essential, 12 months),', 'tf_lang — the chosen site language (essential, 12 months),', 'tf_intro — whether the intro has been shown in this session (essential, until the tab closes),', 'anonymous usage statistics — only after consent; they contain no user identifier.'] },
         { h: '3. Third parties', p: ['Fonts are loaded from Google Fonts; when fetching them Google may receive your IP address. The Site is hosted on GitHub Pages, which may keep technical server logs.'] },
         { h: '4. How to manage', p: ['You can delete cookies and site data at any time in your browser settings. Declining statistics does not affect how the Site works.'] },
@@ -267,11 +267,11 @@ export const en: Dict = {
     terms: {
       title: 'Waitlist Terms',
       updated: '17 September 2026',
-      intro: 'These terms set out the rules for joining the TableFlow AI waitlist and using tableflow.pl.',
+      intro: 'These terms set out the rules for joining the TableFlow AI waitlist and using tableflow.studio.',
       sections: [
-        { h: '1. Service provider', p: ['tableflow.pl and the waitlist are operated by Maksym Yehorov Maksikon, ul. Zamiany 18 lok. 46, 02-786 Warszawa, NIP 9512594289, REGON 528375783 (“we”).'] },
+        { h: '1. Service provider', p: ['tableflow.studio and the waitlist are operated by Maksym Yehorov Maksikon, ul. Zamiany 18 lok. 46, 02-786 Warszawa, NIP 9512594289, REGON 528375783 (“we”).'] },
         { h: '2. Waitlist', p: ['Joining the waitlist is free and voluntary. Entering your e-mail means you wish to receive information about the launch, early access and pricing. It does not create a contract or an obligation to purchase.'] },
-        { h: '3. Messages', p: ['We only send messages related to the TableFlow AI launch. You can unsubscribe at any time by clicking the link in a message or writing to hello@tableflow.pl.'] },
+        { h: '3. Messages', p: ['We only send messages related to the TableFlow AI launch. You can unsubscribe at any time by clicking the link in a message or writing to contact@tableflow.studio.'] },
         { h: '4. Site content', p: ['Screenshots, sample conversations, business and personal names shown on the Site illustrate how the product works and are not accounts of real deployments. Figures shown are targets and may change before launch.'] },
         { h: '5. Intellectual property', p: ['The TableFlow AI name, logo and Site content are our property. You may quote them with attribution; commercial use requires our consent.'] },
         { h: '6. Liability', p: ['The Site is informational. We strive to keep it running but do not guarantee uninterrupted availability. We are not liable for decisions made solely on the basis of Site content.'] },

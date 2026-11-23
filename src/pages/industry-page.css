@@ -1,0 +1,63 @@
+/* Industry landing pages (/recepcja-ai-*) — built from the landing tokens */
+.ip-hero { padding-top: clamp(40px, 6vw, 88px); padding-bottom: clamp(32px, 4vw, 56px); }
+.ip-crumbs { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+.ip-crumbs a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line); }
+.ip-crumbs a:hover { color: var(--fg); }
+.ip-crumbs span { color: var(--fg); }
+.ip-lang { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--fg-2); background: var(--bg-2); border-radius: var(--r-sm); padding: 6px 10px; margin-bottom: 18px; }
+.ip-h1 { max-width: 20ch; }
+.ip-lead { margin-top: 22px; }
+.ip-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+.ip-note { margin-top: 14px; }
+
+.ip-split { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(28px, 5vw, 72px); align-items: start; }
+.ip-intro p { font-size: 18px; line-height: 1.65; color: var(--fg-2); max-width: 62ch; }
+.ip-intro p + p { margin-top: 18px; }
+
+.ip-call { padding: 22px; margin: 0; }
+.ip-call__head { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 16px; }
+.ip-call__head .tf-orb { width: 18px; height: 18px; }
+.ip-call__lines { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ip-call__line { max-width: 88%; padding: 10px 14px; border-radius: var(--r-lg); background: var(--bg-2); }
+.ip-call__line p { font-size: 15px; line-height: 1.5; }
+.ip-call__line.is-ai { justify-self: end; background: #1a1916; color: #fff; }
+.ip-call__who { display: block; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; opacity: .65; margin-bottom: 2px; }
+.ip-call__result { display: flex; gap: 8px; align-items: flex-start; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 14px; color: var(--fg-2); }
+.ip-call__result svg { flex: 0 0 auto; margin-top: 3px; color: var(--ok); }
+
+.ip-grid { display: grid; gap: 16px; margin-top: clamp(24px, 3vw, 40px); }
+.ip-grid--3 { grid-template-columns: repeat(3, 1fr); }
+.ip-card { padding: 22px; }
+.ip-card h3 { font-size: 17px; font-weight: 500; letter-spacing: -.01em; }
+.ip-card p { margin-top: 8px; color: var(--fg-2); font-size: 15px; line-height: 1.55; }
+.ip-card__ic { color: var(--accent); margin-bottom: 12px; }
+
+.ip-steps { list-style: none; padding: 0; margin: clamp(24px, 3vw, 40px) 0 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; counter-reset: none; }
+.ip-step { padding: 22px; border-radius: var(--r-xl); border: 1px solid var(--line); background: var(--card); }
+.ip-step__n { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: var(--r-md); background: #000; color: #fff; font-size: 14px; font-weight: 600; margin-bottom: 14px; }
+.ip-step h3 { font-size: 17px; font-weight: 500; }
+.ip-step p { margin-top: 8px; color: var(--fg-2); font-size: 15px; line-height: 1.55; }
+
+.ip .faq__list { margin-top: clamp(24px, 3vw, 40px); margin-left: 0; }
+.ip-faq-h { margin: 0; font: inherit; }
+
+.ip-others { list-style: none; padding: 0; margin: 24px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.ip-others a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--card); font-size: 15px; transition: border-color .2s; }
+.ip-others a:hover { border-color: #cfcdc8; }
+
+/* 404 */
+.nf { min-height: 60vh; padding-top: clamp(56px, 8vw, 120px); }
+.nf .lead { margin-top: 16px; }
+.nf .ip-others { margin-top: 32px; }
+
+@media (max-width: 1000px) {
+  .ip-steps { grid-template-columns: repeat(2, 1fr); }
+  .ip-grid--3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 760px) {
+  .ip-split { grid-template-columns: 1fr; }
+  .ip-steps, .ip-grid--3 { grid-template-columns: 1fr; }
+  .ip-intro p { font-size: 17px; }
+  .ip-cta .btn { flex: 1 1 100%; justify-content: center; }
+  .ip-call__line { max-width: 94%; }
+}
